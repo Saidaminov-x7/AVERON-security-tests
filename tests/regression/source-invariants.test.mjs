@@ -48,3 +48,36 @@ test("backend migration deploy path is guarded by the harness policy script", as
   assert.match(entrypoint, /prisma:deploy/);
   assert.doesNotMatch(entrypoint, /prisma db push|prisma migrate reset|--force-reset|--accept-data-loss/i);
 });
+
+test("commerce route regressions cover ownership, price, stock, idempotency, and guarded transitions", async () => {
+  const tests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+  );
+  for (const scenario of [
+    "derives cart ownership only from the authenticated user",
+    "does not expose or mutate another customer cart items",
+    "does not check out another customer cart",
+    "rejects unpublished products and malformed quantities",
+    "rejects client-supplied prices rather than accepting a tampered checkout",
+    "replays a same-key checkout committed while the request waits for the cart lock",
+    "rechecks and does not oversell stock during checkout",
+    "does not return another customer order",
+    "requires admin authorization and prevents invalid order status transitions",
+    "accepts adjacent fulfillment and shipping transitions and rejects skipped stages",
+  ]) {
+    assert.ok(tests.includes(scenario), `Missing commerce security regression: ${scenario}`);
+  }
+});
+
+test("frontend return-target regressions reject external and malformed destinations", async () => {
+  const tests = await source("AVERON_frontend", "lib/safe-navigation.test.ts");
+  for (const maliciousTarget of [
+    "//evil.example/path",
+    "https://evil.example/en/profile",
+    "/en/%2e%2e/login",
+    "/en/%2f%2fevil.example",
+  ]) {
+    assert.ok(tests.includes(maliciousTarget), `Missing unsafe returnTo regression: ${maliciousTarget}`);
+  }
+});

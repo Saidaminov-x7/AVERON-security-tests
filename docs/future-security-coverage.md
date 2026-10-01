@@ -41,6 +41,15 @@ OpenAPI only outside production; the security harness does not invent a
 production schema URL. Dynamic ZAP/Schemathesis runs remain staging-only and
 require a protected target and explicit operator opt-in.
 
+Commerce route-level regressions live with the backend API and are checked by
+the cross-repository regression runner. They exercise cart/order ownership,
+published-product and quantity checks, server-side pricing, idempotency,
+stock claims, admin authorization, and sequential order/shipping transitions
+using the API test harness. These tests use mocked Prisma behavior and do not
+replace verification against a live PostgreSQL instance under concurrent load.
+Frontend return-target tests reject external, protocol-relative, and malformed
+localized paths; they do not substitute for an end-to-end authentication flow.
+
 Parser review identified areas that need dedicated follow-up before claiming
 complete SSRF/hostile-response coverage: DNS validation-to-connection
 time-of-check/time-of-use, explicit response-body caps, request-body schema
