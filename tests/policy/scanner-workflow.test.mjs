@@ -38,6 +38,7 @@ test("Trivy scans each canonical application checkout alias independently", () =
     const step = stepWithId(id);
     assert.ok(step.includes(`scan-ref: source-checkouts/${repository}`), `${id} uses the wrong checkout path`);
     assert.ok(step.includes(`output: reports/raw/${repository}-trivy.sarif`), `${id} has no repository-specific SARIF`);
+    assert.ok(step.includes("cache-dir: ${{ runner.temp }}/trivy-cache"), `${id} stores Trivy data in the scanned workspace`);
   }
 });
 

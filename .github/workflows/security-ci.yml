@@ -131,6 +131,7 @@ jobs:
           scanners: vuln,misconfig
           format: sarif
           output: reports/raw/AVERON_backend-trivy.sarif
+          cache-dir: ${{ runner.temp }}/trivy-cache
           version: v0.75.0
           exit-code: "0"
       - name: Run Trivy on AVERON-frontend
@@ -143,6 +144,7 @@ jobs:
           scanners: vuln,misconfig
           format: sarif
           output: reports/raw/AVERON_frontend-trivy.sarif
+          cache-dir: ${{ runner.temp }}/trivy-cache
           version: v0.75.0
           exit-code: "0"
       - name: Run Trivy on AVERON-admin-panel
@@ -155,6 +157,7 @@ jobs:
           scanners: vuln,misconfig
           format: sarif
           output: reports/raw/AVERON_admin_panel-trivy.sarif
+          cache-dir: ${{ runner.temp }}/trivy-cache
           version: v0.75.0
           exit-code: "0"
       - name: Run Trivy on AVERON-parser
@@ -167,6 +170,7 @@ jobs:
           scanners: vuln,misconfig
           format: sarif
           output: reports/raw/AVERON_parser-trivy.sarif
+          cache-dir: ${{ runner.temp }}/trivy-cache
           version: v0.75.0
           exit-code: "0"
       - name: Upload backend Trivy SARIF
