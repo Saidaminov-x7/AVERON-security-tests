@@ -2,12 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { resolveAllRepositories } from "../../scripts/repositories.mjs";
 
-const root = process.env.AVERON_SOURCE_ROOT;
-assert.ok(root, "run these tests with scripts/run-regression.mjs");
+const repositories = await resolveAllRepositories();
 
 async function source(repository, relativePath) {
-  return readFile(path.join(root, repository, relativePath), "utf8");
+  return readFile(path.join(repositories[repository], relativePath), "utf8");
 }
 
 test("backend requires signing secrets and leaves unfinished visual features disabled", async () => {

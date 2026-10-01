@@ -1,6 +1,16 @@
 .env
 .env.*
 !.env.example
+secrets/
+secrets.*
+*.secret
+*.credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
 node_modules/
 reports/generated/
 reports/raw/

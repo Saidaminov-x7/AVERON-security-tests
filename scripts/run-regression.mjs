@@ -1,30 +1,11 @@
-import { access, readdir } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { resolveAllRepositories, sourceRepositories } from "./repositories.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sourceRoot = path.resolve(
-  process.env.AVERON_SOURCE_ROOT
-    ?? path.join(root, "source-checkouts"),
-);
-const repositories = [
-  "AVERON_backend",
-  "AVERON_frontend",
-  "AVERON_admin_panel",
-  "AVERON_parser",
-];
-
-for (const repository of repositories) {
-  try {
-    await access(path.join(sourceRoot, repository, "package.json"));
-  } catch {
-    throw new Error(
-      `Required source checkout is missing: ${path.join(sourceRoot, repository)}. `
-      + "Set AVERON_SOURCE_ROOT to the directory containing all four AVERON source repositories.",
-    );
-  }
-}
+const repositories = await resolveAllRepositories();
 
 const testDirectory = path.join(root, "tests/regression");
 const testFiles = (await readdir(testDirectory))
@@ -37,7 +18,13 @@ const child = spawn(
   ["--test", ...testFiles],
   {
     cwd: root,
-    env: { ...process.env, AVERON_SOURCE_ROOT: sourceRoot },
+    env: {
+      ...process.env,
+      ...Object.fromEntries(Object.entries(sourceRepositories).map(([repository, definition]) => [
+        definition.pathVariable,
+        repositories[repository],
+      ])),
+    },
     stdio: "inherit",
   },
 );

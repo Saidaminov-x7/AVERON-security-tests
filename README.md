@@ -28,21 +28,27 @@ npm run security:safe
 ```
 
 For cross-repository regressions and static scans, check out all four
-application repositories beside this repository, then set their common parent:
+application repositories beside this repository, then set their common parent
+or explicit repository paths:
 
 ```powershell
 $env:AVERON_SOURCE_ROOT = "C:\work\AVERON"
+# Or set only the paths needed by a command:
+$env:AVERON_BACKEND_REPO_PATH = "C:\work\AVERON\AVERON_backend"
 npm run security:regression
 npm run security:static
 ```
 
-The regression runner expects directories named `AVERON_backend`,
-`AVERON_frontend`, `AVERON_admin_panel`, and `AVERON_parser` under that root.
+The resolver maps those local directory names to the exact GitHub repositories
+in `scripts/repositories.mjs`. `AVERON_BACKEND_REPO_PATH`,
+`AVERON_FRONTEND_REPO_PATH`, `AVERON_ADMIN_REPO_PATH`, and
+`AVERON_PARSER_REPO_PATH` override individual checkout paths. Relative paths
+are resolved from this repository. Every path is checked for its `package.json`
+before a test or scan starts; missing checkouts are errors, never skips.
 The static command requires Semgrep, Trivy, and Gitleaks to be installed and
-records each scanner's actual exit result and repository coverage. It fails
-closed when a required scanner or source checkout is missing. Do not install
-scanners from unreviewed sources or send private source to third-party hosted
-scanning services.
+records each scanner's actual exit result and repository coverage. Do not
+install scanners from unreviewed sources or send private source to third-party
+hosted scanning services.
 
 An aggressive local or staging run additionally requires
 `$env:ALLOW_AGGRESSIVE_SECURITY_TESTS = "true"`. Staging API tests also require
@@ -64,8 +70,12 @@ npm run security:report      Generate normalized JSON and Markdown reports
 
 Static tools are separate executables: CI pins Semgrep `1.142.0`, Trivy
 `v0.75.0`, and Gitleaks `v8.28.0`; dynamic CI pins ZAP action versions and
-Schemathesis `4.32.0`. Local tool absence is reported as an error; missing scan
-results are never represented as clean.
+Schemathesis `4.32.0`. Third-party GitHub Actions are pinned to verified commit
+SHAs; see [docs/action-pins.md](./docs/action-pins.md). Local tool absence is
+reported as an error; missing scan results are never represented as clean.
+See [docs/security-tooling.md](./docs/security-tooling.md) for scanner
+configuration, runtime requirements, report output, and local/staging versus
+production-safe execution boundaries.
 Generated files are written under `reports/generated/` and raw scanner output
 under `reports/raw/`; both are ignored by Git. Raw scanner files stay on the
 runner because tools can include matched source context. CI uploads the
@@ -83,24 +93,31 @@ staging SSRF coverage; see the future coverage guide.
 
 ## Cross-repository access
 
-CI checks out the four application repositories using the GitHub Actions
-secret `AVERON_SOURCE_READ_TOKEN`. Add it under the repository or organization
-Actions secrets before enabling cross-repository CI. Use a fine-grained token
-(or GitHub App installation token) scoped to read-only Contents access for:
+CI checks out the four private application repositories using the GitHub
+Actions secret `AVERON_REPOS_READ_TOKEN`. Add it under the private security
+repository's Actions secrets before enabling cross-repository CI. Use a
+fine-grained token with read-only Contents access for only:
 
 - `Saidaminov-x7/AVERON-backend`
 - `Saidaminov-x7/AVERON-frontend`
 - `Saidaminov-x7/AVERON-admin-panel`
 - `Saidaminov-x7/AVERON-parser`
 
-No token is stored in this repository. The checked-out source is placed under
-`source-checkouts/`, which is ignored by Git.
+No token is stored in this repository. If the secret is absent, CI reports
+"Required cross-repository read credential is not configured", fails the
+preflight, and marks dependent verification as not performed; it does not turn
+the required jobs green. The checked-out source is placed under
+`source-checkouts/`, which is ignored by Git. See
+[docs/cross-repository-access.md](./docs/cross-repository-access.md) for the
+minimum token permissions and setup steps.
 
 ## Scanner use and CI
 
-- Pull request/push CI runs policy tests, verifies Prisma's production
-  migration command, and runs static source/security checks. Gitleaks is
-  configured to redact matches. SARIF is uploaded where supported.
+- Pull request/push Security CI runs policy tests against a real checked-out
+  backend, then performs cross-repository Semgrep, Trivy, and redacted Gitleaks
+  scans. SARIF upload is scoped to the scanner job that needs it.
+- The separate Application Regressions workflow installs dependencies and runs
+  the existing tests/typechecks/builds for the four application repositories.
 - The staging workflow is `workflow_dispatch` only, requires the protected
   `security-staging` GitHub Environment, an explicitly allowlisted HTTPS
   origin, and an OpenAPI URL on that origin. Active ZAP scanning and

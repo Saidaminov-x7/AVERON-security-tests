@@ -10,8 +10,26 @@ permissions:
   contents: read
 
 jobs:
+  repository-read-preflight:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Require private source repository read access
+        shell: bash
+        env:
+          AVERON_REPOS_READ_TOKEN: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+        run: |
+          if [[ -z "$AVERON_REPOS_READ_TOKEN" ]]; then
+            message="Required cross-repository read credential is not configured. Required verification was NOT performed. Configure the AVERON_REPOS_READ_TOKEN Actions secret."
+            echo "::error title=CI configuration incomplete::$message"
+            printf '%s\n' "$message" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "Cross-repository read credential is configured."
+
   regression-tests:
     runs-on: ubuntu-latest
+    needs: repository-read-preflight
     strategy:
       fail-fast: false
       matrix:
@@ -41,18 +59,18 @@ jobs:
             test_command: npm test
             verify_command: npm run typecheck && npm run build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/${{ matrix.repository }}
           ref: main
           path: source
-          token: ${{ secrets.AVERON_SOURCE_READ_TOKEN }}
-      - uses: actions/setup-node@v6
+          token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 24
       - name: Enable pinned pnpm
         if: matrix.package_manager == 'pnpm'
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # pnpm/action-setup v4
         with:
           version: 9.15.9
       - name: Install dependencies

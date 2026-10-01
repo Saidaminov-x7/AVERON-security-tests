@@ -26,15 +26,15 @@ jobs:
       SECURITY_TARGET_URL: ${{ vars.SECURITY_PRODUCTION_SAFE_TARGET_URL }}
       SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS: ${{ vars.SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 24
       - name: Run fixed non-destructive checks only
         run: npm run security:safe
       - name: Upload masked report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # actions/upload-artifact v4.6.2
         with:
           name: averon-production-safe-${{ inputs.service }}
           path: reports/generated/safe-checks.json

@@ -19,6 +19,11 @@ on:
         options:
           - passive
           - active
+      confirm_staging_active_tests:
+        description: Explicitly authorize active ZAP scanning and/or Schemathesis fuzzing against the allowlisted staging target
+        required: true
+        type: boolean
+        default: false
       run_api_fuzzing:
         description: Run Schemathesis (backend OpenAPI endpoint required)
         required: true
@@ -38,19 +43,24 @@ jobs:
       SECURITY_TARGET_URL: ${{ vars.SECURITY_STAGING_TARGET_URL }}
       SECURITY_STAGING_ALLOWED_ORIGINS: ${{ vars.SECURITY_STAGING_ALLOWED_ORIGINS }}
       SECURITY_DAST_MODE: ${{ inputs.scan_mode }}
-      ALLOW_AGGRESSIVE_SECURITY_TESTS: "true"
+      ALLOW_AGGRESSIVE_SECURITY_TESTS: ${{ inputs.confirm_staging_active_tests }}
       SECURITY_OPENAPI_URL: ${{ vars.SECURITY_STAGING_OPENAPI_URL }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 24
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # actions/setup-python v6
+        if: ${{ inputs.run_api_fuzzing }}
+        with:
+          python-version: "3.12"
       - name: Validate staging target before any scanner starts
         env:
           SECURITY_DAST_PRECHECK_ONLY: "true"
+          REQUIRE_AGGRESSIVE_PERMISSION: ${{ inputs.scan_mode == 'active' || inputs.run_api_fuzzing }}
         run: |
           mkdir -p reports/generated
-          node -e "import('./scripts/safety.mjs').then(async m => { await m.requireAggressivePermission(); await m.validateTarget(m.requireTarget()); })"
+          node -e "import('./scripts/safety.mjs').then(async m => { if (process.env.REQUIRE_AGGRESSIVE_PERMISSION === 'true') await m.requireAggressivePermission(); await m.validateTarget(m.requireTarget()); })"
       - name: Validate Schemathesis service selection
         if: ${{ inputs.run_api_fuzzing && inputs.service != 'backend' }}
         run: |
@@ -58,16 +68,18 @@ jobs:
           exit 1
       - name: Run OWASP ZAP passive baseline
         if: ${{ inputs.scan_mode == 'passive' }}
-        uses: zaproxy/action-baseline@v0.14.0
+        uses: zaproxy/action-baseline@7c4deb10e6261301961c86d65d54a516394f9aed # zaproxy/action-baseline v0.14.0
         with:
           target: ${{ vars.SECURITY_STAGING_TARGET_URL }}
-          cmd_options: "-m 2 -I"
+          cmd_options: "-m 2 -I -J reports/generated/zap-baseline.json -r reports/generated/zap-baseline.html"
+          allow_issue_writing: false
       - name: Run OWASP ZAP active scan
         if: ${{ inputs.scan_mode == 'active' }}
-        uses: zaproxy/action-full-scan@v0.13.0
+        uses: zaproxy/action-full-scan@3c58388149901b9a03b7718852c5ba889646c27c # zaproxy/action-full-scan v0.13.0
         with:
           target: ${{ vars.SECURITY_STAGING_TARGET_URL }}
           allow_issue_writing: false
+          cmd_options: "-I -J reports/generated/zap-active.json -r reports/generated/zap-active.html"
       - name: Run Schemathesis against staging API
         if: ${{ inputs.run_api_fuzzing && inputs.service == 'backend' }}
         run: |
@@ -76,7 +88,7 @@ jobs:
           npm run security:api 2>&1 | tee reports/generated/schemathesis.log
       - name: Upload staging scan output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # actions/upload-artifact v4.6.2
         with:
           name: averon-staging-security-scan
           path: reports/generated/

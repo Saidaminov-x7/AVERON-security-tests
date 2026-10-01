@@ -1,4 +1,7 @@
 import { spawn } from "node:child_process";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { requireAggressivePermission, requireTarget, validateTarget } from "./safety.mjs";
 
 await requireAggressivePermission();
@@ -23,6 +26,9 @@ if (!Number.isInteger(maxExamples) || maxExamples < 1 || maxExamples > 100) {
   throw new Error("SECURITY_MAX_EXAMPLES must be an integer from 1 to 100.");
 }
 const command = process.env.SCHEMATHESIS_BIN ?? "schemathesis";
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const reportDirectory = path.join(root, "reports/generated/schemathesis");
+await mkdir(reportDirectory, { recursive: true });
 const child = spawn(command, [
   "run",
   schemaUrl.href,
@@ -32,7 +38,13 @@ const child = spawn(command, [
   "all",
   "--max-examples",
   String(maxExamples),
-], { stdio: "inherit", env: process.env });
+  "--report",
+  "json",
+  "--report-dir",
+  reportDirectory,
+  "--report-junit-path",
+  path.join(reportDirectory, "junit.xml"),
+], { cwd: root, stdio: "inherit", env: process.env });
 child.on("error", (error) => {
   console.error(`Unable to start Schemathesis: ${error.message}`);
   process.exitCode = 1;

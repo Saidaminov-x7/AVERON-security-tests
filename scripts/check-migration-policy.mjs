@@ -1,46 +1,40 @@
-import { access, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveRepositoryPath } from "./repositories.mjs";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const workspaceParent = path.resolve(repositoryRoot, "..");
-const sourceRoot = path.resolve(
-  process.env.AVERON_SOURCE_ROOT
-    ?? (await exists(path.join(repositoryRoot, "source-checkouts/AVERON_backend/package.json"))
-      ? path.join(repositoryRoot, "source-checkouts")
-      : workspaceParent),
-);
-const backendRoot = path.join(sourceRoot, "AVERON_backend");
-const packageJson = JSON.parse(await readFile(path.join(backendRoot, "package.json"), "utf8"));
-const deployScript = packageJson.scripts?.["prisma:deploy"];
-if (typeof deployScript !== "string" || !/\bprisma\s+migrate\s+deploy\b/.test(deployScript)) {
-  throw new Error("Backend production migration script must use `prisma migrate deploy`.");
-}
-
-const deploymentFiles = [
-  "railway.json",
-  "Dockerfile",
-  "apps/api/entrypoint.sh",
-];
 const forbidden = /\bprisma\s+(?:db\s+push|migrate\s+reset)\b|--(?:force-reset|accept-data-loss)\b/i;
-for (const relative of deploymentFiles) {
-  let content;
-  try {
-    content = await readFile(path.join(backendRoot, relative), "utf8");
-  } catch (error) {
-    if (error?.code === "ENOENT") continue;
-    throw error;
+
+export async function assertProductionMigrationPolicy(backendRoot) {
+  const packageJson = JSON.parse(await readFile(path.join(backendRoot, "package.json"), "utf8"));
+  const scripts = packageJson.scripts ?? {};
+  const deployScript = scripts["prisma:deploy"];
+  if (typeof deployScript !== "string" || !/\bprisma\s+migrate\s+deploy\b/.test(deployScript)) {
+    throw new Error("Backend production migration script must use `prisma migrate deploy`.");
   }
-  if (forbidden.test(content)) throw new Error(`Forbidden destructive migration command found in ${relative}.`);
+
+  for (const name of ["start", "prisma:deploy"]) {
+    const script = scripts[name];
+    if (typeof script !== "string") {
+      throw new Error(`Backend production script "${name}" is missing.`);
+    }
+    if (forbidden.test(script)) {
+      throw new Error(`Forbidden destructive migration command found in package.json script "${name}".`);
+    }
+  }
+
+  for (const relative of ["railway.json", "apps/api/entrypoint.sh"]) {
+    const content = await readFile(path.join(backendRoot, relative), "utf8");
+    if (forbidden.test(content)) {
+      throw new Error(`Forbidden destructive migration command found in production file ${relative}.`);
+    }
+  }
+
+  return "Migration policy verified: production deployment uses migrate deploy only.";
 }
 
-console.log("Migration policy verified: production deployment uses migrate deploy only.");
-
-async function exists(file) {
-  try {
-    await access(file);
-    return true;
-  } catch {
-    return false;
-  }
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const backendRoot = await resolveRepositoryPath("AVERON_backend");
+  console.log(await assertProductionMigrationPolicy(backendRoot));
 }

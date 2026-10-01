@@ -1,45 +1,12 @@
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveAllRepositories } from "./repositories.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const repositories = [
-  "AVERON_backend",
-  "AVERON_frontend",
-  "AVERON_admin_panel",
-  "AVERON_parser",
-];
-const candidates = [
-  process.env.AVERON_SOURCE_ROOT,
-  path.join(root, "source-checkouts"),
-  path.resolve(root, ".."),
-].filter(Boolean).map((candidate) => path.resolve(candidate));
-
-async function hasAllSources(candidate) {
-  for (const repository of repositories) {
-    try {
-      await access(path.join(candidate, repository, "package.json"));
-    } catch {
-      return false;
-    }
-  }
-  return true;
-}
-
-let sourceRoot;
-for (const candidate of candidates) {
-  if (await hasAllSources(candidate)) {
-    sourceRoot = candidate;
-    break;
-  }
-}
-if (!sourceRoot) {
-  throw new Error(
-    "Static scanning requires all four AVERON source repositories. "
-    + "Set AVERON_SOURCE_ROOT to their common parent directory.",
-  );
-}
+const sourcePaths = await resolveAllRepositories();
+const repositories = Object.keys(sourcePaths);
 
 const reportDirectory = path.join(root, "reports/raw");
 await mkdir(reportDirectory, { recursive: true });
@@ -68,7 +35,7 @@ function runTool(repository, tool, executable, args, cwd) {
 }
 
 for (const repository of repositories) {
-  const repositoryPath = path.join(sourceRoot, repository);
+  const repositoryPath = sourcePaths[repository];
   const semgrepReport = path.join(reportDirectory, `${repository}-semgrep.json`);
   const trivyReport = path.join(reportDirectory, `${repository}-trivy.json`);
   const gitleaksCurrentReport = path.join(reportDirectory, `${repository}-gitleaks-current.json`);

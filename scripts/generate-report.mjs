@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { normalizeSeverity } from "./report-severity.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rawDirectory = path.join(root, "reports/raw");
@@ -29,14 +30,6 @@ function severityFromSarif(level, rule) {
     return "LOW";
   }
   return ({ error: "HIGH", warning: "MEDIUM", note: "LOW" })[level] ?? "INFO";
-}
-
-function normalizeSeverity(value) {
-  const normalized = String(value ?? "INFO").toUpperCase();
-  if (normalized === "UNKNOWN" || normalized === "UNDEFINED") return "INFO";
-  return ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"].includes(normalized)
-    ? normalized
-    : "INFO";
 }
 
 function repositoryFor(filename, file) {
