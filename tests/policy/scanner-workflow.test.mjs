@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const workflow = await readFile(path.join(root, ".github/workflows/security-ci.yml"), "utf8");
 const localStaticRunner = await readFile(path.join(root, "scripts/run-static.mjs"), "utf8");
+const reportGenerator = await readFile(path.join(root, "scripts/generate-report.mjs"), "utf8");
 
 function stepWithId(id) {
   const idIndex = workflow.indexOf(`id: ${id}`);
@@ -82,4 +83,29 @@ test("SARIF upload has only the narrowly required token permissions", () => {
     permissions.split(/\r?\n/).filter(Boolean).map((permission) => permission.trim()),
     ["actions: read", "contents: read", "security-events: write"],
   );
+});
+
+test("SARIF publication is gated on explicit Code Scanning feature availability", () => {
+  const availabilityStep = stepWithId("code_scanning_availability");
+  assert.match(availabilityStep, /\/code-scanning\/alerts\?per_page=1/);
+  assert.match(availabilityStep, /status=BLOCKED_BY_GITHUB_FEATURE/);
+  assert.match(availabilityStep, /status=EXECUTION_FAILED/);
+  assert.match(availabilityStep, /status=AVAILABLE/);
+  assert.doesNotMatch(availabilityStep, /continue-on-error|--fail-with-body/);
+
+  for (const report of [
+    "AVERON_backend-trivy.sarif",
+    "AVERON_frontend-trivy.sarif",
+    "AVERON_admin_panel-trivy.sarif",
+    "AVERON_parser-trivy.sarif",
+  ]) {
+    const upload = workflow.slice(
+      workflow.indexOf(`sarif_file: reports/raw/${report}`) - 500,
+      workflow.indexOf(`sarif_file: reports/raw/${report}`),
+    );
+    assert.match(upload, /steps\.code_scanning_availability\.outputs\.status == 'AVAILABLE'/);
+  }
+
+  assert.match(reportGenerator, /SARIF_PUBLICATION_STATUS/);
+  assert.match(reportGenerator, /sarifPublication/);
 });

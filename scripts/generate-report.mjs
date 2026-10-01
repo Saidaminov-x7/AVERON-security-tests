@@ -260,6 +260,9 @@ const report = {
   schemaVersion: 1,
   generatedAt: new Date().toISOString(),
   profile: process.env.SECURITY_ENV ?? "NOT_CONFIGURED",
+  sarifPublication: {
+    status: process.env.SARIF_PUBLICATION_STATUS ?? "NOT_RUN",
+  },
   status: staticMissing.length || !scopeComplete ? "NOT_VERIFIED" : "STATIC_COMPLETE_DYNAMIC_NOT_RUN",
   baseline: {
     established: staticBaseline.established === true,
@@ -298,6 +301,7 @@ const markdown = [
   `Generated: ${report.generatedAt}`,
   `Profile: ${report.profile}`,
   `Static status: ${report.status}`,
+  `SARIF publication: ${report.sarifPublication.status}`,
   `Reviewed static baseline established: ${report.baseline.established}`,
   "",
   "## Scan coverage",

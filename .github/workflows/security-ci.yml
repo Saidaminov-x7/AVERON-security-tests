@@ -173,23 +173,68 @@ jobs:
           cache-dir: ${{ runner.temp }}/trivy-cache
           version: v0.75.0
           exit-code: "0"
+      - name: Check GitHub Code Scanning availability
+        id: code_scanning_availability
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          response_file="${RUNNER_TEMP}/code-scanning-availability.json"
+          status_code="$(curl --silent --show-error \
+            --output "$response_file" \
+            --write-out '%{http_code}' \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/code-scanning/alerts?per_page=1")" || {
+              echo "::error title=Code Scanning availability check failed::GitHub API request failed; SARIF publication status is unknown."
+              printf '%s\n' 'SARIF publication: EXECUTION_FAILED (GitHub API request failed; see step log).' >> "$GITHUB_STEP_SUMMARY"
+              echo "status=EXECUTION_FAILED" >> "$GITHUB_OUTPUT"
+              exit 1
+            }
+
+          message="$(jq -r 'if type == "object" then (.message // "") else "" end' "$response_file")"
+          message_lower="${message,,}"
+          if [[ "$status_code" == "200" ]]; then
+            echo "status=AVAILABLE" >> "$GITHUB_OUTPUT"
+            printf '%s\n' 'SARIF publication: AVAILABLE (uploads will run for generated reports).' >> "$GITHUB_STEP_SUMMARY"
+          elif [[ ( "$status_code" == "403" || "$status_code" == "404" ) \
+            && ( ( "$message_lower" == *"code scanning"* \
+              && ( "$message_lower" == *"not enabled"* \
+                || "$message_lower" == *"unavailable"* \
+                || "$message_lower" == *"not available"* \
+                || "$message_lower" == *"not configured"* ) ) \
+              || ( "$message_lower" == *"advanced security"* \
+                && ( "$message_lower" == *"must be enabled"* \
+                  || "$message_lower" == *"not available"* ) ) ) ]]; then
+            echo "status=BLOCKED_BY_GITHUB_FEATURE" >> "$GITHUB_OUTPUT"
+            printf '%s\n' 'SARIF publication: BLOCKED_BY_GITHUB_FEATURE (Code Scanning is not enabled or available; scanner results and baseline enforcement are unaffected).' >> "$GITHUB_STEP_SUMMARY"
+            echo "Code Scanning is unavailable for this repository; only SARIF publication will be skipped."
+          else
+            echo "status=EXECUTION_FAILED" >> "$GITHUB_OUTPUT"
+            printf 'SARIF publication: EXECUTION_FAILED (unexpected GitHub API response; HTTP %s).\n' "$status_code" >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=Code Scanning availability check failed::Unexpected GitHub API response (HTTP ${status_code}); SARIF publication status is unknown."
+            exit 1
+          fi
       - name: Upload backend Trivy SARIF
-        if: always() && hashFiles('reports/raw/AVERON_backend-trivy.sarif') != ''
+        if: always() && steps.code_scanning_availability.outputs.status == 'AVAILABLE' && hashFiles('reports/raw/AVERON_backend-trivy.sarif') != ''
         uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
         with:
           sarif_file: reports/raw/AVERON_backend-trivy.sarif
       - name: Upload frontend Trivy SARIF
-        if: always() && hashFiles('reports/raw/AVERON_frontend-trivy.sarif') != ''
+        if: always() && steps.code_scanning_availability.outputs.status == 'AVAILABLE' && hashFiles('reports/raw/AVERON_frontend-trivy.sarif') != ''
         uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
         with:
           sarif_file: reports/raw/AVERON_frontend-trivy.sarif
       - name: Upload Admin Trivy SARIF
-        if: always() && hashFiles('reports/raw/AVERON_admin_panel-trivy.sarif') != ''
+        if: always() && steps.code_scanning_availability.outputs.status == 'AVAILABLE' && hashFiles('reports/raw/AVERON_admin_panel-trivy.sarif') != ''
         uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
         with:
           sarif_file: reports/raw/AVERON_admin_panel-trivy.sarif
       - name: Upload Parser Trivy SARIF
-        if: always() && hashFiles('reports/raw/AVERON_parser-trivy.sarif') != ''
+        if: always() && steps.code_scanning_availability.outputs.status == 'AVAILABLE' && hashFiles('reports/raw/AVERON_parser-trivy.sarif') != ''
         uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
         with:
           sarif_file: reports/raw/AVERON_parser-trivy.sarif
@@ -228,6 +273,8 @@ jobs:
         run: node scripts/write-scan-manifest.mjs
       - name: Generate normalized security report
         if: always()
+        env:
+          SARIF_PUBLICATION_STATUS: ${{ steps.code_scanning_availability.outputs.status || 'EXECUTION_FAILED' }}
         run: node scripts/generate-report.mjs
       - name: Enforce security baseline
         if: always()
