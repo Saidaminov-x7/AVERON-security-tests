@@ -37,7 +37,7 @@ function runTool(repository, tool, executable, args, cwd) {
 for (const repository of repositories) {
   const repositoryPath = sourcePaths[repository];
   const semgrepReport = path.join(reportDirectory, `${repository}-semgrep.json`);
-  const trivyReport = path.join(reportDirectory, `${repository}-trivy.json`);
+  const trivyReport = path.join(reportDirectory, `${repository}-trivy.sarif`);
   const gitleaksCurrentReport = path.join(reportDirectory, `${repository}-gitleaks-current.json`);
   const gitleaksHistoryReport = path.join(reportDirectory, `${repository}-gitleaks-history.json`);
   const scans = [
@@ -54,7 +54,7 @@ for (const repository of repositories) {
       "Trivy",
       process.env.TRIVY_BIN ?? "trivy",
       [
-        "fs", "--scanners", "vuln,misconfig", "--format", "json",
+        "fs", "--scanners", "vuln,misconfig", "--format", "sarif",
         "--output", trivyReport, ".",
       ],
     ],

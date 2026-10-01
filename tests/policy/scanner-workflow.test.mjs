@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const workflow = await readFile(path.join(root, ".github/workflows/security-ci.yml"), "utf8");
+const localStaticRunner = await readFile(path.join(root, "scripts/run-static.mjs"), "utf8");
 
 function stepWithId(id) {
   const idIndex = workflow.indexOf(`id: ${id}`);
@@ -40,6 +41,12 @@ test("Trivy scans each canonical application checkout alias independently", () =
     assert.ok(step.includes(`output: reports/raw/${repository}-trivy.sarif`), `${id} has no repository-specific SARIF`);
     assert.ok(step.includes("cache-dir: ${{ runner.temp }}/trivy-cache"), `${id} stores Trivy data in the scanned workspace`);
   }
+});
+
+test("local Trivy output uses the same SARIF contract as normalized report coverage", () => {
+  assert.ok(localStaticRunner.includes("`${repository}-trivy.sarif`"));
+  assert.match(localStaticRunner, /"--format", "sarif"/);
+  assert.ok(!localStaticRunner.includes("`${repository}-trivy.json`"));
 });
 
 test("manifest, normalized report, and baseline gate always run after scanners", () => {
