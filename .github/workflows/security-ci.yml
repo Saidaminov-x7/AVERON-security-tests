@@ -107,80 +107,106 @@ jobs:
           npm run security:migrations
       - name: Declare scanner scope
         if: always()
-        run: |
-          mkdir -p reports/raw reports/generated
-          cat > reports/raw/scan-scope.json <<'JSON'
-          {
-            "scans": {
-              "Semgrep": ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"],
-              "Trivy": ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"],
-              "Gitleaks current files": ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser", "AVERON_security_tests"],
-              "Gitleaks Git history": ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser", "AVERON_security_tests"]
-            }
-          }
-          JSON
+        run: node scripts/prepare-scan-scope.mjs
       - name: Set up Semgrep
+        if: always()
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # actions/setup-python v6
         with:
           python-version: "3.12"
       - name: Install pinned Semgrep
+        if: always()
         run: python -m pip install --disable-pip-version-check semgrep==1.142.0
       - name: Run Semgrep on application source
         id: semgrep
-        run: |
-          for repository in AVERON_backend AVERON_frontend AVERON_admin_panel AVERON_parser; do
-            semgrep scan --config p/security-audit \
-              --config security-tools/semgrep/averon.yml --json \
-              --output "reports/raw/${repository}-semgrep.json" "source-checkouts/${repository}"
-          done
-      - name: Run Trivy filesystem scan
-        id: trivy
+        if: always()
+        run: node scripts/run-semgrep-ci.mjs
+      - name: Run Trivy on AVERON-backend
+        id: trivy_backend
+        if: always()
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # aquasecurity/trivy-action v0.36.0
         with:
           scan-type: fs
-          scan-ref: source-checkouts
+          scan-ref: source-checkouts/AVERON_backend
           scanners: vuln,misconfig
           format: sarif
-          output: reports/raw/averon-trivy.sarif
+          output: reports/raw/AVERON_backend-trivy.sarif
           version: v0.75.0
           exit-code: "0"
-      - name: Upload Trivy SARIF
-        if: always() && hashFiles('reports/raw/averon-trivy.sarif') != ''
+      - name: Run Trivy on AVERON-frontend
+        id: trivy_frontend
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # aquasecurity/trivy-action v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: source-checkouts/AVERON_frontend
+          scanners: vuln,misconfig
+          format: sarif
+          output: reports/raw/AVERON_frontend-trivy.sarif
+          version: v0.75.0
+          exit-code: "0"
+      - name: Run Trivy on AVERON-admin-panel
+        id: trivy_admin
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # aquasecurity/trivy-action v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: source-checkouts/AVERON_admin_panel
+          scanners: vuln,misconfig
+          format: sarif
+          output: reports/raw/AVERON_admin_panel-trivy.sarif
+          version: v0.75.0
+          exit-code: "0"
+      - name: Run Trivy on AVERON-parser
+        id: trivy_parser
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # aquasecurity/trivy-action v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: source-checkouts/AVERON_parser
+          scanners: vuln,misconfig
+          format: sarif
+          output: reports/raw/AVERON_parser-trivy.sarif
+          version: v0.75.0
+          exit-code: "0"
+      - name: Upload backend Trivy SARIF
+        if: always() && hashFiles('reports/raw/AVERON_backend-trivy.sarif') != ''
         uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
         with:
-          sarif_file: reports/raw/averon-trivy.sarif
+          sarif_file: reports/raw/AVERON_backend-trivy.sarif
+      - name: Upload frontend Trivy SARIF
+        if: always() && hashFiles('reports/raw/AVERON_frontend-trivy.sarif') != ''
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
+        with:
+          sarif_file: reports/raw/AVERON_frontend-trivy.sarif
+      - name: Upload Admin Trivy SARIF
+        if: always() && hashFiles('reports/raw/AVERON_admin_panel-trivy.sarif') != ''
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
+        with:
+          sarif_file: reports/raw/AVERON_admin_panel-trivy.sarif
+      - name: Upload Parser Trivy SARIF
+        if: always() && hashFiles('reports/raw/AVERON_parser-trivy.sarif') != ''
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # github/codeql-action v4
+        with:
+          sarif_file: reports/raw/AVERON_parser-trivy.sarif
       - name: Set up Gitleaks
+        if: always()
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # actions/setup-go v6.5.0
         with:
           go-version: "1.25.0"
       - name: Install pinned Gitleaks
+        if: always()
         run: go install github.com/gitleaks/gitleaks/v8@v8.28.0
       - name: Scan repository histories with redaction
         id: gitleaks
-        run: |
-          mkdir -p reports/raw
-          scan_status=0
-          for dir in . source-checkouts/*; do
-            git -C "$dir" rev-parse --is-inside-work-tree >/dev/null 2>&1 || continue
-            name="$(basename "$dir")"
-            if ! (cd "$dir" && "$(go env GOPATH)/bin/gitleaks" dir --no-banner --redact \
-              --report-format json --report-path "$GITHUB_WORKSPACE/reports/raw/${name}-gitleaks-current.json" \
-              --exit-code 0 .); then
-              scan_status=1
-            fi
-            if ! (cd "$dir" && "$(go env GOPATH)/bin/gitleaks" git --no-banner --redact \
-              --report-format json --report-path "$GITHUB_WORKSPACE/reports/raw/${name}-gitleaks-history.json" \
-              --exit-code 0 .); then
-              scan_status=1
-            fi
-          done
-          exit "$scan_status"
+        if: always()
+        run: node scripts/run-gitleaks-ci.mjs
       - name: Record scanner execution and report coverage
         if: always()
         env:
-          SEMGREP_OUTCOME: ${{ steps.semgrep.outcome }}
-          TRIVY_OUTCOME: ${{ steps.trivy.outcome }}
-          GITLEAKS_OUTCOME: ${{ steps.gitleaks.outcome }}
+          TRIVY_BACKEND_OUTCOME: ${{ steps.trivy_backend.outcome }}
+          TRIVY_FRONTEND_OUTCOME: ${{ steps.trivy_frontend.outcome }}
+          TRIVY_ADMIN_OUTCOME: ${{ steps.trivy_admin.outcome }}
+          TRIVY_PARSER_OUTCOME: ${{ steps.trivy_parser.outcome }}
         run: node scripts/write-scan-manifest.mjs
       - name: Generate normalized security report
         if: always()
@@ -195,5 +221,5 @@ jobs:
           name: averon-static-security-reports
           path: |
             reports/generated/
-            reports/raw/averon-trivy.sarif
+            reports/raw/*-trivy.sarif
           if-no-files-found: warn

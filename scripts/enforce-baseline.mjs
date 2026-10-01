@@ -8,6 +8,9 @@ const errors = [];
 
 if (report.status === "NOT_VERIFIED") {
   errors.push("One or more required static scanners or source-repository scopes are missing.");
+  for (const scan of report.scans.static.missing) {
+    errors.push(`Required scan did not complete: ${scan}`);
+  }
 }
 if (report.baseline.invalidEntries.length) {
   errors.push(...report.baseline.invalidEntries.map((entry) => `Invalid baseline entry: ${entry}`));

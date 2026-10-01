@@ -240,11 +240,7 @@ const executionFor = (scanner, repository) =>
   scanExecution?.scans?.find((entry) => entry.scanner === scanner && entry.repository === repository);
 const fileFor = (scanner, repository) => {
   if (scanner === "Semgrep") return `${repository}-semgrep.json`;
-  if (scanner === "Trivy") {
-    return availableScans.includes(`${repository}-trivy.json`)
-      ? `${repository}-trivy.json`
-      : "averon-trivy.sarif";
-  }
+  if (scanner === "Trivy") return `${repository}-trivy.sarif`;
   const suffix = scanner === "Gitleaks current files" ? "current" : "history";
   return `${repository}-gitleaks-${suffix}.json`;
 };

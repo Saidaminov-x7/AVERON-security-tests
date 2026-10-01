@@ -18,8 +18,8 @@ rules:
   - id: averon-dangerous-html
     message: Review untrusted content passed to a dangerous HTML sink.
     severity: WARNING
-    languages: [typescript, typescriptreact, javascript, javascriptreact]
-    pattern: dangerouslySetInnerHTML: $VALUE
+    languages: [typescript, javascript]
+    pattern: "dangerouslySetInnerHTML: $VALUE"
     metadata:
       category: security
       cwe: "CWE-79"
