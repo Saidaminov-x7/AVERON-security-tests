@@ -54,3 +54,24 @@ test("manifest, normalized report, and baseline gate always run after scanners",
     assert.match(step, /\n\s*if: always\(\)/, `${stepName} must run after scanner failure`);
   }
 });
+
+test("Gitleaks installs the pinned official release with a verified digest", () => {
+  const step = stepWithId("install_gitleaks");
+  assert.match(step, /GITLEAKS_VERSION:\s*"8\.28\.0"/);
+  assert.match(step, /GITLEAKS_SHA256:\s*"[a-f0-9]{64}"/);
+  assert.match(step, /releases\/download\/v\$\{GITLEAKS_VERSION\}\/\$\{archive\}/);
+  assert.match(step, /sha256sum --check/);
+  assert.match(step, /gitleaks" version/);
+  assert.doesNotMatch(step, /go install/);
+});
+
+test("SARIF upload has only the narrowly required token permissions", () => {
+  const permissions = workflow.match(
+    /  cross-repository-static:\r?\n[\s\S]*?    permissions:\r?\n((?:      [^\r\n]+\r?\n)+)/,
+  )?.[1];
+  assert.ok(permissions, "Missing permissions for cross-repository-static job");
+  assert.deepEqual(
+    permissions.split(/\r?\n/).filter(Boolean).map((permission) => permission.trim()),
+    ["actions: read", "contents: read", "security-events: write"],
+  );
+});
