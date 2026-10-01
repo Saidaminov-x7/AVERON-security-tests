@@ -1,0 +1,9 @@
+{
+  "securityEnv": "local",
+  "service": "backend",
+  "targetUrl": "http://127.0.0.1:8080",
+  "safePaths": [
+    "/health/live",
+    "/api/v1/capabilities"
+  ]
+}

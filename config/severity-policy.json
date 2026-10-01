@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "failCiForNewFindings": [
+    "CRITICAL",
+    "HIGH"
+  ],
+  "alwaysFailFor": [
+    "SECRET"
+  ],
+  "advisoryFindingsAreNotConfirmedExploits": true,
+  "historicalDebtMustRemainVisible": true,
+  "suppressionsRequire": [
+    "reason",
+    "scope",
+    "createdAt",
+    "reviewBy"
+  ]
+}

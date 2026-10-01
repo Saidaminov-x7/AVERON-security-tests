@@ -1,0 +1,71 @@
+name: AVERON Application Regressions
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repository: AVERON-backend
+            checkout_path: backend
+            package_manager: pnpm
+            install_command: pnpm install --frozen-lockfile
+            test_command: pnpm --filter api test
+            verify_command: pnpm --filter api type-check
+          - repository: AVERON-frontend
+            checkout_path: frontend
+            package_manager: pnpm
+            install_command: pnpm install --frozen-lockfile
+            test_command: pnpm test
+            verify_command: pnpm lint
+          - repository: AVERON-admin-panel
+            checkout_path: admin
+            package_manager: pnpm
+            install_command: pnpm install --frozen-lockfile
+            test_command: pnpm test
+            verify_command: pnpm lint && pnpm build
+          - repository: AVERON-parser
+            checkout_path: parser
+            package_manager: npm
+            install_command: npm ci
+            test_command: npm test
+            verify_command: npm run typecheck && npm run build
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: Saidaminov-x7/${{ matrix.repository }}
+          ref: main
+          path: source
+          token: ${{ secrets.AVERON_SOURCE_READ_TOKEN }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Enable pinned pnpm
+        if: matrix.package_manager == 'pnpm'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - name: Install dependencies
+        working-directory: source
+        run: ${{ matrix.install_command }}
+      - name: Run existing project tests
+        working-directory: source
+        run: ${{ matrix.test_command }}
+        env:
+          DATABASE_URL: postgresql://unit-test:unit-test@127.0.0.1:1/unit_test
+          REDIS_URL: redis://127.0.0.1:1
+          JWT_SECRET: unit-test-only-jwt-signing-secret-not-production
+          REFRESH_SECRET: unit-test-only-refresh-signing-secret-not-production
+      - name: Run project verification
+        working-directory: source
+        run: ${{ matrix.verify_command }}

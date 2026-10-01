@@ -1,0 +1,41 @@
+name: AVERON Production Safe Checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: Service to check
+        required: true
+        type: choice
+        options:
+          - backend
+          - frontend
+          - admin
+          - parser
+
+permissions:
+  contents: read
+
+jobs:
+  safe-checks:
+    runs-on: ubuntu-latest
+    environment: production-safe
+    env:
+      SECURITY_ENV: production-safe
+      SECURITY_SERVICE: ${{ inputs.service }}
+      SECURITY_TARGET_URL: ${{ vars.SECURITY_PRODUCTION_SAFE_TARGET_URL }}
+      SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS: ${{ vars.SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Run fixed non-destructive checks only
+        run: npm run security:safe
+      - name: Upload masked report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: averon-production-safe-${{ inputs.service }}
+          path: reports/generated/safe-checks.json
+          if-no-files-found: warn

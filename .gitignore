@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+node_modules/
+reports/generated/
+reports/raw/
+coverage/
+*.sarif
+zap-report.*
+schemathesis-report.*

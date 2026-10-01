@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "local": {
+      "aggressiveAllowed": true,
+      "requiresExplicitAggressiveOptIn": true,
+      "requiresHttps": false,
+      "targetOriginAllowlistVariable": null
+    },
+    "staging": {
+      "aggressiveAllowed": true,
+      "requiresExplicitAggressiveOptIn": true,
+      "requiresHttps": true,
+      "targetOriginAllowlistVariable": "SECURITY_STAGING_ALLOWED_ORIGINS"
+    },
+    "production-safe": {
+      "aggressiveAllowed": false,
+      "requiresExplicitAggressiveOptIn": false,
+      "requiresHttps": true,
+      "targetOriginAllowlistVariable": "SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS",
+      "allowedMethods": [
+        "GET"
+      ],
+      "allowAuthenticatedRequests": false,
+      "allowPayloads": false
+    }
+  },
+  "limits": {
+    "requestTimeoutMs": 10000,
+    "responseBytes": 131072,
+    "maximumRedirects": 0
+  }
+}

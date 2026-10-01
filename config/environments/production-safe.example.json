@@ -1,0 +1,10 @@
+{
+  "securityEnv": "production-safe",
+  "service": "backend",
+  "targetUrl": "https://averon-backend-production-128zjje.up.railway.app",
+  "safePaths": [
+    "/health/live",
+    "/api/v1/capabilities"
+  ],
+  "note": "GET-only checks. The target origin must also appear in SECURITY_PRODUCTION_SAFE_ALLOWED_ORIGINS."
+}

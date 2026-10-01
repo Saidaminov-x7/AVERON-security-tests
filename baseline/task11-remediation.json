@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-01",
+  "source": "Task #11 production dependency audit outputs",
+  "status": "historical-advisory-debt",
+  "policy": "Aggregate historical counts are visible documentation, not scanner suppressions. Findings remain untriaged until current scanner output identifies the exact package, advisory, fixed version, and reachability.",
+  "revalidation": {
+    "checkedAt": "2026-10-01",
+    "method": "Production dependency audit rerun per repository; package paths checked for identified highlights.",
+    "interpretation": "The historical counts below were reproduced before targeted remediation. A later audit of the checked-out production dependency graphs reported zero advisories for all four repositories. This does not establish deployed versions, runtime reachability, or exploitability. The complete raw historical 55-advisory backend list was not archived."
+  },
+  "repositories": {
+    "AVERON_backend": {
+      "sourceCommand": "pnpm audit --prod",
+      "counts": {
+        "critical": 4,
+        "high": 33,
+        "moderate": 16,
+        "low": 2
+      },
+      "knownPackages": [
+        "fast-jwt",
+        "fast-uri",
+        "sharp",
+        "undici"
+      ],
+      "exactAdvisories": "55_MATCHES_REPRODUCED; KEY_ADVISORIES_REVALIDATED",
+      "currentAudit": {
+        "status": "PASS",
+        "command": "pnpm audit --prod",
+        "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
+        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+      },
+      "keyFindings": [
+        {
+          "package": "fast-jwt",
+          "installed": "4.0.5",
+          "dependencyPath": "@fastify/jwt 8.x -> fast-jwt",
+          "advisories": [
+            { "id": 1116107, "severity": "high", "fixed": "No safe fix in installed 4.x range; advisory metadata lists no patched range." },
+            { "id": 1116194, "severity": "critical", "fixed": ">=6.2.0" },
+            { "id": 1116255, "severity": "critical", "fixed": ">=6.2.0" },
+            { "id": 1118995, "severity": "critical", "fixed": ">=6.2.4" }
+          ],
+          "reachability": "JWT implementation is part of the server auth plugin. Exploitability of individual advisory preconditions is not confirmed.",
+          "decision": "Do not override a major cryptographic dependency without compatibility analysis; requires coordinated @fastify/jwt/Fastify review."
+        },
+        {
+          "package": "fastify",
+          "installed": "4.29.1",
+          "dependencyPath": "Direct API framework dependency",
+          "advisories": [
+            { "id": 1112877, "severity": "high", "fixed": ">=5.7.2" },
+            { "id": 1240641, "severity": "high", "fixed": ">=5.12.2" },
+            { "id": 1240642, "severity": "high", "fixed": ">=5.12.2" },
+            { "id": 1240643, "severity": "high", "fixed": ">=5.12.2" },
+            { "id": 1240644, "severity": "high", "fixed": ">=5.12.2" }
+          ],
+          "reachability": "Core HTTP framework; affected code paths are not individually exercised by the package audit.",
+          "decision": "Fixes shown are in Fastify 5; no blind Fastify 4 to 5 migration in this task."
+        },
+        {
+          "package": "sharp",
+          "installed": "0.32.6",
+          "dependencyPath": "Direct API dependency; used by media and visual-search image processing",
+          "advisories": [
+            { "id": 1124066, "severity": "high", "fixed": ">=0.35.0" },
+            { "id": 1193725, "severity": "high", "fixed": ">=0.35.4" }
+          ],
+          "reachability": "Image upload decoding/normalization uses Sharp; application-level exploitability not independently demonstrated."
+        },
+        {
+          "package": "file-type",
+          "installed": "16.5.4",
+          "dependencyPath": "Direct API dependency; used by media/admin/visual-search upload validation",
+          "advisories": [
+            { "id": 1114301, "severity": "moderate", "fixed": ">=21.3.1" }
+          ],
+          "reachability": "Upload validation invokes file-type; advisory specifically affects malformed ASF parser inputs."
+        },
+        {
+          "package": "fast-uri",
+          "installed": ["3.1.5", "2.4.4"],
+          "dependencyPath": "Transitive Fastify/OpenAPI dependency graph",
+          "advisories": [
+            { "id": 1158521, "severity": "high", "fixed": ">=3.1.6" },
+            { "id": 1158524, "severity": "high", "fixed": ">=3.1.6" },
+            { "id": 1239943, "severity": "high", "fixed": ">=3.1.7" },
+            { "id": 1240091, "severity": "moderate", "fixed": ">=3.1.8" },
+            { "id": 1158522, "severity": "high", "fixed": ">=2.4.5" },
+            { "id": 1158525, "severity": "high", "fixed": ">=2.4.5" },
+            { "id": 1239944, "severity": "high", "fixed": ">=2.4.6" },
+            { "id": 1240092, "severity": "moderate", "fixed": ">=2.4.7" }
+          ],
+          "decision": "Patch releases are available; eligible for a constrained transitive update and regression tests."
+        },
+        {
+          "package": "undici",
+          "installed": "6.28.0",
+          "dependencyPath": "Direct API dependency",
+          "advisories": [
+            { "id": 1239934, "severity": "moderate", "fixed": ">=6.28.1" },
+            { "id": 1240039, "severity": "low", "fixed": ">=6.28.1" },
+            { "id": 1240042, "severity": "high", "fixed": ">=6.28.1" }
+          ],
+          "decision": "Patch release available; eligible for a targeted update and tests."
+        },
+        {
+          "package": "find-my-way",
+          "installed": "8.2.2",
+          "dependencyPath": "Transitive Fastify router dependency",
+          "advisories": [
+            { "id": 1124273, "severity": "high", "fixed": ">=9.7.0" }
+          ],
+          "decision": "Fixed range is a major upgrade coupled to the Fastify 5 router stack."
+        },
+        {
+          "package": "@fastify/static",
+          "installed": "7.0.4",
+          "dependencyPath": "Direct API dependency",
+          "advisories": [
+            { "id": 1124285, "severity": "moderate", "fixed": ">=10.1.2" },
+            { "id": 1124286, "severity": "high", "fixed": ">=10.1.1" }
+          ],
+          "decision": "Fixed range is coupled to a major Fastify plugin upgrade."
+        }
+      ]
+    },
+    "AVERON_frontend": {
+      "sourceCommand": "pnpm audit --prod",
+      "counts": {
+        "critical": 3,
+        "high": 1,
+        "moderate": 0,
+        "low": 1
+      },
+      "knownPackages": [
+        "next",
+        "@grpc/grpc-js"
+      ],
+      "exactAdvisories": "5_MATCHES_REPRODUCED",
+      "currentAudit": {
+        "status": "PASS",
+        "command": "pnpm audit --prod",
+        "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
+        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+      },
+      "keyFindings": [
+        {
+          "package": "next",
+          "installed": "16.3.1",
+          "advisories": [
+            { "id": 1193676, "severity": "critical", "fixed": ">=16.3.3" },
+            { "id": 1193732, "severity": "critical", "fixed": ">=16.3.3" },
+            { "id": 1240609, "severity": "critical", "fixed": ">=16.3.6" }
+          ],
+          "decision": "Patch release available; target 16.3.6 or later in the same release line."
+        },
+        {
+          "package": "@grpc/grpc-js",
+          "installed": "1.9.16",
+          "dependencyPath": "firebase 12.18.0 -> @firebase/firestore 4.17.1 -> @grpc/grpc-js",
+          "advisories": [
+            { "id": 1240623, "severity": "high", "fixed": ">=1.13.6" },
+            { "id": 1240625, "severity": "low", "fixed": ">=1.13.6" }
+          ],
+          "decision": "Transitive package; verify Firebase use and apply a compatible same-major update if package-manager tests pass."
+        }
+      ]
+    },
+    "AVERON_admin_panel": {
+      "sourceCommand": "pnpm audit --prod",
+      "counts": {
+        "critical": 0,
+        "high": 7,
+        "moderate": 5,
+        "low": 0
+      },
+      "knownPackages": [
+        "axios"
+      ],
+      "exactAdvisories": "12_MATCHES_REPRODUCED",
+      "currentAudit": {
+        "status": "PASS",
+        "command": "pnpm audit --prod",
+        "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
+        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+      },
+      "keyFindings": [
+        {
+          "package": "axios",
+          "installed": "1.19.0",
+          "advisoryIds": [1240600, 1240601, 1240603, 1240604, 1240605, 1240607, 1240608, 1240626, 1240627, 1240628, 1240629, 1240634],
+          "severityCounts": { "high": 7, "moderate": 5 },
+          "fixed": ">=1.20.0",
+          "decision": "Same-major minor update available; eligible for a targeted update and tests."
+        }
+      ]
+    },
+    "AVERON_parser": {
+      "sourceCommand": "npm audit --omit=dev",
+      "counts": {
+        "critical": 0,
+        "high": 0,
+        "moderate": 0,
+        "low": 0
+      },
+      "knownPackages": [],
+      "exactAdvisories": "0_MATCHES_REPRODUCED",
+      "currentAudit": {
+        "status": "PASS",
+        "command": "npm audit --omit=dev",
+        "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
+        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+      }
+    }
+  }
+}

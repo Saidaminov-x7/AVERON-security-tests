@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "established": false,
+  "approvedFindings": [],
+  "policy": "Findings remain unbaselined until a human-reviewed fingerprint entry records a reason, narrow scope, creation date, and review-by date. Secret candidates may never be baselined."
+}

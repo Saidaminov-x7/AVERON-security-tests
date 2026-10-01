@@ -1,0 +1,23 @@
+{
+  "name": "averon-security-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/check-syntax.mjs",
+    "test": "node scripts/run-policy-tests.mjs",
+    "security:tests": "npm test",
+    "security:regression": "node scripts/run-regression.mjs",
+    "security:safe": "node scripts/run-safe.mjs",
+    "security:static": "node scripts/run-static.mjs",
+    "security:api": "node scripts/run-api.mjs",
+    "security:dast": "node scripts/run-dast.mjs",
+    "security:full": "node scripts/run-full.mjs",
+    "security:report": "node scripts/generate-report.mjs",
+    "security:migrations": "node scripts/check-migration-policy.mjs"
+  }
+}

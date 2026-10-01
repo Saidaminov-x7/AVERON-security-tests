@@ -1,0 +1,10 @@
+{
+  "securityEnv": "staging",
+  "service": "backend",
+  "targetUrl": "https://staging.example.invalid",
+  "safePaths": [
+    "/health/live",
+    "/api/v1/capabilities"
+  ],
+  "note": "Replace only with an explicitly allowlisted staging origin."
+}

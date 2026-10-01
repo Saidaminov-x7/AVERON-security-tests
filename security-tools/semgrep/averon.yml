@@ -1,0 +1,25 @@
+rules:
+  - id: averon-no-eval
+    message: Avoid evaluating dynamically supplied code.
+    severity: ERROR
+    languages: [javascript, typescript]
+    pattern: eval(...)
+    metadata:
+      category: security
+      cwe: "CWE-95"
+  - id: averon-no-new-function
+    message: Avoid constructing executable functions from strings.
+    severity: ERROR
+    languages: [javascript, typescript]
+    pattern: new Function(...)
+    metadata:
+      category: security
+      cwe: "CWE-95"
+  - id: averon-dangerous-html
+    message: Review untrusted content passed to a dangerous HTML sink.
+    severity: WARNING
+    languages: [typescript, typescriptreact, javascript, javascriptreact]
+    pattern: dangerouslySetInnerHTML: $VALUE
+    metadata:
+      category: security
+      cwe: "CWE-79"
