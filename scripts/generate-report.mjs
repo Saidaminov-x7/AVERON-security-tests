@@ -3,10 +3,12 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeSeverity } from "./report-severity.mjs";
+import { classifyFindingStatus } from "./baseline-policy.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rawDirectory = path.join(root, "reports/raw");
 const generatedDirectory = path.join(root, "reports/generated");
+const scanArtifactHashes = new Map();
 const historicalDebt = JSON.parse(await readFile(path.join(root, "baseline/task11-remediation.json"), "utf8"));
 const staticBaseline = JSON.parse(await readFile(path.join(root, "baseline/static-findings.json"), "utf8"));
 const expectedRepositories = ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"];
@@ -80,13 +82,15 @@ const approved = new Map(
     .map((entry) => [entry.fingerprint, entry]),
 );
 const availableScans = [];
-const findings = [];
+const findingsByFingerprint = new Map();
 try {
   for (const filename of await readdir(rawDirectory)) {
     if (!filename.endsWith(".json") && !filename.endsWith(".sarif")) continue;
     if (filename === "scan-scope.json" || filename === "tool-execution.json") continue;
     availableScans.push(filename);
-    const content = JSON.parse(await readFile(path.join(rawDirectory, filename), "utf8"));
+    const rawContent = await readFile(path.join(rawDirectory, filename), "utf8");
+    scanArtifactHashes.set(filename, createHash("sha256").update(rawContent).digest("hex"));
+    const content = JSON.parse(rawContent);
     const pushFinding = (candidate) => {
       const record = {
         schemaVersion: 1,
@@ -107,9 +111,14 @@ try {
           ?? "Review the affected code/dependency and apply a tested, minimal remediation.",
       };
       record.fingerprint = fingerprint(record);
-      const baselineEntry = approved.get(record.fingerprint);
-      record.status = baselineEntry && record.tool !== "Gitleaks" ? "BASELINE" : "NEW";
-      findings.push(record);
+      record.status = classifyFindingStatus(record, approved);
+      const existing = findingsByFingerprint.get(record.fingerprint);
+      if (existing) {
+        existing.scanArtifacts.push(filename);
+      } else {
+        record.scanArtifacts = [filename];
+        findingsByFingerprint.set(record.fingerprint, record);
+      }
     };
 
     if (filename.endsWith(".sarif")) {
@@ -213,6 +222,7 @@ try {
   if (error?.code !== "ENOENT") throw error;
 }
 
+const findings = [...findingsByFingerprint.values()];
 const scopePath = path.join(rawDirectory, "scan-scope.json");
 let scanScope = null;
 try {
@@ -249,9 +259,36 @@ const staticMissing = requiredScans.flatMap(({ scanner, repository }) => {
   const output = fileFor(scanner, repository);
   const collected = availableScans.includes(output);
   const inDeclaredScope = scanScope?.scans?.[scanner]?.includes(repository);
-  return execution?.outcome === "success" && collected && inDeclaredScope
+  const successfulStatus = [
+    "SCAN_SUCCESS_ZERO_FINDINGS",
+    "SCAN_SUCCESS_WITH_FINDINGS",
+  ].includes(execution?.status);
+  const metadataComplete =
+    typeof scanExecution?.runId === "string"
+    && scanExecution.runId.length > 0
+    && /^[a-f0-9]{40}$/i.test(scanExecution.commitSha ?? "")
+    && Number.isFinite(Date.parse(scanExecution.timestamp))
+    && typeof scanExecution.repository === "string"
+    && execution?.runId === scanExecution.runId
+    && execution?.repositoryName === scanExecution.repository
+    && /^[a-f0-9]{40}$/i.test(execution?.sourceCommitSha ?? "")
+    && Number.isFinite(Date.parse(execution?.timestamp))
+    && typeof execution?.toolVersion === "string"
+    && execution.toolVersion !== "unknown"
+    && /^[a-f0-9]{64}$/i.test(execution?.reportSha256 ?? "")
+    && execution.reportSha256 === scanArtifactHashes.get(output);
+  const matchingRunScope =
+    scanScope?.runId === scanExecution?.runId
+    && scanScope?.commitSha === scanExecution?.commitSha
+    && scanScope?.repository === scanExecution?.repository;
+  return execution?.outcome === "success"
+    && successfulStatus
+    && collected
+    && inDeclaredScope
+    && metadataComplete
+    && matchingRunScope
     ? []
-    : [`${scanner} (${repository})`];
+    : [`${scanner} (${repository}): ${execution?.status ?? "SCAN_OUTPUT_MISSING"}`];
 });
 const scopeComplete = requiredScans.every(({ scanner, repository }) =>
   scanScope?.scans?.[scanner]?.includes(repository),
@@ -264,6 +301,12 @@ const report = {
     status: process.env.SARIF_PUBLICATION_STATUS ?? "NOT_RUN",
   },
   status: staticMissing.length || !scopeComplete ? "NOT_VERIFIED" : "STATIC_COMPLETE_DYNAMIC_NOT_RUN",
+  run: scanExecution ? {
+    runId: scanExecution.runId ?? null,
+    commitSha: scanExecution.commitSha ?? null,
+    timestamp: scanExecution.timestamp ?? null,
+    repository: scanExecution.repository ?? null,
+  } : null,
   baseline: {
     established: staticBaseline.established === true,
     approvedFingerprintCount: approved.size,
@@ -279,6 +322,16 @@ const report = {
       expectedRepositories,
       expectedScanRepositories,
       scopeComplete: Boolean(scopeComplete),
+      artifacts: scanExecution?.scans?.map((scan) => ({
+        scanner: scan.scanner,
+        repository: scan.repository,
+        status: scan.status ?? (scan.outcome === "success" ? "SCAN_STATUS_UNAVAILABLE" : "SCANNER_FAILED"),
+        findingsCount: scan.findingsCount ?? null,
+        timestamp: scan.timestamp ?? null,
+        sourceCommitSha: scan.sourceCommitSha ?? null,
+        toolVersion: scan.toolVersion ?? null,
+        reportSha256: scan.reportSha256 ?? null,
+      })) ?? [],
     },
     dynamic: {
       notRun: ["OWASP ZAP", "Schemathesis"],

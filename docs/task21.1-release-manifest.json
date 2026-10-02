@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "task": "21.1",
+  "recordedAt": "2026-10-02T17:33:19.0612325Z",
+  "decision": "BLOCKED_FROM_PRODUCTION",
+  "publication": {
+    "status": "LOCAL_UNCOMMITTED",
+    "deploymentAttempted": false,
+    "commitPushPullRequestTagOrReleaseCreated": false
+  },
+  "repositories": [
+    {
+      "name": "AVERON_backend",
+      "branch": "main",
+      "head": "03b9ab6cc6238d966dba40038a6dd97c687a2249",
+      "workingTree": "MODIFIED"
+    },
+    {
+      "name": "AVERON_frontend",
+      "branch": "main",
+      "head": "b3d7397bcc1bd9e1c69d911e5e08a67952e50ff9",
+      "workingTree": "MODIFIED"
+    },
+    {
+      "name": "AVERON_admin_panel",
+      "branch": "main",
+      "head": "be4803c03f0b62cc4cf0715eeea156b3bdb47847",
+      "workingTree": "MODIFIED"
+    },
+    {
+      "name": "AVERON_parser",
+      "branch": "main",
+      "head": "5f44304e30e45105f036df2fc22922cee55a12a0",
+      "workingTree": "CLEAN"
+    },
+    {
+      "name": "AVERON_security_tests",
+      "branch": "main",
+      "head": "45248fbeb6b3606c00b8c280f804bb08ec642738",
+      "workingTree": "MODIFIED"
+    }
+  ],
+  "sourceCommitForLocalSemgrep": {
+    "AVERON_backend": "03b9ab6cc6238d966dba40038a6dd97c687a2249",
+    "AVERON_frontend": "b3d7397bcc1bd9e1c69d911e5e08a67952e50ff9",
+    "AVERON_admin_panel": "be4803c03f0b62cc4cf0715eeea156b3bdb47847",
+    "AVERON_parser": "5f44304e30e45105f036df2fc22922cee55a12a0"
+  },
+  "security": {
+    "baseline": {
+      "status": "UNESTABLISHED",
+      "approvedFingerprints": 0,
+      "newCriticalFindingsMustFail": true,
+      "unknownFindingsApproved": false
+    },
+    "hostedSecurityCi": {
+      "status": "NOT_VERIFIED",
+      "reason": "The hosted workflow run and its artifact were unavailable; the prior GitHub integration response was 404."
+    },
+    "localSemgrep": {
+      "runId": "local-task21.1-semgrep-20261002T173154Z",
+      "recordedAt": "2026-10-02T17:31:54Z",
+      "tool": "Semgrep",
+      "toolVersion": "1.142.0",
+      "repositories": {
+        "AVERON_backend": {
+          "status": "SCAN_SUCCESS_ZERO_FINDINGS",
+          "findings": 0,
+          "scannerErrors": 0,
+          "scannedFiles": 233
+        },
+        "AVERON_frontend": {
+          "status": "INCOMPLETE_WITH_PARSE_ERRORS",
+          "findings": 0,
+          "scannerErrors": 4,
+          "scannedFiles": 239,
+          "errorFiles": [
+            "components/commerce/CatalogAssistant.test.tsx",
+            "components/commerce/ProductCard.test.tsx",
+            "components/commerce/SimilarProducts.test.tsx",
+            "components/commerce/commerce-orders.test.tsx"
+          ]
+        },
+        "AVERON_admin_panel": {
+          "status": "SCAN_SUCCESS_ZERO_FINDINGS",
+          "findings": 0,
+          "scannerErrors": 0,
+          "scannedFiles": 155
+        },
+        "AVERON_parser": {
+          "status": "SCAN_SUCCESS_ZERO_FINDINGS",
+          "findings": 0,
+          "scannerErrors": 0,
+          "scannedFiles": 24
+        }
+      },
+      "completeSecurityGate": false
+    },
+    "trivy": {
+      "status": "NOT_RUN",
+      "requiredRepositories": [
+        "AVERON_backend",
+        "AVERON_frontend",
+        "AVERON_admin_panel",
+        "AVERON_parser"
+      ]
+    },
+    "gitleaks": {
+      "status": "NOT_RUN",
+      "requiredScopes": [
+        "current files",
+        "Git history"
+      ]
+    },
+    "firebasePublicClientConfiguration": {
+      "status": "NOT_VERIFIED",
+      "secretClassification": "PUBLIC_CLIENT_CONFIGURATION",
+      "projectOwnershipAuthorizedDomainsApiRestrictionsAndBillingExposureVerified": false
+    }
+  },
+  "localValidation": {
+    "backend": {
+      "status": "PASS",
+      "checks": [
+        "typecheck",
+        "build",
+        "full API test suite: 44 files, 302 tests"
+      ]
+    },
+    "frontend": {
+      "status": "PASS",
+      "checks": [
+        "production build",
+        "tests: 25 files, 110 tests"
+      ]
+    },
+    "admin": {
+      "status": "PASS",
+      "checks": [
+        "tests: 9 files, 47 tests"
+      ]
+    },
+    "parser": {
+      "status": "PASS",
+      "checks": [
+        "tests: 27 tests"
+      ]
+    },
+    "securityTests": {
+      "status": "PASS",
+      "checks": [
+        "policy suite: 36 tests",
+        "script syntax: 36 files"
+      ]
+    },
+    "aiService": {
+      "status": "PASS",
+      "checks": [
+        "Python syntax",
+        "configuration and health-route import",
+        "python-dotenv 1.2.2"
+      ]
+    }
+  },
+  "unverifiedLaunchGates": [
+    "Fresh complete Semgrep/Trivy/Gitleaks scan set and hosted baseline enforcement",
+    "Cloudflare and Railway trusted proxy chain, spoofed forwarded headers, origin exposure, TLS, WAF, cache isolation, and security headers",
+    "Parser Chromium-through-proxy and container network egress/1688 live functionality",
+    "Firebase project ownership and API/domain restrictions",
+    "Disposable PostgreSQL checkout, stock, idempotency, and promo concurrency",
+    "Redis multi-instance shared-state and outage behavior",
+    "Customer/Admin/mobile browser E2E and responsive viewport matrix",
+    "Production and staging migration state",
+    "Recent backup, retention, and disposable restore rehearsal",
+    "Deployed secrets, canonical origin, CORS, and production dependency health"
+  ],
+  "releaseGate": "Do not release while any mandatory gate is BLOCKED or NOT_VERIFIED."
+}

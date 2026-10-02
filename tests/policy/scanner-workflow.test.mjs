@@ -68,7 +68,10 @@ test("local Trivy output uses the same SARIF contract as normalized report cover
 test("local static scans clear stale outputs and require fresh scanner artifacts", () => {
   assert.match(localStaticRunner, /await Promise\.all\(scannerOutputs\.map/);
   assert.match(localStaticRunner, /rm\(output, \{ force: true \}\)/);
-  assert.match(localStaticRunner, /result\?\.exitCode === 0 && await hasOutput/);
+  assert.match(localStaticRunner, /inspectScanArtifact/);
+  assert.match(localStaticRunner, /evidence\.status\.startsWith\("SCAN_SUCCESS_"\)/);
+  assert.match(localStaticRunner, /reportSha256/);
+  assert.match(localStaticRunner, /sourceCommitSha/);
 });
 
 test("manifest, normalized report, and baseline gate always run after scanners", () => {
@@ -129,4 +132,6 @@ test("SARIF publication is gated on explicit Code Scanning feature availability"
 
   assert.match(reportGenerator, /SARIF_PUBLICATION_STATUS/);
   assert.match(reportGenerator, /sarifPublication/);
+  assert.match(reportGenerator, /matchingRunScope/);
+  assert.match(reportGenerator, /reportSha256 === scanArtifactHashes/);
 });

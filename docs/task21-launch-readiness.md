@@ -145,3 +145,66 @@ coverage is not a substitute for current staging evidence.
    FAIL, BLOCKED, or NOT_VERIFIED, stop at `RELEASE_READY_NOT_PUBLISHED`.
 
 No staging or production deployment was performed during Task #21.
+
+## Task #21.1 — Local blocker closure status
+
+This section supersedes the Task #21 local verification snapshot above for the
+Task #21.1 work. It records the current local source/test remediation and fresh
+Semgrep attempt; it does not convert missing hosted, staging, or infrastructure
+evidence into a pass.
+
+**Decision: `BLOCKED_FROM_PRODUCTION`.** Changes remain local and uncommitted.
+No deployment, publication, baseline approval, or secret rotation claim was
+made. The machine-readable record is
+[`task21.1-release-manifest.json`](./task21.1-release-manifest.json).
+
+### Current repository state
+
+All repositories were on `main` at the supplied starting HEADs. Backend,
+Frontend, Admin, and Security Tests contain local changes; Parser is unchanged.
+No commits, pushes, PRs, tags, releases, or deployments were made. The manifest
+records each exact HEAD and the local working-tree state.
+
+### Source and local validation
+
+- Backend: compromised default-secret rejection now compares a SHA-256
+  fingerprint rather than retaining the raw value; test signing credentials
+  are generated at runtime; CORS is limited to explicit validated origins; and
+  adaptive rate limits target registered AVERON catalog, visual-search, and
+  AI routes. `python-dotenv` is pinned to `1.2.2`.
+- Frontend: Firebase browser configuration is environment-backed. It remains
+  public client configuration, not a private secret; Firebase project identity
+  and API restrictions have not been verified.
+- Admin: the environment example uses the intended `https://averon.uz` site
+  origin. Deployed origin/CORS configuration remains unverified.
+- Security Tests: reports now distinguish empty scans, missing output, and
+  scanner failure; add run/source metadata and digests; deduplicate findings;
+  and test that unreviewed Critical/secret findings remain blocking.
+- Backend type-check/build and full API suite passed (44 files, 302 tests).
+  Frontend build and tests passed (25 files, 110 tests). Admin tests passed
+  (9 files, 47 tests). Parser tests passed (27 tests). Security Tests policy
+  suite passed (36 tests) and script syntax checks passed (36 files). AI
+  service syntax/import and liveness-route checks passed with
+  `python-dotenv==1.2.2`.
+
+### Fresh scanner evidence
+
+A local Semgrep `1.142.0` run produced zero findings in each output. Backend,
+Admin, and Parser reports had no scanner errors. Frontend had four syntax/parser
+errors in four TSX test files, so its zero-finding output is incomplete and
+must not be treated as a clean scan. This run did not include Trivy or
+Gitleaks, and it does not replace the inaccessible hosted security workflow.
+The pre-existing generated security report remains stale/incomplete and the
+baseline remains unestablished. No findings were approved or suppressed.
+
+### Remaining production blockers
+
+Hosted baseline enforcement and a complete fresh Semgrep/Trivy/Gitleaks run
+remain blocked. Firebase ownership/restrictions, production CORS and canonical
+origin, Cloudflare/Railway proxy and origin controls, staging spoof/cache/TLS
+tests, Parser Chromium/container egress validation, PostgreSQL concurrency,
+Redis multi-instance/outage behavior, customer/Admin/mobile browser E2E,
+production migration status, backup evidence, and restore rehearsal remain
+`NOT_VERIFIED`. No staging or production access was used. These gates must be
+closed before any manual release; the local build/test results alone do not
+establish production readiness.

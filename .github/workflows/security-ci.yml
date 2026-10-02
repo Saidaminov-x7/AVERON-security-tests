@@ -287,6 +287,9 @@ jobs:
       - name: Record scanner execution and report coverage
         if: always()
         env:
+          SEMGREP_VERSION: "1.142.0"
+          TRIVY_VERSION: "0.75.0"
+          GITLEAKS_VERSION: "8.28.0"
           TRIVY_BACKEND_OUTCOME: ${{ steps.trivy_backend.outcome }}
           TRIVY_FRONTEND_OUTCOME: ${{ steps.trivy_frontend.outcome }}
           TRIVY_ADMIN_OUTCOME: ${{ steps.trivy_admin.outcome }}

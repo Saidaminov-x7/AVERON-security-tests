@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { isBlockingFinding } from "./baseline-policy.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const report = JSON.parse(await readFile(path.join(root, "reports/generated/security-report.json"), "utf8"));
@@ -16,9 +17,7 @@ if (report.baseline.invalidEntries.length) {
   errors.push(...report.baseline.invalidEntries.map((entry) => `Invalid baseline entry: ${entry}`));
 }
 for (const finding of report.findings) {
-  const secret = finding.category === "SECRET_DETECTION";
-  const severe = ["CRITICAL", "HIGH"].includes(finding.severity);
-  if (secret || (severe && finding.status !== "BASELINE")) {
+  if (isBlockingFinding(finding)) {
     errors.push(`${finding.severity} ${finding.tool} ${finding.id} (${finding.repository})`);
   }
 }

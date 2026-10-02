@@ -1,12 +1,36 @@
-import { access, mkdir, rm, writeFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveAllRepositories } from "./repositories.mjs";
+import { inspectScanArtifact } from "./scan-artifacts.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePaths = await resolveAllRepositories();
 const repositories = Object.keys(sourcePaths);
+function gitRevision(repositoryPath) {
+  try {
+    return execFileSync("git", ["-C", repositoryPath, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+const runId = process.env.GITHUB_RUN_ID ?? `local-${randomUUID()}`;
+const commitSha = process.env.GITHUB_SHA ?? gitRevision(root);
+const repositoryName = process.env.GITHUB_REPOSITORY ?? "Saidaminov-x7/AVERON-security-tests";
+const recordedAt = new Date().toISOString();
+const versions = {
+  Semgrep: process.env.SEMGREP_VERSION ?? "unknown",
+  Trivy: process.env.TRIVY_VERSION ?? "unknown",
+  "Gitleaks current files": process.env.GITLEAKS_VERSION ?? "unknown",
+  "Gitleaks Git history": process.env.GITLEAKS_VERSION ?? "unknown",
+};
 
 const reportDirectory = path.join(root, "reports/raw");
 await mkdir(reportDirectory, { recursive: true });
@@ -25,6 +49,10 @@ await Promise.all(scannerOutputs.map((output) => rm(output, { force: true })));
 await writeFile(
   path.join(reportDirectory, "scan-scope.json"),
   `${JSON.stringify({
+    runId,
+    commitSha,
+    timestamp: recordedAt,
+    repository: repositoryName,
     scans: {
       Semgrep: repositories,
       Trivy: repositories,
@@ -111,33 +139,48 @@ const requiredScans = [
     { scanner: "Gitleaks Git history", repository },
   ]),
 ];
-async function hasOutput(scanner, repository) {
-  const suffix = scanner === "Semgrep"
-    ? "semgrep.json"
-    : scanner === "Trivy"
-      ? "trivy.sarif"
-      : `gitleaks-${scanner === "Gitleaks current files" ? "current" : "history"}.json`;
-  try {
-    await access(path.join(reportDirectory, `${repository}-${suffix}`));
-    return true;
-  } catch (error) {
-    if (error?.code === "ENOENT") return false;
-    throw error;
-  }
+function outputFile(scanner, repository) {
+  if (scanner === "Semgrep") return `${repository}-semgrep.json`;
+  if (scanner === "Trivy") return `${repository}-trivy.sarif`;
+  const suffix = scanner === "Gitleaks current files" ? "current" : "history";
+  return `${repository}-gitleaks-${suffix}.json`;
 }
+
 const scans = await Promise.all(requiredScans.map(async ({ scanner, repository }) => {
   const result = toolResults.find((entry) => entry.repository === repository && entry.tool === scanner);
+  const report = outputFile(scanner, repository);
+  const evidence = await inspectScanArtifact(
+    scanner,
+    path.join(reportDirectory, report),
+    result?.exitCode === 0,
+  );
+  const repositoryPath = repository === "AVERON_security_tests" ? root : sourcePaths[repository];
   return {
     scanner,
     repository,
-    outcome: result?.exitCode === 0 && await hasOutput(scanner, repository)
-      ? "success"
-      : "failure",
+    outcome: evidence.status.startsWith("SCAN_SUCCESS_") ? "success" : "failure",
+    status: evidence.status,
+    findingsCount: evidence.findingsCount,
+    reportSha256: evidence.reportSha256,
+    report,
+    exitCode: result?.exitCode ?? null,
+    runId,
+    commitSha,
+    timestamp: recordedAt,
+    repositoryName,
+    sourceCommitSha: gitRevision(repositoryPath),
+    toolVersion: versions[scanner],
   };
 }));
 await writeFile(
   path.join(reportDirectory, "tool-execution.json"),
-  `${JSON.stringify({ scans }, null, 2)}\n`,
+  `${JSON.stringify({
+    runId,
+    commitSha,
+    timestamp: recordedAt,
+    repository: repositoryName,
+    scans,
+  }, null, 2)}\n`,
 );
 
 for (const script of ["generate-report.mjs", "enforce-baseline.mjs"]) {
