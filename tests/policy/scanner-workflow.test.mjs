@@ -44,6 +44,21 @@ test("Trivy scans each canonical application checkout alias independently", () =
   }
 });
 
+test("cross-repository checkout paths and Telegram source discovery are verified before regressions", () => {
+  const start = workflow.indexOf("- name: Verify cross-repository checkout and Telegram source discovery");
+  assert.notEqual(start, -1, "Missing cross-repository checkout verification step");
+  const next = workflow.indexOf("      - name:", start + 1);
+  const step = workflow.slice(start, next === -1 ? undefined : next);
+  for (const repository of ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"]) {
+    assert.ok(step.includes(`source-checkouts/$repository/package.json`), `${repository} checkout is not validated`);
+  }
+  assert.match(step, /discoverSourceFile/);
+  assert.match(step, /timingSafeEqual/);
+  assert.match(step, /auth_date/);
+  assert.match(step, /createHmac/);
+  assert.doesNotMatch(step, /AVERON_REPOS_READ_TOKEN|toJSON\(\)|process\.env/);
+});
+
 test("local Trivy output uses the same SARIF contract as normalized report coverage", () => {
   assert.ok(localStaticRunner.includes("`${repository}-trivy.sarif`"));
   assert.match(localStaticRunner, /"--format", "sarif"/);

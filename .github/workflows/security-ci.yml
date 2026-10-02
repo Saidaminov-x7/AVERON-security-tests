@@ -100,6 +100,27 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 24
+      - name: Verify cross-repository checkout and Telegram source discovery
+        env:
+          AVERON_SOURCE_ROOT: source-checkouts
+        run: |
+          for repository in AVERON_backend AVERON_frontend AVERON_admin_panel AVERON_parser; do
+            if [[ ! -f "source-checkouts/$repository/package.json" ]]; then
+              echo "::error title=CHECKOUT_FAILURE::$repository checkout is missing under source-checkouts"
+              exit 1
+            fi
+          done
+          node --input-type=module -e '
+            import path from "node:path";
+            import { resolveAllRepositories } from "./scripts/repositories.mjs";
+            import { discoverSourceFile } from "./scripts/source-discovery.mjs";
+            const repositories = await resolveAllRepositories();
+            const auth = await discoverSourceFile(repositories.AVERON_backend, {
+              searchRoots: ["apps/api/src"],
+              markers: ["timingSafeEqual", "auth_date", "createHmac"],
+            });
+            console.log(`Verified Telegram authentication source discovery: ${path.relative(repositories.AVERON_backend, auth)}`);
+          '
       - name: Run cross-repository source regressions
         env:
           AVERON_SOURCE_ROOT: source-checkouts

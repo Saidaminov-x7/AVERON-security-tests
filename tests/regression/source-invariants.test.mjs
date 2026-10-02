@@ -3,11 +3,23 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { resolveAllRepositories } from "../../scripts/repositories.mjs";
+import { discoverSourceFile } from "../../scripts/source-discovery.mjs";
 
 const repositories = await resolveAllRepositories();
 
 async function source(repository, relativePath) {
-  return readFile(path.join(repositories[repository], relativePath), "utf8");
+  const filePath = path.join(repositories[repository], relativePath);
+  try {
+    return await readFile(filePath, "utf8");
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      throw new Error(
+        `SOURCE_DISCOVERY_FAILURE: expected source "${relativePath}" was not found `
+        + `in checkout "${repositories[repository]}".`,
+      );
+    }
+    throw error;
+  }
 }
 
 test("backend requires signing secrets and leaves unfinished visual features disabled", async () => {
@@ -83,8 +95,21 @@ test("frontend return-target regressions reject external and malformed destinati
 });
 
 test("Telegram Mini App auth and manual publication keep identity, feature, and product state server-authoritative", async () => {
-  const auth = await source("AVERON_backend", "apps/api/src/modules/auth/telegram-init-data.ts");
-  const authTests = await source("AVERON_backend", "apps/api/src/modules/auth/__tests__/telegram-init-data.test.ts");
+  const backendPath = repositories.AVERON_backend;
+  const authPath = await discoverSourceFile(backendPath, {
+    searchRoots: ["apps/api/src"],
+    markers: ["timingSafeEqual", "auth_date", "createHmac"],
+  });
+  const authTestsPath = await discoverSourceFile(backendPath, {
+    searchRoots: ["apps/api/src"],
+    markers: [
+      "accepts a valid, fresh Telegram signature",
+      "rejects altered data and invalid hashes",
+      "rejects stale, future-dated, malformed, and ambiguous initData",
+    ],
+  });
+  const auth = await readFile(authPath, "utf8");
+  const authTests = await readFile(authTestsPath, "utf8");
   const authRoutes = await source("AVERON_backend", "apps/api/src/modules/auth/telegram.ts");
   const publication = await source("AVERON_backend", "apps/api/src/modules/commerce/telegram-publication.ts");
   const publicationTests = await source("AVERON_backend", "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts");
