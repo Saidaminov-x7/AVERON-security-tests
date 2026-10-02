@@ -81,3 +81,45 @@ test("frontend return-target regressions reject external and malformed destinati
     assert.ok(tests.includes(maliciousTarget), `Missing unsafe returnTo regression: ${maliciousTarget}`);
   }
 });
+
+test("Telegram Mini App auth and manual publication keep identity, feature, and product state server-authoritative", async () => {
+  const auth = await source("AVERON_backend", "apps/api/src/modules/auth/telegram-init-data.ts");
+  const authTests = await source("AVERON_backend", "apps/api/src/modules/auth/__tests__/telegram-init-data.test.ts");
+  const authRoutes = await source("AVERON_backend", "apps/api/src/modules/auth/telegram.ts");
+  const publication = await source("AVERON_backend", "apps/api/src/modules/commerce/telegram-publication.ts");
+  const publicationTests = await source("AVERON_backend", "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts");
+  const cardTests = await source("AVERON_backend", "apps/api/src/modules/commerce/__tests__/telegram-publisher.test.ts");
+  const commerce = await source("AVERON_backend", "apps/api/src/modules/commerce/index.ts");
+  const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
+
+  assert.match(auth, /timingSafeEqual/);
+  assert.match(auth, /authDate > nowSeconds \+ 30/);
+  for (const scenario of [
+    "accepts a valid, fresh Telegram signature",
+    "rejects altered data and invalid hashes",
+    "rejects stale, future-dated, malformed, and ambiguous initData",
+  ]) {
+    assert.ok(authTests.includes(scenario), `Missing Mini App auth regression: ${scenario}`);
+  }
+  assert.match(authRoutes, /telegram:mini-app:auth:/);
+  assert.match(authRoutes, /'NX'/);
+  assert.match(authRoutes, /telegramId: result\.identity\.id/);
+  assert.match(publication, /adminMiddleware/);
+  assert.match(publication, /FEATURE_DISABLED/);
+  assert.match(publication, /status: \{ in: \[TelegramPublicationStatus\.NOT_PUBLISHED, TelegramPublicationStatus\.FAILED\] \}/);
+  assert.match(publication, /product\.status !== 'PUBLISHED'/);
+  for (const scenario of [
+    "requires admin authorization",
+    "returns FEATURE_DISABLED",
+    "rejects unpublished products and unknown products",
+    "claims publication atomically",
+    "does not expose the configured bot token",
+    "publishes only after an explicit admin request",
+  ]) {
+    assert.ok(publicationTests.includes(scenario), `Missing Telegram publish regression: ${scenario}`);
+  }
+  assert.match(cardTests, /mocked Telegram transport/);
+  assert.match(cardTests, /rejects unsafe image URLs/);
+  assert.doesNotMatch(commerce, /publishProductToTelegram|sendTelegramCard/);
+  assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
+});
