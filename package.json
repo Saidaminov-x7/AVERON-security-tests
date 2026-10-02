@@ -12,6 +12,7 @@
     "test": "node scripts/run-policy-tests.mjs",
     "security:tests": "npm test",
     "security:regression": "node scripts/run-regression.mjs",
+    "inventory:api": "node scripts/generate-api-registry.mjs",
     "security:safe": "node scripts/run-safe.mjs",
     "security:static": "node scripts/run-static.mjs",
     "security:api": "node scripts/run-api.mjs",

@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, rm, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +10,18 @@ const repositories = Object.keys(sourcePaths);
 
 const reportDirectory = path.join(root, "reports/raw");
 await mkdir(reportDirectory, { recursive: true });
+const scannerRepositories = [...repositories, "AVERON_security_tests"];
+const scannerOutputs = scannerRepositories.flatMap((repository) => [
+  ...(repository === "AVERON_security_tests"
+    ? []
+    : [
+        `${repository}-semgrep.json`,
+        `${repository}-trivy.sarif`,
+      ]),
+  `${repository}-gitleaks-current.json`,
+  `${repository}-gitleaks-history.json`,
+].map((filename) => path.join(reportDirectory, filename)));
+await Promise.all(scannerOutputs.map((output) => rm(output, { force: true })));
 await writeFile(
   path.join(reportDirectory, "scan-scope.json"),
   `${JSON.stringify({
@@ -99,14 +111,30 @@ const requiredScans = [
     { scanner: "Gitleaks Git history", repository },
   ]),
 ];
-const scans = requiredScans.map(({ scanner, repository }) => {
+async function hasOutput(scanner, repository) {
+  const suffix = scanner === "Semgrep"
+    ? "semgrep.json"
+    : scanner === "Trivy"
+      ? "trivy.sarif"
+      : `gitleaks-${scanner === "Gitleaks current files" ? "current" : "history"}.json`;
+  try {
+    await access(path.join(reportDirectory, `${repository}-${suffix}`));
+    return true;
+  } catch (error) {
+    if (error?.code === "ENOENT") return false;
+    throw error;
+  }
+}
+const scans = await Promise.all(requiredScans.map(async ({ scanner, repository }) => {
   const result = toolResults.find((entry) => entry.repository === repository && entry.tool === scanner);
   return {
     scanner,
     repository,
-    outcome: result?.exitCode === 0 ? "success" : "failure",
+    outcome: result?.exitCode === 0 && await hasOutput(scanner, repository)
+      ? "success"
+      : "failure",
   };
-});
+}));
 await writeFile(
   path.join(reportDirectory, "tool-execution.json"),
   `${JSON.stringify({ scans }, null, 2)}\n`,

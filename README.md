@@ -37,6 +37,7 @@ $env:AVERON_SOURCE_ROOT = "C:\work\AVERON"
 $env:AVERON_BACKEND_REPO_PATH = "C:\work\AVERON\AVERON_backend"
 npm run security:regression
 npm run security:static
+npm run inventory:api
 ```
 
 The resolver maps those local directory names to the exact GitHub repositories
@@ -62,6 +63,7 @@ npm run security:tests       Run local policy and regression tests
 npm run security:migrations  Verify the app's production migration command
 npm run security:safe        Run fixed safe GET checks against one service
 npm run security:static      Run Semgrep, Trivy, and redacted Gitleaks scans
+npm run inventory:api        Regenerate the source-derived backend endpoint registry
 npm run security:api         Run gated Schemathesis checks against OpenAPI
 npm run security:dast        Run gated OWASP ZAP scan
 npm run security:full        Run the full locally gated harness test suite
@@ -132,28 +134,31 @@ minimum token permissions and setup steps.
   blocked and CI must report the run as unverified rather than omit the source
   repositories silently.
 
-## Task #11 debt and verification limits
+## Task #19 audit and verification limits
 
-The historical dependency advisory counts remain in
-`baseline/task11-remediation.json`; a later production-dependency audit of the
-checked-out repositories reported zero current matches for Backend, Frontend,
-Admin, and Parser. This does not prove which dependency graph is deployed or
-that every advisory's vulnerable path was unreachable. The historical
-Fastify 4/Fastify 5 and plugin compatibility items remain documented rather
-than being addressed through a blind major upgrade.
+The Task #19 source-derived architecture, API inventory, UI coverage matrix,
+and unresolved findings are documented in
+[docs/architecture-inventory.md](./docs/architecture-inventory.md),
+[docs/api-endpoint-registry.json](./docs/api-endpoint-registry.json),
+[docs/ui-coverage-matrix.md](./docs/ui-coverage-matrix.md), and
+[docs/task19-audit-findings.md](./docs/task19-audit-findings.md).
 
-The frontend still has both npm and pnpm lockfiles, with divergent resolutions
-for some ranged dependencies. Its deployment hook invokes `npm install`, so
-removing `package-lock.json` without coordinating deployment would be unsafe.
-Frontend lint had zero errors and five warnings at audit time. Backend already
-uses a short-lived rate-limit settings cache, and production deployment uses
-`prisma migrate deploy`; no destructive migration command or production
-database was run. See the architecture inventory and future coverage guide for
-remaining parser SSRF, external-link/CSP, staging and secret-rotation review
-items. Secret-store contents and any historical credential rotation were not
-verified.
+The API registry currently extracts 159 routes: 5 `TESTED`, 52 `PARTIAL`, and
+102 `NOT_TESTED`. These statuses represent static test associations, not proof
+of production runtime coverage. The parser DNS-validation-to-Chromium
+connection boundary and the backend's deployment-owned `trustProxy: true`
+configuration remain open pending a safe network/deployment design.
 
-See [docs/architecture-inventory.md](./docs/architecture-inventory.md) for the
-source-derived architecture and its verification limits, and
-[baseline/task11-remediation.json](./baseline/task11-remediation.json) for the
-visible Task #11 advisory debt.
+Backend, Frontend, Admin, and Parser dependency audits are run against the
+checked-out lockfiles; the Frontend retains npm and pnpm lockfiles because the
+deployment hook uses npm. Local source/build/test results do not establish
+which graph is deployed. No destructive migration command or production
+database was used.
+
+The latest local static scan is `NOT_VERIFIED`: Semgrep, Trivy, and Gitleaks
+were unavailable, and the harness correctly records missing scanner artifacts
+as failures instead of reusing stale output. Staging-only ZAP and Schemathesis
+were not run without an approved staging target. Secret-store contents,
+historical credential rotation, deployed proxy topology, and live provider
+behavior remain unverified. Historical Task #11 advisory data is preserved in
+[baseline/task11-remediation.json](./baseline/task11-remediation.json).

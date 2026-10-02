@@ -65,6 +65,12 @@ test("local Trivy output uses the same SARIF contract as normalized report cover
   assert.ok(!localStaticRunner.includes("`${repository}-trivy.json`"));
 });
 
+test("local static scans clear stale outputs and require fresh scanner artifacts", () => {
+  assert.match(localStaticRunner, /await Promise\.all\(scannerOutputs\.map/);
+  assert.match(localStaticRunner, /rm\(output, \{ force: true \}\)/);
+  assert.match(localStaticRunner, /result\?\.exitCode === 0 && await hasOutput/);
+});
+
 test("manifest, normalized report, and baseline gate always run after scanners", () => {
   for (const stepName of [
     "Record scanner execution and report coverage",

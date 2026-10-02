@@ -32,6 +32,48 @@ test("backend requires signing secrets and leaves unfinished visual features dis
   }
 });
 
+test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const slowQueryStart = server.indexOf("prisma.$on('query'");
+  const slowQueryEnd = server.indexOf("const redis", slowQueryStart);
+  assert.notEqual(slowQueryStart, -1);
+  assert.notEqual(slowQueryEnd, -1);
+  const slowQueryLog = server.slice(slowQueryStart, slowQueryEnd);
+  assert.match(slowQueryLog, /durationMs:\s*e\.duration/);
+  assert.doesNotMatch(slowQueryLog, /e\.query|e\.params/);
+
+  const aiHealthStart = server.indexOf("server.get('/health/ai'");
+  const aiHealthEnd = server.indexOf("server.get('/health/ready'", aiHealthStart);
+  assert.notEqual(aiHealthStart, -1);
+  assert.notEqual(aiHealthEnd, -1);
+  const aiHealth = server.slice(aiHealthStart, aiHealthEnd);
+  assert.doesNotMatch(aiHealth, /url:\s*config\.OLLAMA_BASE_URL|model:\s*config\.OLLAMA_MODEL|models:|error:\s*err\.message/);
+  assert.match(aiHealth, /error: 'AI_SERVICE_UNAVAILABLE'/);
+
+  const register = await source("AVERON_backend", "apps/api/src/modules/auth/register.ts");
+  const registerLog = register.match(/request\.log\.warn\(\{[\s\S]*?\}, 'Registration failed'\)/)?.[0] ?? "";
+  assert.ok(registerLog, "Registration failures must keep a structured diagnostic log");
+  assert.doesNotMatch(registerLog, /email|error\.message|dto\./);
+  assert.doesNotMatch(register, /message:\s*`[^`]*(?:user\.name|user\.email)|meta:\s*\{\s*email:/);
+  assert.match(register, /logUserActivity\(request\.server\.prisma, user\.id, 'REGISTER', request\)/);
+
+  const forgotPassword = await source("AVERON_backend", "apps/api/src/modules/auth/forgot-password.ts");
+  const resetNoticeStart = forgotPassword.indexOf("await sendTelegramMessage");
+  const resetNoticeEnd = forgotPassword.indexOf("'HTML'", resetNoticeStart);
+  assert.notEqual(resetNoticeStart, -1);
+  assert.notEqual(resetNoticeEnd, -1);
+  assert.doesNotMatch(forgotPassword.slice(resetNoticeStart, resetNoticeEnd), /user\.name|user\.email/);
+  const resetLog = forgotPassword.match(/request\.log\.info\(\{\s*userId:\s*updatedUser\.id[^}]*\}\s*,\s*'Password successfully reset'\)/)?.[0] ?? "";
+  assert.ok(resetLog, "Password resets must retain a user-scoped audit log");
+  assert.doesNotMatch(resetLog, /email/);
+  assert.doesNotMatch(forgotPassword, /request\.log\.(?:error|warn)\(\s*\{[^}]*\b(?:email|err)\s*:/);
+
+  const parser = await source("AVERON_parser", "src/server.ts");
+  assert.doesNotMatch(parser, /message:\s*error\.message|request\.log\.error\(error\)/);
+  assert.match(parser, /Browser session open failed/);
+  assert.match(parser, /Product search failed/);
+});
+
 test("parser imports require the backend service boundary and enter review, not publication", async () => {
   const imports = await source("AVERON_backend", "apps/api/src/modules/commerce/parser-import.ts");
   assert.match(imports, /PARSER_IMPORT_TOKEN|Authorization|authorization/i);
