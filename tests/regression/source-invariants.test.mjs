@@ -32,6 +32,16 @@ test("backend requires signing secrets and leaves unfinished visual features dis
   }
 });
 
+test("backend trusts forwarded client IPs only from explicitly configured proxy addresses", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
+  const proxyConfig = await source("AVERON_backend", "apps/api/src/lib/trust-proxy.ts");
+  assert.match(server, /trustProxy: trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
+  assert.doesNotMatch(server, /trustProxy:\s*true/);
+  assert.match(env, /TRUST_PROXY_ADDRESSES/);
+  assert.match(proxyConfig, /return addresses\.length \? \[\.\.\.addresses\] : false/);
+});
+
 test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const slowQueryStart = server.indexOf("prisma.$on('query'");
@@ -87,11 +97,15 @@ test("parser imports require the backend service boundary and enter review, not 
 
 test("parser outbound destinations are constrained and URL guard regressions run in its test suite", async () => {
   const guard = await source("AVERON_parser", "src/security/external-url.ts");
+  const egressProxy = await source("AVERON_parser", "src/security/marketplace-egress-proxy.ts");
   const adapter = await source("AVERON_parser", "src/adapter-1688.ts");
   const tests = await source("AVERON_parser", "test/external-url.test.ts");
   assert.match(guard, /https:/);
-  assert.match(guard, /127\.|private|loopback|link.local/i);
+  assert.match(guard, /nonPublicIpv4Ranges/);
+  assert.match(egressProxy, /resolveSafeMarketplaceAddresses/);
+  assert.match(egressProxy, /connector\(address, target\.port\)/);
   assert.match(adapter, /route\(/);
+  assert.match(adapter, /proxy: \{ server: egressProxyUrl/);
   assert.match(tests, /127\.0\.0\.1|localhost|169\.254|private/i);
 });
 
