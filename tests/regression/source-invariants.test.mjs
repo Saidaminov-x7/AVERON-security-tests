@@ -307,6 +307,11 @@ test("Task 17 recommendations share canonical eligibility and isolate behavioral
 test("Task 18 authentication and integration foundations fail closed and protect OTP state", async () => {
   const emailLogin = await source("AVERON_backend", "apps/api/src/modules/auth/login.ts");
   const phoneLogin = await source("AVERON_backend", "apps/api/src/modules/auth/phone-password.ts");
+  const phoneOtp = await source("AVERON_backend", "apps/api/src/modules/auth/phone-otp.ts");
+  const phoneAuth = await source("AVERON_backend", "apps/api/src/modules/auth/index.ts");
+  const loginThrottle = await source("AVERON_backend", "apps/api/src/modules/auth/login-throttle.ts");
+  const phoneOtpTests = await source("AVERON_backend", "apps/api/src/modules/auth/__tests__/phone-otp.test.ts");
+  const phonePasswordTests = await source("AVERON_backend", "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts");
   const otpStore = await source("AVERON_backend", "apps/api/src/modules/auth/otp-store.ts");
   const sms = await source("AVERON_backend", "apps/api/src/modules/auth/phone-otp.ts");
   const publisher = await source("AVERON_backend", "apps/api/src/modules/integrations/n8n-publisher.ts");
@@ -317,6 +322,13 @@ test("Task 18 authentication and integration foundations fail closed and protect
 
   assert.match(emailLogin, /verifyPassword\(await dummyPasswordHash, dto\.password\)/);
   assert.match(phoneLogin, /user\?\.passwordHash \?\? await dummyPasswordHash/);
+  assert.match(phoneLogin, /PHONE_ALREADY_REGISTERED/);
+  assert.match(phoneLogin, /redis\.set\(cooldownKey,\s*'1',\s*'EX',\s*60,\s*'NX'\)/);
+  assert.match(phoneLogin, /registrationSchema[\s\S]*?\.strict\(\)/);
+  assert.match(phoneOtp, /averon:v1:auth:phone-otp:code:/);
+  assert.match(phoneOtp, /averon:v1:auth:phone-otp:cooldown:/);
+  assert.match(phoneAuth, /keyGenerator:[\s\S]*?req\.ip/);
+  assert.match(loginThrottle, /averon:v1:auth:login-failures:/);
   assert.match(otpStore, /redis\.call\('GET', KEYS\[1\]\)/);
   assert.match(otpStore, /redis\.call\('DEL', KEYS\[1\]\)/);
   assert.match(otpStore, /redis\.call\('SET', KEYS\[1\].*'KEEPTTL'/s);
@@ -331,6 +343,18 @@ test("Task 18 authentication and integration foundations fail closed and protect
   assert.match(envExample, /JWT_SECRET=\r?\n/);
   assert.match(envExample, /REFRESH_SECRET=\r?\n/);
   assert.match(server, /skipOnError:\s*false/);
+  for (const scenario of [
+    "stores a hashed OTP under versioned Redis keys and never returns it outside tests",
+    "enforces the phone resend cooldown before creating another OTP",
+  ]) {
+    assert.ok(phoneOtpTests.includes(scenario), `Missing Task 18 SMS regression: ${scenario}`);
+  }
+  for (const scenario of [
+    "returns account-independent registration responses and atomically enforces per-phone resend cooldown",
+    "does not create a duplicate account after an already-registered phone verifies a code",
+  ]) {
+    assert.ok(phonePasswordTests.includes(scenario), `Missing Task 18 phone-password regression: ${scenario}`);
+  }
 });
 
 test("Task 18 outfit, wishlist, and promo boundaries remain server-authoritative", async () => {
