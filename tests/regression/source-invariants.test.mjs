@@ -396,3 +396,43 @@ test("Task 18 outfit, wishlist, and promo boundaries remain server-authoritative
     assert.ok(checkoutTests.includes(scenario), `Missing Task 18 checkout security regression: ${scenario}`);
   }
 });
+
+test("Task 18 iPost shipment integration is idempotent, bounded, and does not own delivery truth", async () => {
+  const contract = await source("AVERON_backend", "apps/api/src/modules/integrations/contracts.ts");
+  const boundary = await source("AVERON_backend", "apps/api/src/modules/integrations/ipost-shipping.ts");
+  const routes = await source("AVERON_backend", "apps/api/src/modules/commerce/ipost-shipping.ts");
+  const tests = await source("AVERON_backend", "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts");
+  const schema = await source("AVERON_backend", "prisma/schema.prisma");
+  const migration = await source(
+    "AVERON_backend",
+    "prisma/migrations/20261002161000_add_delivery_provider_reference/migration.sql",
+  );
+  const flags = await source("AVERON_backend", "apps/api/src/modules/features/feature-flags.ts");
+  const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
+  const commerce = await source("AVERON_backend", "apps/api/src/modules/commerce/index.ts");
+
+  assert.match(contract, /supportsIdempotentShipmentCreation/);
+  assert.match(boundary, /createHash\('sha256'\)/);
+  assert.match(boundary, /REQUEST_TIMEOUT_MS/);
+  assert.match(boundary, /MAX_ATTEMPTS/);
+  assert.match(boundary, /IPOST_INVALID_PROVIDER_RESPONSE/);
+  assert.match(routes, /adminMiddleware/);
+  assert.match(routes, /FOR UPDATE/);
+  assert.match(routes, /statusApplied:\s*false/);
+  assert.doesNotMatch(routes, /commerceDelivery\.update\(\{[\s\S]{0,500}data:\s*\{\s*status:/);
+  assert.match(schema, /providerReference\s+String\?\s+@unique/);
+  assert.match(migration, /ADD COLUMN "providerReference" TEXT/);
+  assert.match(migration, /CREATE UNIQUE INDEX "CommerceDelivery_providerReference_key"/);
+  assert.match(flags, /IPOST:\s*false/);
+  assert.match(env, /FEATURE_IPOST:.*default\('false'\)/);
+  assert.match(commerce, /ipostShippingModule/);
+  for (const scenario of [
+    "creates at most one order shipment and returns the persisted result on retry",
+    "times out provider requests and returns a controlled timeout",
+    "reports provider DELIVERED as evidence without changing backend delivery truth",
+    "returns a controlled error for provider failure and malformed normalized states",
+    "does not call a provider or persist shipment state when iPost is disabled",
+  ]) {
+    assert.ok(tests.includes(scenario), `Missing Task 18 iPost security regression: ${scenario}`);
+  }
+});
