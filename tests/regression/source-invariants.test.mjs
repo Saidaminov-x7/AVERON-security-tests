@@ -332,3 +332,67 @@ test("Task 18 authentication and integration foundations fail closed and protect
   assert.match(envExample, /REFRESH_SECRET=\r?\n/);
   assert.match(server, /skipOnError:\s*false/);
 });
+
+test("Task 18 outfit, wishlist, and promo boundaries remain server-authoritative", async () => {
+  const outfits = await source("AVERON_backend", "apps/api/src/modules/commerce/outfits.ts");
+  const wishlist = await source("AVERON_backend", "apps/api/src/modules/commerce/wishlist.ts");
+  const promos = await source("AVERON_backend", "apps/api/src/modules/commerce/commerce-promos.ts");
+  const checkout = await source("AVERON_backend", "apps/api/src/modules/commerce/cart-checkout.ts");
+  const checkoutTests = await source("AVERON_backend", "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts");
+  const currency = await source("AVERON_backend", "apps/api/src/modules/integrations/currency-rate.ts");
+  const currencyTests = await source("AVERON_backend", "apps/api/src/modules/integrations/__tests__/currency-rate.test.ts");
+  const migration = await source(
+    "AVERON_backend",
+    "prisma/migrations/20261002140000_task18_outfits_wishlist_and_commerce_promos/migration.sql",
+  );
+  const featureTests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
+  );
+
+  assert.match(outfits, /z\.array\(outfitItemSchema\)\.max\(MAX_OUTFIT_ITEMS\)/);
+  assert.match(outfits, /status:\s*'PUBLISHED'/);
+  assert.match(outfits, /where:\s*\{\s*id:\s*params\.data\.outfitId,\s*userId:\s*request\.user\.userId\s*\}/);
+  assert.match(outfits, /outfits\/:outfitId\/cart/);
+  assert.match(outfits, /rejectedItems/);
+  assert.match(wishlist, /randomBytes\(32\)\.toString\('base64url'\)/);
+  assert.match(wishlist, /status:\s*'PUBLISHED'/);
+  assert.match(wishlist, /cache-control',\s*'private, no-store'/);
+  assert.match(wishlist, /wishlistShareToken:\s*null/);
+  assert.match(promos, /discountPercent:\s*z\.number\(\)\.int\(\)\.min\(1\)\.max\(15\)/);
+  assert.match(checkout, /UPDATE "CommercePromoCode"[\s\S]*"usedActivations"\s*<\s*"maxActivations/);
+  assert.match(checkout, /discountPercentSnapshot/);
+  assert.match(checkout, /commercePromoCodeUsage\.create/);
+  assert.match(currency, /averon:v1:currency/);
+  assert.match(currency, /allowStaleOnProviderFailure/);
+  assert.match(currency, /Number\.isFinite\(quote\.rate\)/);
+  for (const scenario of [
+    "caches provider-sourced rates with freshness metadata and explicit TTLs",
+    "never invents a rate when no provider is registered",
+    "uses last-known data only when both request and business policy explicitly allow stale data",
+    "rejects and does not cache invalid provider rates",
+  ]) {
+    assert.ok(currencyTests.includes(scenario), `Missing currency provider security regression: ${scenario}`);
+  }
+  assert.match(migration, /CHECK\s*\("discountPercent"\s+BETWEEN\s+1\s+AND\s+15\)/);
+  assert.match(migration, /CommercePromoCodeUsage_promoCodeId_userId_key/);
+  assert.match(migration, /CommercePromoCodeUsage_orderId_key/);
+  for (const scenario of [
+    "rejects client-provided prices and IDs that do not resolve to published products",
+    "returns only canonical public product fields and never owner PII",
+    "rejects a discount above 15 percent at the admin API boundary",
+    "validates without consuming a promo and applies canonical normalization",
+    "uses an atomic usage-count guard when an admin lowers an activation cap",
+  ]) {
+    assert.ok(featureTests.includes(scenario), `Missing Task 18 commerce security regression: ${scenario}`);
+  }
+  for (const scenario of [
+    "rejects fake client discounts and stacked promo payloads without consuming a promo",
+    "consumes a promo once on successful order creation and preserves its order snapshot",
+    "rolls back a promo activation when order creation fails",
+    "allows only one checkout to consume the final promo activation",
+    "prevents a customer from using the same promo a second time",
+  ]) {
+    assert.ok(checkoutTests.includes(scenario), `Missing Task 18 checkout security regression: ${scenario}`);
+  }
+});
