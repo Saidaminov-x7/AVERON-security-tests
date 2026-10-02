@@ -303,3 +303,32 @@ test("Task 17 recommendations share canonical eligibility and isolate behavioral
     assert.ok(tests.includes(scenario), `Missing Task 17 security regression: ${scenario}`);
   }
 });
+
+test("Task 18 authentication and integration foundations fail closed and protect OTP state", async () => {
+  const emailLogin = await source("AVERON_backend", "apps/api/src/modules/auth/login.ts");
+  const phoneLogin = await source("AVERON_backend", "apps/api/src/modules/auth/phone-password.ts");
+  const otpStore = await source("AVERON_backend", "apps/api/src/modules/auth/otp-store.ts");
+  const sms = await source("AVERON_backend", "apps/api/src/modules/auth/phone-otp.ts");
+  const publisher = await source("AVERON_backend", "apps/api/src/modules/integrations/n8n-publisher.ts");
+  const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
+  const flags = await source("AVERON_backend", "apps/api/src/modules/features/feature-flags.ts");
+  const envExample = await source("AVERON_backend", "apps/api/.env.example");
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+
+  assert.match(emailLogin, /verifyPassword\(await dummyPasswordHash, dto\.password\)/);
+  assert.match(phoneLogin, /user\?\.passwordHash \?\? await dummyPasswordHash/);
+  assert.match(otpStore, /redis\.call\('GET', KEYS\[1\]\)/);
+  assert.match(otpStore, /redis\.call\('DEL', KEYS\[1\]\)/);
+  assert.match(otpStore, /redis\.call\('SET', KEYS\[1\].*'KEEPTTL'/s);
+  assert.match(sms, /config\.NODE_ENV === 'test'/);
+  assert.match(publisher, /createHmac\('sha256'/);
+  assert.match(publisher, /x-averon-timestamp/);
+  assert.match(publisher, /x-averon-signature/);
+  assert.match(publisher, /averon:v1:n8n:failed-events/);
+  assert.match(env, /FEATURE_N8N:.*default\('false'\)/);
+  assert.match(env, /N8N_WEBHOOK_SECRET:[\s\S]*?z\.string\(\)\.min\(32\)/);
+  assert.match(flags, /N8N: config\.FEATURE_N8N && Boolean\(config\.N8N_WEBHOOK_URL && config\.N8N_WEBHOOK_SECRET\)/);
+  assert.match(envExample, /JWT_SECRET=\r?\n/);
+  assert.match(envExample, /REFRESH_SECRET=\r?\n/);
+  assert.match(server, /skipOnError:\s*false/);
+});
