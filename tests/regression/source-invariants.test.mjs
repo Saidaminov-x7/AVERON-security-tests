@@ -209,3 +209,97 @@ test("Task 15 product reviews preserve verified-purchase, moderation, aggregatio
     assert.ok(tests.includes(scenario), `Missing Task 15 regression scenario: ${scenario}`);
   }
 });
+
+test("Task 16 AI catalog security stays provider-bounded and database-authoritative", async () => {
+  const aiService = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/catalog-ai-service.ts",
+  );
+  const aiSchemas = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/catalog-assistant-schemas.ts",
+  );
+  const assistant = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/catalog-assistant.ts",
+  );
+  const providerTests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/catalog-ai-service.test.ts",
+  );
+  const routeTests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+  );
+
+  assert.match(aiSchemas, /\.strict\(\)/);
+  assert.match(aiService, /searchIntentSchema\.parse/);
+  assert.match(assistant, /status:\s*ProductPublicationStatus\.PUBLISHED/);
+  assert.match(assistant, /buildSearchWhere/);
+  assert.match(assistant, /fallbackUsed:\s*!aiUsed/);
+  for (const scenario of [
+    "rejects unsupported or extra provider output instead of trusting it",
+    "keeps prompt-injection text inside the bounded untrusted user-data field",
+    "maps provider timeouts and upstream failures to controlled errors",
+  ]) {
+    assert.ok(providerTests.includes(scenario), `Missing Task 16 provider regression: ${scenario}`);
+  }
+  for (const scenario of [
+    "uses strict server filters and returns only visible, available database products",
+    "keeps catalog search usable with explicit fallback metadata when no provider is configured",
+  ]) {
+    assert.ok(routeTests.includes(scenario), `Missing Task 16 catalog regression: ${scenario}`);
+  }
+  assert.match(providerTests, /not\.toContain\('server-only-test-key'\)/);
+  assert.match(providerTests, /salePriceUzs:\s*1/);
+});
+
+test("Task 17 recommendations share canonical eligibility and isolate behavioral history", async () => {
+  const recommendations = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/recommendations.ts",
+  );
+  const ranking = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/recommendation-ranking.ts",
+  );
+  const schema = await source("AVERON_backend", "prisma/schema.prisma");
+  const migration = await source(
+    "AVERON_backend",
+    "prisma/migrations/20261002133000_add_recommendation_history/migration.sql",
+  );
+  const flags = await source("AVERON_backend", "apps/api/src/modules/features/feature-flags.ts");
+  const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
+  const similar = await source("AVERON_backend", "apps/api/src/modules/visual-search/index.ts");
+  const tests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
+  );
+
+  assert.match(recommendations, /request\.jwtVerify\(\)/);
+  assert.match(recommendations, /request\.user\.userId/);
+  assert.match(recommendations, /createHash\('sha256'\)/);
+  assert.match(recommendations, /randomBytes\(32\)/);
+  assert.match(recommendations, /publicProductDto\(canonical\)/);
+  assert.match(recommendations, /RECENT_HISTORY_RETENTION_DAYS/);
+  assert.match(ranking, /isEligibleRecommendationProduct/);
+  assert.match(ranking, /RECOMMENDATION_WEIGHTS/);
+  assert.match(similar, /hydrateSimilarProducts/);
+  assert.match(schema, /model CommerceRecentlyViewedProduct/);
+  assert.match(migration, /CHECK.*userId.*sessionKey|CHECK.*sessionKey.*userId/is);
+  for (const flag of [
+    "FEATURE_RECOMMENDATIONS",
+    "FEATURE_PERSONALIZED_RECOMMENDATIONS",
+    "FEATURE_RECENTLY_VIEWED",
+  ]) {
+    assert.match(flags, new RegExp(`'${flag.replace('FEATURE_', '')}'`));
+    assert.match(env, new RegExp(`${flag}:.*default\\('false'\\)`));
+  }
+  for (const scenario of [
+    "derives recently-viewed ownership from the verified token, not request data",
+    "isolates anonymous history with a server-issued opaque session cookie",
+    "gates recommendation routes when the centralized feature flag is disabled",
+  ]) {
+    assert.ok(tests.includes(scenario), `Missing Task 17 security regression: ${scenario}`);
+  }
+});
