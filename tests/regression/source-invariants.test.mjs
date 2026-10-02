@@ -123,3 +123,64 @@ test("Telegram Mini App auth and manual publication keep identity, feature, and 
   assert.doesNotMatch(commerce, /publishProductToTelegram|sendTelegramCard/);
   assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
 });
+
+test("Task 15 product reviews preserve verified-purchase, moderation, aggregation, and media boundaries", async () => {
+  const api = await source("AVERON_backend", "apps/api/src/modules/commerce/product-reviews.ts");
+  const schema = await source("AVERON_backend", "prisma/schema.prisma");
+  const migration = await source(
+    "AVERON_backend",
+    "prisma/migrations/20261002130000_add_verified_product_reviews/migration.sql",
+  );
+  const tests = await source(
+    "AVERON_backend",
+    "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
+  );
+  const customerUi = await source(
+    "AVERON_frontend",
+    "components/commerce/ProductReviews.tsx",
+  );
+  const miniApp = await source(
+    "AVERON_frontend",
+    "components/telegram/TelegramMiniApp.tsx",
+  );
+  const adminUi = await source(
+    "AVERON_admin_panel",
+    "src/pages/commerce/ReviewsPage.tsx",
+  );
+
+  assert.match(api, /preHandler:\s*\[authMiddleware\]/);
+  assert.match(api, /item\.order\.userId !== request\.user\.userId/);
+  assert.match(api, /eligibleOrderStatus\(item\.order\.status/);
+  assert.match(api, /verifiedPurchase:\s*true/);
+  assert.match(api, /CommerceProductReviewStatus\.PUBLISHED/);
+  assert.match(api, /preHandler:\s*adminMiddleware/);
+  assert.match(api, /moderatedById:\s*request\.user\.userId/);
+  assert.match(schema, /orderItemId\s+String\s+@unique/);
+  assert.match(schema, /verifiedPurchase\s+Boolean\s+@default\(false\)/);
+  assert.match(migration, /CommerceProductReview_orderItemId_key/);
+  assert.match(migration, /CommerceProductReview_rating_check/);
+  assert.match(api, /ownerId:\s*userId/);
+  assert.match(api, /image\/jpeg.*image\/png.*image\/webp.*image\/gif/);
+  assert.doesNotMatch(customerUi, /dangerouslySetInnerHTML/);
+  assert.match(miniApp, /<ProductReviews/);
+  assert.match(adminUi, /admin\/reviews/);
+  assert.match(adminUi, /adminMiddleware|REJECTED|PUBLISHED/);
+
+  for (const scenario of [
+    "requires authentication and refuses unverified client claims",
+    "derives verified purchase from the authenticated delivered order",
+    "rejects an ineligible",
+    "prevents another customer from claiming an order item",
+    "rejects invalid rating",
+    "rejects oversized or control-character review content",
+    "rejects concurrent duplicate attempts using the database unique key",
+    "rejects media that is not owned by the authenticated reviewer",
+    "only permits the author to edit or delete",
+    "soft-deletes only the current customer review",
+    "calculates public rating statistics only from published reviews",
+    "requires an admin and rejects invalid moderation transitions",
+    "audits valid admin moderation",
+  ]) {
+    assert.ok(tests.includes(scenario), `Missing Task 15 regression scenario: ${scenario}`);
+  }
+});
