@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
-          node-version: 24
+          node-version: 22
       - name: Run fixed non-destructive checks only
         run: npm run security:safe
       - name: Upload masked report
