@@ -52,7 +52,7 @@ jobs:
           npm run security:report
       - name: Upload normalized report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # actions/upload-artifact v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
         with:
           name: averon-security-policy-report
           path: reports/generated/
@@ -305,7 +305,7 @@ jobs:
         run: node scripts/enforce-baseline.mjs
       - name: Upload redacted scanner reports
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # actions/upload-artifact v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
         with:
           name: averon-static-security-reports
           path: |

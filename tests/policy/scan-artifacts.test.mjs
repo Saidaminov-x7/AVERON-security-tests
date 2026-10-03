@@ -28,3 +28,21 @@ test("binds successful scanner output to its SHA-256 digest", () => {
   const result = classifyScanArtifact("Semgrep", JSON.stringify({ results: [] }), true);
   assert.match(result.reportSha256, /^[a-f0-9]{64}$/);
 });
+
+test("marks Semgrep parser errors as incomplete coverage, even when it reports no findings", () => {
+  const result = classifyScanArtifact(
+    "Semgrep",
+    JSON.stringify({ results: [], errors: [{ type: ["PartialParsing"] }] }),
+    true,
+  );
+  assert.equal(result.status, "SCAN_INCOMPLETE_PARSE_ERRORS");
+  assert.equal(result.findingsCount, 0);
+  assert.equal(result.scannerErrors, 1);
+  assert.match(result.reportSha256, /^[a-f0-9]{64}$/);
+});
+
+test("reports complete Semgrep output without errors as a clean scan", () => {
+  const result = classifyScanArtifact("Semgrep", JSON.stringify({ results: [], errors: [] }), true);
+  assert.equal(result.status, "SCAN_SUCCESS_ZERO_FINDINGS");
+  assert.equal(result.scannerErrors, 0);
+});

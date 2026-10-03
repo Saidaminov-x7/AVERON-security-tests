@@ -3,7 +3,11 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeSeverity } from "./report-severity.mjs";
-import { classifyFindingStatus } from "./baseline-policy.mjs";
+import { classifyFindingStatus, isBlockingFinding } from "./baseline-policy.mjs";
+import {
+  historicalSecretFingerprint,
+  validateHistoricalSecretApprovals,
+} from "./historical-secret-policy.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rawDirectory = path.join(root, "reports/raw");
@@ -53,6 +57,10 @@ function fingerprint(finding) {
 }
 
 const baselineEntries = staticBaseline.approvedFindings ?? [];
+const {
+  approvals: historicalApprovals,
+  invalidEntries: invalidHistoricalSecretApprovals,
+} = validateHistoricalSecretApprovals(staticBaseline.approvedHistoricalSecrets ?? []);
 const now = Date.now();
 const validBaselineEntries = new Set();
 const invalidBaselineEntries = baselineEntries.flatMap((entry, index) => {
@@ -99,6 +107,8 @@ try {
         severity: normalizeSeverity(candidate.severity),
         repository: candidate.repository ?? repositoryFor(filename, candidate.file),
         category: candidate.category ?? "SECURITY_HARDENING",
+        source: candidate.source ?? "SCAN",
+        historicalContext: candidate.historicalContext ?? null,
         location: {
           file: candidate.file ?? null,
           endpoint: candidate.endpoint ?? null,
@@ -110,8 +120,11 @@ try {
         recommendedRemediation: candidate.recommendedRemediation
           ?? "Review the affected code/dependency and apply a tested, minimal remediation.",
       };
-      record.fingerprint = fingerprint(record);
-      record.status = classifyFindingStatus(record, approved);
+      record.fingerprint = candidate.fingerprint ?? fingerprint(record);
+      record.status = classifyFindingStatus(record, approved, historicalApprovals);
+      if (record.status === "HISTORICAL_REVIEWED") {
+        record.classification = historicalApprovals.get(record.fingerprint).classification;
+      }
       const existing = findingsByFingerprint.get(record.fingerprint);
       if (existing) {
         existing.scanArtifacts.push(filename);
@@ -158,12 +171,25 @@ try {
       }
     } else if (filename.includes("-gitleaks-") || filename.endsWith("-gitleaks.json")) {
       for (const result of Array.isArray(content) ? content : []) {
+        const isHistorical = filename.includes("-gitleaks-history");
+        const historicalContext = isHistorical ? {
+          scanner: "Gitleaks",
+          rule: result.RuleID ?? "SECRET_CANDIDATE",
+          repository: repositoryFor(filename, result.File),
+          path: result.File ?? "",
+          commit: result.Commit ?? "",
+          fingerprint: result.Fingerprint ?? "",
+        } : null;
         pushFinding({
           tool: "Gitleaks",
           id: result.RuleID ?? "SECRET_CANDIDATE",
           severity: "CRITICAL",
           category: "SECRET_DETECTION",
           classification: "NOT_VERIFIED",
+          source: isHistorical ? "HISTORY" : "CURRENT",
+          historicalContext,
+          fingerprint: historicalSecretFingerprint(historicalContext) ?? undefined,
+          repository: historicalContext?.repository,
           description: "Potential secret detected; value redacted.",
           evidenceSummary: "Secret value intentionally omitted; investigate the file/history location privately.",
           file: result.File ?? null,
@@ -312,6 +338,7 @@ const report = {
     approvedFingerprintCount: approved.size,
     unbaselinedFindingsAreNew: staticBaseline.established !== true,
     invalidEntries: invalidBaselineEntries,
+    invalidHistoricalSecretApprovals,
   },
   findings,
   historicalDebt,
@@ -340,11 +367,8 @@ const report = {
   },
   policyEvaluation: {
     failForNewSeverities: ["CRITICAL", "HIGH"],
-    failForSecretCandidates: true,
-    blockingFindingCount: findings.filter((finding) =>
-      finding.status !== "BASELINE"
-      && (finding.category === "SECRET_DETECTION" || ["CRITICAL", "HIGH"].includes(finding.severity)),
-    ).length,
+    failForCurrentOrUnreviewedHistoricalSecrets: true,
+    blockingFindingCount: findings.filter(isBlockingFinding).length,
   },
 };
 
@@ -382,8 +406,7 @@ const markdown = [
   "",
   "Historical advisory counts describe affected dependency versions, not confirmed exploitable application paths.",
   `Dynamic scans not run: ${report.scans.dynamic.notRun.join(", ")}. Static scanner completeness does not imply a security certification.`,
-  "Existing reviewed findings remain visible; only explicitly fingerprinted non-secret findings with documented scope and expiry may be baselined.",
-  "Secret candidates are never baselined.",
+  "Current-file secret candidates always block. Historical Gitleaks findings are non-blocking only when their exact scanner, rule, repository, path, commit and fingerprint have a valid human review record.",
   "",
 ].join("\n");
 

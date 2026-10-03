@@ -17,10 +17,10 @@ function findingsCount(scanner, report) {
 
 export function classifyScanArtifact(scanner, contents, scannerSucceeded) {
   if (!scannerSucceeded) {
-    return { status: "SCANNER_FAILED", findingsCount: null, reportSha256: null };
+    return { status: "SCANNER_FAILED", findingsCount: null, scannerErrors: null, reportSha256: null };
   }
   if (contents === null) {
-    return { status: "SCAN_OUTPUT_MISSING", findingsCount: null, reportSha256: null };
+    return { status: "SCAN_OUTPUT_MISSING", findingsCount: null, scannerErrors: null, reportSha256: null };
   }
 
   let report;
@@ -28,17 +28,21 @@ export function classifyScanArtifact(scanner, contents, scannerSucceeded) {
     report = JSON.parse(contents);
   } catch (error) {
     if (!(error instanceof SyntaxError)) throw error;
-    return { status: "SCANNER_FAILED", findingsCount: null, reportSha256: null };
+    return { status: "SCANNER_FAILED", findingsCount: null, scannerErrors: null, reportSha256: null };
   }
 
   const count = findingsCount(scanner, report);
   if (count === null) {
-    return { status: "SCANNER_FAILED", findingsCount: null, reportSha256: null };
+    return { status: "SCANNER_FAILED", findingsCount: null, scannerErrors: null, reportSha256: null };
   }
 
+  const scannerErrors = scanner === "Semgrep" ? (report.errors?.length ?? 0) : 0;
   return {
-    status: count === 0 ? "SCAN_SUCCESS_ZERO_FINDINGS" : "SCAN_SUCCESS_WITH_FINDINGS",
+    status: scannerErrors > 0
+      ? "SCAN_INCOMPLETE_PARSE_ERRORS"
+      : count === 0 ? "SCAN_SUCCESS_ZERO_FINDINGS" : "SCAN_SUCCESS_WITH_FINDINGS",
     findingsCount: count,
+    scannerErrors,
     reportSha256: createHash("sha256").update(contents).digest("hex"),
   };
 }

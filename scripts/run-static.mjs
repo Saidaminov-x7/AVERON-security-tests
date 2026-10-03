@@ -161,6 +161,7 @@ const scans = await Promise.all(requiredScans.map(async ({ scanner, repository }
     outcome: evidence.status.startsWith("SCAN_SUCCESS_") ? "success" : "failure",
     status: evidence.status,
     findingsCount: evidence.findingsCount,
+    scannerErrors: evidence.scannerErrors,
     reportSha256: evidence.reportSha256,
     report,
     exitCode: result?.exitCode ?? null,

@@ -2,5 +2,6 @@
   "schemaVersion": 1,
   "established": false,
   "approvedFindings": [],
-  "policy": "Findings remain unbaselined until a human-reviewed fingerprint entry records a reason, narrow scope, creation date, and review-by date. Secret candidates may never be baselined."
+  "approvedHistoricalSecrets": [],
+  "policy": "Critical and high non-secret findings require exact reviewed fingerprints before baseline approval. Current-file secret candidates always block. A historical Gitleaks finding may be excepted only with an exact scanner, rule, repository, path, commit, fingerprint, classification, evidence reference, reviewer, and review window."
 }

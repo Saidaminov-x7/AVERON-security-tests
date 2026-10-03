@@ -12,7 +12,7 @@ const registry = JSON.parse(
 test("backend API registry contains a complete record for every extracted route", () => {
   assert.equal(registry.version, 1);
   assert.equal(registry.endpointCount, registry.endpoints.length);
-  assert.ok(registry.endpointCount >= 150, "Unexpectedly few Fastify endpoints were extracted");
+  assert.ok(registry.endpointCount >= 132, "Unexpectedly few Fastify endpoints were extracted after legacy route retirement");
   for (const endpoint of registry.endpoints) {
     assert.ok(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "ALL"].includes(endpoint.method));
     assert.ok(endpoint.path);
@@ -31,6 +31,23 @@ test("backend API registry contains a complete record for every extracted route"
     assert.ok(["TESTED", "PARTIAL", "NOT_TESTED", "BLOCKED"].includes(endpoint.testCoverageStatus));
     assert.ok(endpoint.coverageEvidence);
     assert.ok(Array.isArray(endpoint.testFiles));
+  }
+});
+
+test("API registry excludes retired real-estate Admin routes", () => {
+  const paths = new Set(registry.endpoints.map((endpoint) => endpoint.path));
+  for (const path of [
+    "/admin/listings",
+    "/admin/listings/:id/approve",
+    "/admin/listings/:id/reject",
+    "/admin/listings/:id/request-changes",
+    "/admin/listings/:id/verify",
+    "/admin/listings/:id/fraud-analysis",
+    "/admin/moderation/kanban",
+    "/admin/reviews/pending",
+    "/admin/reviews/:id/status",
+  ]) {
+    assert.equal(paths.has(path), false, `Retired Admin route remains registered: ${path}`);
   }
 });
 

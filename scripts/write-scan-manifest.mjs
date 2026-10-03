@@ -87,6 +87,7 @@ async function addScan({
     outcome: evidence.status.startsWith("SCAN_SUCCESS_") ? "success" : "failure",
     status: evidence.status,
     findingsCount: evidence.findingsCount,
+    scannerErrors: evidence.scannerErrors,
     reportSha256: evidence.reportSha256,
     exitCode,
     actionOutcome,
