@@ -12,7 +12,7 @@ const registry = JSON.parse(
 test("backend API registry contains a complete record for every extracted route", () => {
   assert.equal(registry.version, 1);
   assert.equal(registry.endpointCount, registry.endpoints.length);
-  assert.ok(registry.endpointCount >= 132, "Unexpectedly few Fastify endpoints were extracted after legacy route retirement");
+  assert.ok(registry.endpointCount >= 129, "Unexpectedly few Fastify endpoints were extracted after legacy route retirement");
   for (const endpoint of registry.endpoints) {
     assert.ok(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "ALL"].includes(endpoint.method));
     assert.ok(endpoint.path);
@@ -49,6 +49,7 @@ test("API registry excludes retired real-estate Admin routes", () => {
   ]) {
     assert.equal(paths.has(path), false, `Retired Admin route remains registered: ${path}`);
   }
+  assert.equal(paths.has("/ai-chat/chats/:listingId/summary"), false);
 });
 
 test("API registry distinguishes direct request coverage from module-level tests", () => {

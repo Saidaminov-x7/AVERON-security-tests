@@ -116,6 +116,50 @@ test("a changed historical fingerprint is not covered by an approval", () => {
   assert.equal(isBlockingFinding(finding), true);
 });
 
+for (const [field, value] of [
+  ["commit", "b".repeat(40)],
+  ["path", "src/config/other.ts"],
+]) {
+  test(`a changed historical ${field} is not covered by an approval`, () => {
+    const entry = approval();
+    const { approvals } = validateHistoricalSecretApprovals([entry]);
+    const context = { ...entry, [field]: value };
+    const finding = {
+      tool: "Gitleaks",
+      source: "HISTORY",
+      category: "SECRET_DETECTION",
+      severity: "CRITICAL",
+      historicalContext: context,
+      fingerprint: historicalSecretFingerprint(context),
+    };
+    finding.status = classifyFindingStatus(finding, new Map(), approvals);
+
+    assert.equal(finding.status, "NEW");
+    assert.equal(isBlockingFinding(finding), true);
+  });
+}
+
+test("an expired historical approval is rejected and cannot permit a finding", () => {
+  const entry = approval({
+    reviewBy: new Date(Date.now() - 1_000).toISOString(),
+  });
+  const { approvals, invalidEntries } = validateHistoricalSecretApprovals([entry]);
+  const finding = {
+    tool: "Gitleaks",
+    source: "HISTORY",
+    category: "SECRET_DETECTION",
+    severity: "CRITICAL",
+    historicalContext: { ...entry },
+    fingerprint: historicalSecretFingerprint(entry),
+  };
+  finding.status = classifyFindingStatus(finding, new Map(), approvals);
+
+  assert.equal(approvals.size, 0);
+  assert.equal(invalidEntries.length, 1);
+  assert.equal(finding.status, "NEW");
+  assert.equal(isBlockingFinding(finding), true);
+});
+
 test("wildcard approvals and approval metadata containing secret-like values are rejected", () => {
   const wildcard = approval({ path: "src/**" });
   const extraSecret = approval({ token: "not-a-real-secret-value" });

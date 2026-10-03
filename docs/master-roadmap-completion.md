@@ -108,3 +108,112 @@ particular, no baseline may be established until current Gitleaks/Trivy/
 Semgrep outputs are complete, fresh, tied to the current commit and reviewed.
 The release decision stays `BLOCKED_FROM_PRODUCTION` while any mandatory gate
 is `BLOCKED_EXTERNAL` or `NOT_RUNTIME_VERIFIED`.
+
+## Task #21.3 addendum — final blocker remediation
+
+**Decision: `BLOCKED_FROM_PRODUCTION`.** This addendum records local source and
+policy work only. No production deployment, Task #22 work, commit, push, PR,
+tag, or release was performed.
+
+### Current source remediation
+
+- Checkout idempotency test values are generated per test run; the existing
+  assertions still exercise idempotency without secret-shaped literals.
+- The four reported Vitest async module mocks use `vi.importActual`; the
+  ProductCard JSX parse issue was corrected without changing its test behavior.
+- Public Site Settings no longer return the rental photo limit. Admin reads only
+  current setting fields. Listing-only media routes and the unused rental
+  conversation-summary route are retired; physical legacy schema is retained.
+- Password-reset URLs and the storefront CORS example use the approved
+  `https://averon.uz` origin. SEO robots, sitemap, canonical, OpenGraph and
+  product metadata share the production origin.
+- Admin analytics exports now use the Backend-supported `products` report,
+  and no longer describe traffic as new listings. A focused test asserts the
+  supported report is offered and the retired report is absent. The
+  unproduced `LISTING_REPORTED` webhook option was removed.
+- Removed unused Frontend listing types, listing form validation, coordinate
+  fallbacks, and the unreferenced rental filter store. Dynamic-section defaults
+  and fallback UI now use commerce terminology. Platform statistics are omitted
+  unless verified values are supplied, rather than rendering fabricated zeroes.
+- Legacy runtime classification: the Backend `listings`, `viewing-requests`, and
+  `saved-searches` plugins have definitions but are not imported or registered
+  by the active server (`DEAD_RUNTIME`). The authenticated GDPR export still
+  includes a user's historical listing/favorite/search records
+  (`LEGACY_COMPATIBILITY`). Legacy physical tables/enums are retained
+  (`LEGACY_SCHEMA_ONLY`). `Role.LANDLORD` remains accepted by a Backend Admin
+  schema and included in legacy customer filters; the current Admin UI has no
+  `LANDLORD` choice, and no commerce authorization check was found that grants
+  access based on that role. The CMS section identifier `POPULAR_LISTINGS`
+  remains for stored-content compatibility, but its current renderer uses
+  product cards and product terminology (`LEGACY_COMPATIBILITY`).
+- API registry: 129 active endpoint records; 5 `TESTED`, 52 `PARTIAL`, and 72
+  `NOT_TESTED`. The 72 entries are not represented as runtime-tested.
+
+### Fresh static scan evidence
+
+The latest pinned scanner execution, including its timestamp and per-repository
+source SHAs, is recorded in
+[`tool-execution.json`](../reports/raw/tool-execution.json):
+
+| Scanner | Scope | Result |
+| --- | --- | --- |
+| Semgrep 1.142.0 | Backend, Frontend, Admin, Parser | `SCAN_SUCCESS_ZERO_FINDINGS`; zero scanner/parser errors in each repository |
+| Trivy 0.75.0 | Backend, Frontend, Admin, Parser | `SCAN_SUCCESS_ZERO_FINDINGS` in each repository |
+| Gitleaks 8.28.0 current files | All five repositories | Backend/Admin: zero; Frontend: 6 scanner records in ignored `.next` output; Parser: 5 records in ignored browser-profile files; Security Tests: 1 ignored local `.env` record |
+| Gitleaks 8.28.0 Git history | All five repositories | Backend: 5 candidates; Frontend: 1 candidate; Admin/Parser/Security Tests: zero |
+
+The six Frontend current-file records represent five ignored build-output paths
+(one path produced duplicate records); they do not include a current Firebase
+key literal. Frontend Firebase configuration reads `NEXT_PUBLIC_FIREBASE_*`
+environment variables. The Parser browser profile and Security Tests `.env`
+were not modified or printed. Scanner output is stored under
+[`reports/raw`](../reports/raw) and [`reports/generated`](../reports/generated).
+The source repository SHAs in the scan manifest match the checked-out HEADs,
+but working-tree edits remain uncommitted. No baseline was established:
+[`static-findings.json`](../baseline/static-findings.json) still has
+`established: false` and empty approval arrays. Dynamic ZAP/Schemathesis scans
+were not run.
+
+### Unique historical Gitleaks candidates
+
+No candidate below is approved. The listed classifications describe the
+candidate evidence only; exact human reviewer, evidence reference, review date,
+and expiration records are absent. Approval remains blocked.
+
+| Rule | Repository | Historical path | Commit | Fingerprint | Exact candidate in current source? | Classification / decision | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `generic-api-key` | Backend | `apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts` | `3178959695c113a83c05acb3c66f72633bc91f67` | `3178959695c113a83c05acb3c66f72633bc91f67:apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts:generic-api-key:710` | No; the fixture is now generated per run | `TEST_FIXTURE`; not approved | Historical checkout test; current idempotency assertions remain |
+| `generic-api-key` | Backend | `apps/api/src/modules/commerce/__tests__/recommendations.test.ts` | `892f436f85126f0d8016f686a33abf7154c2d008` | `892f436f85126f0d8016f686a33abf7154c2d008:apps/api/src/modules/commerce/__tests__/recommendations.test.ts:generic-api-key:32` | No current-file finding | `TEST_FIXTURE`; not approved | Historical test-only mock setup |
+| `generic-api-key` | Backend | `apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts` | `dcba79458535fe6677371c09af4107246f6fccbd` | `dcba79458535fe6677371c09af4107246f6fccbd:apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts:generic-api-key:490` | No; the fixture is no longer a current finding | `TEST_FIXTURE`; not approved | Historical test request context |
+| `generic-api-key` | Backend | `apps/api/src/config/env.ts` | `55f34b1fce11569636efe9ad9184e0d9b8a4084e` | `55f34b1fce11569636efe9ad9184e0d9b8a4084e:apps/api/src/config/env.ts:generic-api-key:82` | No current-file finding | `FALSE_POSITIVE_WITH_EVIDENCE`; not approved | Historical match is a rejected refresh-secret validation sentinel, not a credential |
+| `generic-api-key` | Backend | `apps/api/src/test/setup.ts` | `55f34b1fce11569636efe9ad9184e0d9b8a4084e` | `55f34b1fce11569636efe9ad9184e0d9b8a4084e:apps/api/src/test/setup.ts:generic-api-key:8` | No current-file finding | `TEST_FIXTURE`; not approved | Historical test-only signing setup |
+| `gcp-api-key` | Frontend | `lib/firebase.ts` | `adb972be2661dcef5c8d223efbadb420cc9ae4a0` | `adb972be2661dcef5c8d223efbadb420cc9ae4a0:lib/firebase.ts:gcp-api-key:6` | No key literal; configuration uses public environment variables | `BLOCKED_EXTERNAL`; no public-client approval | Firebase project/domain/API restrictions could not be independently verified |
+
+Current Gitleaks candidates remain blockers until the ignored local artifacts
+are privately reviewed and handled by their owner. In particular, determine
+whether the local Security Tests token was ever valid or deployed; rotate or
+revoke it if so. Do not approve the historical Firebase finding without
+independent restriction evidence.
+
+### Runtime and infrastructure gates still open
+
+- Browser customer/Admin E2E, the required responsive viewport and locale/theme
+  matrices, keyboard/focus/drawer behavior, token-refresh concurrency, IDOR,
+  and Admin RBAC remain unverified. The existing local Frontend server serves
+  stale/missing chunks and is not suitable for E2E.
+- Critical API route coverage is incomplete: the registry still has 72
+  `NOT_TESTED` routes. Critical route families have not all been exercised
+  through real runtime/integration paths.
+- No disposable PostgreSQL/Redis services were available. Checkout/promo
+  concurrency, order snapshots, multi-instance Redis behavior, and outage
+  semantics were not verified against real services.
+- Parser Chromium-through-proxy SSRF cases, live external providers, real
+  Cloudflare/Railway/origin/TLS configuration, and backup/restore evidence
+  remain unverified.
+- Commerce analytics still lacks the required allowlisted event taxonomy,
+  bounded metadata/privacy checks, and Backend-authoritative purchase revenue.
+- Product locale quality has not been runtime-audited. SEO source tests pass,
+  but the stale local server prevented rendered runtime validation.
+
+Therefore this remediation does not satisfy the security-baseline, full-runtime
+E2E, database/Redis concurrency, or production-readiness gates.
