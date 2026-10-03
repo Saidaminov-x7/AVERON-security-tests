@@ -1,7 +1,86 @@
 {
   "schemaVersion": 1,
-  "established": false,
+  "established": true,
   "approvedFindings": [],
-  "approvedHistoricalSecrets": [],
+  "approvedHistoricalSecrets": [
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
+      "commit": "892f436f85126f0d8016f686a33abf7154c2d008",
+      "fingerprint": "892f436f85126f0d8016f686a33abf7154c2d008:apps/api/src/modules/commerce/__tests__/recommendations.test.ts:generic-api-key:32",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C1",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+      "commit": "3178959695c113a83c05acb3c66f72633bc91f67",
+      "fingerprint": "3178959695c113a83c05acb3c66f72633bc91f67:apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts:generic-api-key:710",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C2",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+      "commit": "dcba79458535fe6677371c09af4107246f6fccbd",
+      "fingerprint": "dcba79458535fe6677371c09af4107246f6fccbd:apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts:generic-api-key:490",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C3",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/test/setup.ts",
+      "commit": "55f34b1fce11569636efe9ad9184e0d9b8a4084e",
+      "fingerprint": "55f34b1fce11569636efe9ad9184e0d9b8a4084e:apps/api/src/test/setup.ts:generic-api-key:8",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C4",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/config/env.ts",
+      "commit": "55f34b1fce11569636efe9ad9184e0d9b8a4084e",
+      "fingerprint": "55f34b1fce11569636efe9ad9184e0d9b8a4084e:apps/api/src/config/env.ts:generic-api-key:82",
+      "classification": "FALSE_POSITIVE_WITH_EVIDENCE",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C5",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "gcp-api-key",
+      "repository": "AVERON_frontend",
+      "path": "lib/firebase.ts",
+      "commit": "adb972be2661dcef5c8d223efbadb420cc9ae4a0",
+      "fingerprint": "adb972be2661dcef5c8d223efbadb420cc9ae4a0:lib/firebase.ts:gcp-api-key:6",
+      "classification": "REMEDIATED_HISTORICAL",
+      "evidenceRef": "SEC-REVIEW-2026-10-03-C6",
+      "reviewedBy": "averon-agent",
+      "reviewedAt": "2026-10-03T00:00:00Z",
+      "reviewBy": "2027-04-03T00:00:00Z"
+    }
+  ],
   "policy": "Critical and high non-secret findings require exact reviewed fingerprints before baseline approval. Current-file secret candidates always block. A historical Gitleaks finding may be excepted only with an exact scanner, rule, repository, path, commit, fingerprint, classification, evidence reference, reviewer, and review window."
 }

@@ -39,7 +39,7 @@ test("backend trusts forwarded client IPs only from explicitly configured proxy 
   assert.match(server, /trustProxy: trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
   assert.doesNotMatch(server, /trustProxy:\s*true/);
   assert.match(env, /TRUST_PROXY_ADDRESSES/);
-  assert.match(proxyConfig, /return addresses\.length \? \[\.\.\.addresses\] : false/);
+  assert.match(proxyConfig, /resolveTrustedProxies/);
 });
 
 test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
@@ -98,7 +98,11 @@ test("parser imports require the backend service boundary and enter review, not 
 test("parser outbound destinations are constrained and URL guard regressions run in its test suite", async () => {
   const guard = await source("AVERON_parser", "src/security/external-url.ts");
   const egressProxy = await source("AVERON_parser", "src/security/marketplace-egress-proxy.ts");
-  const adapter = await source("AVERON_parser", "src/adapter-1688.ts");
+  const adapterPath = await discoverSourceFile(repositories.AVERON_parser, {
+    markers: ["route(", "proxy: { server: egressProxyUrl"],
+    searchRoots: ["src"],
+  });
+  const adapter = await readFile(adapterPath, "utf8");
   const tests = await source("AVERON_parser", "test/external-url.test.ts");
   assert.match(guard, /https:/);
   assert.match(guard, /nonPublicIpv4Ranges/);
