@@ -542,6 +542,7 @@ test("deployment verification is bound to each runtime SHA and a successful stag
   assert.match(verifier, /staging\.passed !== true/);
   assert.match(verifier, /staging\.mode !== 'deployment'/);
   assert.match(workflow, /environment: \$\{\{ inputs\.environment \}\}/);
+  assert.match(workflow, /name: AVERON Deployment SHA and Health Gate/);
   assert.match(workflow, /actions\/download-artifact@/);
   assert.match(workflow, /inputs\.environment == 'production'/);
   assert.match(backend, /RAILWAY_GIT_COMMIT_SHA/);
