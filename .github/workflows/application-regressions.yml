@@ -4,6 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [averon-application-changed]
   workflow_dispatch:
 
 permissions:
@@ -59,12 +61,26 @@ jobs:
             test_command: npm test
             verify_command: npm run typecheck && npm run build
     steps:
+      - name: Record cross-repository trigger
+        if: matrix.repository == 'AVERON-backend'
+        env:
+          EVENT_PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+        run: |
+          {
+            echo '## Cross-repository trigger'
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "payload=${EVENT_PAYLOAD}"
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/${{ matrix.repository }}
           ref: main
           path: source
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+      - name: Record checked out SHA
+        run: |
+          sha="$(git -C source rev-parse HEAD)"
+          echo "${{ matrix.repository }}=${sha}" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 22
