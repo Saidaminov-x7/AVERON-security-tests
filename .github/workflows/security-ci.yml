@@ -5,6 +5,27 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: Exact backend commit SHA or main
+        type: string
+        required: true
+        default: main
+      frontend_ref:
+        description: Exact frontend commit SHA or main
+        type: string
+        required: true
+        default: main
+      admin_ref:
+        description: Exact admin commit SHA or main
+        type: string
+        required: true
+        default: main
+      parser_ref:
+        description: Exact parser commit SHA or main
+        type: string
+        required: true
+        default: main
 
 permissions:
   contents: read
@@ -37,7 +58,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-backend
-          ref: main
+          ref: ${{ inputs.backend_ref || 'main' }}
           path: source-checkouts/AVERON_backend
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           fetch-depth: 1
@@ -74,28 +95,28 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-backend
-          ref: main
+          ref: ${{ inputs.backend_ref || 'main' }}
           path: source-checkouts/AVERON_backend
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           fetch-depth: 0
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-frontend
-          ref: main
+          ref: ${{ inputs.frontend_ref || 'main' }}
           path: source-checkouts/AVERON_frontend
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           fetch-depth: 0
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-admin-panel
-          ref: main
+          ref: ${{ inputs.admin_ref || 'main' }}
           path: source-checkouts/AVERON_admin_panel
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           fetch-depth: 0
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-parser
-          ref: main
+          ref: ${{ inputs.parser_ref || 'main' }}
           path: source-checkouts/AVERON_parser
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           fetch-depth: 0

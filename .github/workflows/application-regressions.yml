@@ -7,6 +7,27 @@ on:
   repository_dispatch:
     types: [averon-application-changed]
   workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: Exact backend commit SHA or main
+        type: string
+        required: true
+        default: main
+      frontend_ref:
+        description: Exact frontend commit SHA or main
+        type: string
+        required: true
+        default: main
+      admin_ref:
+        description: Exact admin commit SHA or main
+        type: string
+        required: true
+        default: main
+      parser_ref:
+        description: Exact parser commit SHA or main
+        type: string
+        required: true
+        default: main
 
 permissions:
   contents: read
@@ -39,28 +60,28 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-backend
-          ref: ${{ github.event.client_payload.repository == 'AVERON-backend' && github.event.client_payload.sha || 'main' }}
+          ref: ${{ inputs.backend_ref != 'main' && inputs.backend_ref || (github.event.client_payload.repository == 'AVERON-backend' && github.event.client_payload.sha) || 'main' }}
           path: source-checkouts/backend
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           persist-credentials: false
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-frontend
-          ref: ${{ github.event.client_payload.repository == 'AVERON-frontend' && github.event.client_payload.sha || 'main' }}
+          ref: ${{ inputs.frontend_ref != 'main' && inputs.frontend_ref || (github.event.client_payload.repository == 'AVERON-frontend' && github.event.client_payload.sha) || 'main' }}
           path: source-checkouts/frontend
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           persist-credentials: false
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-admin-panel
-          ref: ${{ github.event.client_payload.repository == 'AVERON-admin-panel' && github.event.client_payload.sha || 'main' }}
+          ref: ${{ inputs.admin_ref != 'main' && inputs.admin_ref || (github.event.client_payload.repository == 'AVERON-admin-panel' && github.event.client_payload.sha) || 'main' }}
           path: source-checkouts/admin
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           persist-credentials: false
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
         with:
           repository: Saidaminov-x7/AVERON-parser
-          ref: ${{ github.event.client_payload.repository == 'AVERON-parser' && github.event.client_payload.sha || 'main' }}
+          ref: ${{ inputs.parser_ref != 'main' && inputs.parser_ref || (github.event.client_payload.repository == 'AVERON-parser' && github.event.client_payload.sha) || 'main' }}
           path: source-checkouts/parser
           token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
           persist-credentials: false
@@ -162,7 +183,7 @@ jobs:
           if-no-files-found: warn
 
   publish-source-commit-status:
-    if: ${{ always() && github.event_name == 'repository_dispatch' && github.event.action == 'averon-application-changed' }}
+    if: ${{ always() && (github.event_name == 'repository_dispatch' && github.event.action == 'averon-application-changed' || github.event_name == 'workflow_dispatch' && inputs.backend_ref != 'main' && inputs.frontend_ref != 'main' && inputs.admin_ref != 'main' && inputs.parser_ref != 'main') }}
     runs-on: ubuntu-latest
     needs: [repository-read-preflight, regression-tests]
     permissions: {}
@@ -170,17 +191,17 @@ jobs:
       - name: Publish required status to the exact source commit
         env:
           GH_TOKEN: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
           SOURCE_REPOSITORY: ${{ github.event.client_payload.repository }}
           SOURCE_SHA: ${{ github.event.client_payload.sha }}
+          BACKEND_SHA: ${{ inputs.backend_ref }}
+          FRONTEND_SHA: ${{ inputs.frontend_ref }}
+          ADMIN_SHA: ${{ inputs.admin_ref }}
+          PARSER_SHA: ${{ inputs.parser_ref }}
           PREFLIGHT_RESULT: ${{ needs.repository-read-preflight.result }}
           REGRESSION_RESULT: ${{ needs.regression-tests.result }}
         run: |
           set -euo pipefail
-          case "$SOURCE_REPOSITORY" in
-            AVERON-backend|AVERON-frontend|AVERON-admin-panel|AVERON-parser) ;;
-            *) echo "::error::Unsupported source repository: $SOURCE_REPOSITORY"; exit 1 ;;
-          esac
-          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::Invalid source SHA"; exit 1; }
           if [[ "$PREFLIGHT_RESULT" == success && "$REGRESSION_RESULT" == success ]]; then
             state=success
             description="Exact-SHA cross-repository checks passed"
@@ -188,8 +209,24 @@ jobs:
             state=failure
             description="Cross-repository checks incomplete or failed; see linked run"
           fi
-          gh api "repos/Saidaminov-x7/$SOURCE_REPOSITORY/statuses/$SOURCE_SHA" \
-            -f state="$state" \
-            -f context='AVERON / cross-repository verify' \
-            -f description="$description" \
-            -f target_url="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          publish_status() {
+            repository="$1"; sha="$2"
+            case "$repository" in
+              AVERON-backend|AVERON-frontend|AVERON-admin-panel|AVERON-parser) ;;
+              *) echo "::error::Unsupported source repository: $repository"; exit 1 ;;
+            esac
+            [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::Invalid SHA for $repository"; exit 1; }
+            gh api "repos/Saidaminov-x7/$repository/statuses/$sha" \
+              -f state="$state" \
+              -f context='AVERON / cross-repository verify' \
+              -f description="$description" \
+              -f target_url="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          if [[ "$EVENT_NAME" == workflow_dispatch ]]; then
+            publish_status AVERON-backend "$BACKEND_SHA"
+            publish_status AVERON-frontend "$FRONTEND_SHA"
+            publish_status AVERON-admin-panel "$ADMIN_SHA"
+            publish_status AVERON-parser "$PARSER_SHA"
+          else
+            publish_status "$SOURCE_REPOSITORY" "$SOURCE_SHA"
+          fi
