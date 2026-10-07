@@ -44,6 +44,8 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
         with:
           node-version: 22
+      - name: Install security harness dependencies
+        run: npm ci --ignore-scripts
       - name: Run security harness policy tests
         env:
           AVERON_BACKEND_REPO_PATH: ${{ github.workspace }}/source-checkouts/AVERON_backend
