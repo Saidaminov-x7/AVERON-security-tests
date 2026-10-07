@@ -56,7 +56,7 @@ requires source/runtime review.
   not found. Fastify Helmet is enabled with a backend CSP. Frontend CSP and
   externally sourced content have deployment-dependent concerns recorded in
   [`task19-audit-findings.md`](./task19-audit-findings.md).
-- **Proxy and client IP:** backend Fastify is configured with `trustProxy: true`
+- **Proxy and client IP:** backend Fastify trusts only explicitly configured proxy addresses; a separately tested Railway managed-runtime compatibility fallback is enabled only when Railway runtime markers are present. Empty configuration outside that runtime uses the direct peer address.
   for the expected Railway proxy. The real trusted-hop/CIDR boundary and direct
   origin reachability cannot be established from source.
 - **Provider status:** iPost, SMS, n8n, currency, Telegram, and marketplace

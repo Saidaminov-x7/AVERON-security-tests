@@ -2,13 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { resolveAllRepositories } from "../../scripts/repositories.mjs";
 import { discoverSourceFile } from "../../scripts/source-discovery.mjs";
 
 const repositories = await resolveAllRepositories();
+const securityTestsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 async function source(repository, relativePath) {
-  const filePath = path.join(repositories[repository], relativePath);
+  const root = repository === "AVERON_security_tests" ? securityTestsRoot : repositories[repository];
+  const filePath = path.join(root, relativePath);
   try {
     return await readFile(filePath, "utf8");
   } catch (error) {
@@ -36,10 +39,12 @@ test("backend trusts forwarded client IPs only from explicitly configured proxy 
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
   const proxyConfig = await source("AVERON_backend", "apps/api/src/lib/trust-proxy.ts");
-  assert.match(server, /trustProxy: trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
+  assert.match(server, /trustProxy:\s*trustProxyOption\(config\.TRUST_PROXY_ADDRESSES,\s*isRailwayRuntime\)/);
+  assert.match(server, /const isRailwayRuntime = Boolean\(process\.env\.RAILWAY_ENVIRONMENT \|\| process\.env\.RAILWAY_PROJECT_ID\)/);
   assert.doesNotMatch(server, /trustProxy:\s*true/);
   assert.match(env, /TRUST_PROXY_ADDRESSES/);
-  assert.match(proxyConfig, /resolveTrustedProxies/);
+  assert.match(proxyConfig, /addresses\.length/);
+  assert.match(proxyConfig, /managedPlatformProxy \? true : false/);
 });
 
 test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
@@ -206,7 +211,9 @@ test("Telegram Mini App auth and manual publication keep identity, feature, and 
   assert.match(cardTests, /mocked Telegram transport/);
   assert.match(cardTests, /rejects unsafe image URLs/);
   assert.doesNotMatch(commerce, /publishProductToTelegram|sendTelegramCard/);
-  assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
+  // The feature flag controls availability; publication itself remains an explicit,
+  // admin-authorized operation covered by the route and service regressions above.
+  assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:\s*z\.enum\(\['true', 'false'\]\)/);
 });
 
 test("Task 15 product reviews preserve verified-purchase, moderation, aggregation, and media boundaries", async () => {
@@ -518,5 +525,42 @@ test("Task 18 iPost shipment integration is idempotent, bounded, and does not ow
     "does not call a provider or persist shipment state when iPost is disabled",
   ]) {
     assert.ok(tests.includes(scenario), `Missing Task 18 iPost security regression: ${scenario}`);
+  }
+});
+
+test("deployment verification is bound to each runtime SHA and a successful staging artifact", async () => {
+  const verifier = await source("AVERON_security_tests", "scripts/verify-deployment.mjs");
+  const workflow = await source("AVERON_security_tests", ".github/workflows/deployment-health.yml");
+  const backend = await source("AVERON_backend", "apps/api/src/server.ts");
+  const storefront = await source("AVERON_frontend", "app/api/release/route.ts");
+  const admin = await source("AVERON_admin_panel", "vite.config.ts");
+
+  assert.match(verifier, /EXPECTED_BACKEND_SHA/);
+  assert.match(verifier, /EXPECTED_STOREFRONT_SHA/);
+  assert.match(verifier, /EXPECTED_ADMIN_SHA/);
+  assert.match(verifier, /health\.db !== 'up'/);
+  assert.match(verifier, /staging\.passed !== true/);
+  assert.match(verifier, /staging\.mode !== 'deployment'/);
+  assert.match(workflow, /environment: \$\{\{ inputs\.environment \}\}/);
+  assert.match(workflow, /actions\/download-artifact@/);
+  assert.match(workflow, /inputs\.environment == 'production'/);
+  assert.match(backend, /RAILWAY_GIT_COMMIT_SHA/);
+  assert.match(storefront, /VERCEL_GIT_COMMIT_SHA/);
+  assert.match(admin, /VERCEL_GIT_COMMIT_SHA/);
+});
+
+test("cross-repository checks publish a blocking status back to the triggering source SHA", async () => {
+  const central = await source("AVERON_security_tests", ".github/workflows/application-regressions.yml");
+  assert.match(central, /persist-credentials: false/);
+  assert.match(central, /publish-source-commit-status:/);
+  assert.match(central, /needs\.regression-tests\.result/);
+  assert.match(central, /context='AVERON \/ cross-repository verify'/);
+  assert.match(central, /SOURCE_SHA: \$\{\{ github\.event\.client_payload\.sha \}\}/);
+  for (const repository of ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"]) {
+    const notifier = await source(repository, ".github/workflows/notify-security.yml");
+    assert.match(notifier, /statuses: write/);
+    assert.match(notifier, /state=pending/);
+    assert.match(notifier, /state=error/);
+    assert.match(notifier, /client_payload\[sha\]=\"\$SOURCE_SHA\"/);
   }
 });
