@@ -144,10 +144,22 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
+          node --input-type=module -e "import { writeFile } from 'node:fs/promises'; import { tmpdir } from 'node:os'; import { join } from 'node:path'; const json=Buffer.from(JSON.stringify({asset:{version:'2.0',generator:'AVERON E2E fixture'},scene:0,scenes:[{nodes:[0]}],nodes:[{mesh:0}],meshes:[{primitives:[{attributes:{POSITION:0},indices:1,material:0}]}],materials:[{pbrMetallicRoughness:{baseColorFactor:[0.12,0.28,0.68,1]}}],buffers:[{byteLength:44}],bufferViews:[{buffer:0,byteOffset:0,byteLength:36,target:34962},{buffer:0,byteOffset:36,byteLength:6,target:34963}],accessors:[{bufferView:0,componentType:5126,count:3,type:'VEC3',min:[-0.5,-0.5,0],max:[0.5,0.5,0]},{bufferView:1,componentType:5123,count:3,type:'SCALAR',min:[0],max:[2]}]})); const padded=Buffer.concat([json,Buffer.alloc((4-json.length%4)%4,0x20)]); const bin=Buffer.alloc(44); [-.5,-.5,0,.5,-.5,0,0,.5,0].forEach((v,i)=>bin.writeFloatLE(v,i*4)); [0,1,2].forEach((v,i)=>bin.writeUInt16LE(v,36+i*2)); const len=12+8+padded.length+8+bin.length; const out=Buffer.alloc(len); out.writeUInt32LE(0x46546c67,0); out.writeUInt32LE(2,4); out.writeUInt32LE(len,8); out.writeUInt32LE(padded.length,12); out.writeUInt32LE(0x4e4f534a,16); padded.copy(out,20); const off=20+padded.length; out.writeUInt32LE(bin.length,off); out.writeUInt32LE(0x004e4942,off+4); bin.copy(out,off+8); await writeFile(join(tmpdir(),'averon-e2e-fitting.glb'),out);"
+          node source-checkouts/admin/scripts/local-product-fixture.mjs > "$RUNNER_TEMP/averon-admin-fixture.log" 2>&1 &
+          fixture_pid=$!
+          trap 'kill "$fixture_pid" 2>/dev/null || true' EXIT
+          cd source-checkouts/admin
+          VITE_API_URL=http://127.0.0.1:4200 pnpm dev --host 127.0.0.1 --port 3200 --strictPort > "$RUNNER_TEMP/averon-admin-vite.log" 2>&1 &
+          admin_pid=$!
+          trap 'kill "$admin_pid" "$fixture_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do curl --fail --silent http://127.0.0.1:3200/login >/dev/null && break; sleep 1; done
+          cd "$GITHUB_WORKSPACE"
           npm run e2e:smoke
         env:
           AVERON_STOREFRONT_URL: ${{ vars.AVERON_STOREFRONT_URL }}
-          AVERON_ADMIN_URL: ${{ vars.AVERON_ADMIN_URL }}
+          AVERON_ADMIN_URL: http://127.0.0.1:3200
+          AVERON_FITTING_ROOM_FIXTURE_URL: http://127.0.0.1:4200
+          AVERON_FITTING_ROOM_GLB: ${{ runner.temp }}/averon-e2e-fitting.glb
       - name: Upload Playwright reports
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
