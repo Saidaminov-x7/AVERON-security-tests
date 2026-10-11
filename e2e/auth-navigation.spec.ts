@@ -117,7 +117,7 @@ test('safe purchase return survives password recovery and unsafe targets are dro
   await page.locator('input[name="password"]').fill('SafeTestPassword123!');
   await page.locator('input[name="confirmPassword"]').fill('SafeTestPassword123!');
   await page.locator('form button[type="submit"]').click();
-  const continueToLogin = page.getByRole('button', { name: /sign in|войти/i });
+  const continueToLogin = page.locator('main button[type="button"]').last();
   await expect(continueToLogin).toBeVisible();
   await continueToLogin.click();
   await expect(page).toHaveURL(loginUrl.toString());
@@ -157,7 +157,7 @@ test('checkout return is preserved through login, registration, and password rec
   await page.locator('input[name="password"]').fill('SafeTestPassword123!');
   await page.locator('input[name="confirmPassword"]').fill('SafeTestPassword123!');
   await page.locator('form button[type="submit"]').click();
-  const continueToLogin = page.getByRole('button', { name: /sign in|РІРѕР№С‚Рё/i });
+  const continueToLogin = page.locator('main button[type="button"]').last();
   await expect(continueToLogin).toBeVisible();
   await continueToLogin.click();
   await expect(page).toHaveURL(loginUrl.toString());
