@@ -276,6 +276,7 @@ jobs:
           PARSER_IMPORT_TOKEN: isolated-parser-http-integration-token
           FEATURE_1688_PARSER: "true"
           PUBLIC_SITE_URL: https://averon.example
+          FITTING_ROOM_ENABLED: "true"
         run: pnpm exec tsx scripts/check-commerce-http-db.ts
 
   publish-source-commit-status:
