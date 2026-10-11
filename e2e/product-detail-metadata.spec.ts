@@ -13,6 +13,7 @@ test('local product details keep readable article, localized options, care infor
 
   await page.goto(new URL('/ru/catalog/fixture-product-review', storefrontUrl!).toString());
   await expect(page.getByRole('heading', { name: 'GLB review fixture shirt' })).toBeVisible();
+  await expect(page.getByText('Карточка подтверждена администратором')).toHaveCount(0);
   await expect(page).toHaveURL(/\/ru\/catalog\/AVR-000000000000001$/);
   await expect(page.locator('header a').first()).toHaveText('AVERON');
   await expect(page.getByText(/\u0410\u0440\u0442\u0438\u043a\u0443\u043b: AVR-000000000000001/)).toBeVisible();
