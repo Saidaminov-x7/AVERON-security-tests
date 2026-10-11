@@ -39,7 +39,7 @@ test("backend trusts forwarded client IPs only from explicitly configured proxy 
   assert.match(server, /trustProxy: trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
   assert.doesNotMatch(server, /trustProxy:\s*true/);
   assert.match(env, /TRUST_PROXY_ADDRESSES/);
-  assert.match(proxyConfig, /resolveTrustedProxies/);
+  assert.match(proxyConfig, /trustProxyOption\([\s\S]*addresses\.length[\s\S]*return \[\.\.\.addresses\][\s\S]*return false/);
 });
 
 test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
@@ -206,7 +206,7 @@ test("Telegram Mini App auth and manual publication keep identity, feature, and 
   assert.match(cardTests, /mocked Telegram transport/);
   assert.match(cardTests, /rejects unsafe image URLs/);
   assert.doesNotMatch(commerce, /publishProductToTelegram|sendTelegramCard/);
-  assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
+  assert.match(env.replace(/\s+/g, " "), /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
 });
 
 test("Task 15 product reviews preserve verified-purchase, moderation, aggregation, and media boundaries", async () => {
@@ -238,7 +238,8 @@ test("Task 15 product reviews preserve verified-purchase, moderation, aggregatio
   assert.match(api, /eligibleOrderStatus\(item\.order\.status/);
   assert.match(api, /verifiedPurchase:\s*true/);
   assert.match(api, /CommerceProductReviewStatus\.PUBLISHED/);
-  assert.match(api, /preHandler:\s*adminMiddleware/);
+  assert.match(api, /const reviewModerators\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
+  assert.match(api, /app\.(?:get|patch)\('\/admin\/reviews[^\n]*\{ preHandler: reviewModerators \}/);
   assert.match(api, /moderatedById:\s*request\.user\.userId/);
   assert.match(schema, /orderItemId\s+String\s+@unique/);
   assert.match(schema, /verifiedPurchase\s+Boolean\s+@default\(false\)/);
