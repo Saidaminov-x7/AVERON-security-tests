@@ -178,10 +178,10 @@ configuration, DNS, database, or customer data was changed.
   No new local changes were pushed. Security PR #7 remains open; its historical
   check rollup is red. The exact-SHA dispatch subsequently passed its preflight
   and regression jobs, but the source status writes still fail because the
-  `AVERON_REPOS_READ_TOKEN` Actions secret lacks commit-status write permission.
-  Replace that secret with a narrowly scoped token (or GitHub App token) granting
-  Commit statuses: write on all four source repositories, then rerun the
-  dispatch and verify the exact SHA status rollup before merge.
+  `AVERON_REPOS_READ_TOKEN` is intentionally read-only and cannot publish
+  commit statuses. Configure the separate `AVERON_SOURCE_STATUS_TOKEN` secret
+  with Commit statuses: write on only the four source repositories, then rerun
+  the dispatch and verify the exact SHA status rollup before merge.
 
 Before rollout, test proxy identity, rate-limit state, WAF/cache/TLS behavior,
 authenticated user flows, and checkout races in a disposable staging

@@ -215,7 +215,7 @@ jobs:
     steps:
       - name: Publish required status to the exact source commit
         env:
-          GH_TOKEN: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+          GH_TOKEN: ${{ secrets.AVERON_SOURCE_STATUS_TOKEN }}
           EVENT_NAME: ${{ github.event_name }}
           SOURCE_REPOSITORY: ${{ github.event.client_payload.repository }}
           SOURCE_SHA: ${{ github.event.client_payload.sha }}
@@ -227,6 +227,10 @@ jobs:
           REGRESSION_RESULT: ${{ needs.regression-tests.result }}
         run: |
           set -euo pipefail
+          if [[ -z "${GH_TOKEN:-}" ]]; then
+            echo "::error title=Status credential missing::Configure AVERON_SOURCE_STATUS_TOKEN with Commit statuses: write on the four AVERON source repositories."
+            exit 1
+          fi
           if [[ "$PREFLIGHT_RESULT" == success && "$REGRESSION_RESULT" == success ]]; then
             state=success
             description="Exact-SHA cross-repository checks passed"

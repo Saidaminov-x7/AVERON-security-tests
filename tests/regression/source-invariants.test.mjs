@@ -715,6 +715,9 @@ test("cross-repository checks publish a blocking status back to the triggering s
   const central = await source("AVERON_security_tests", ".github/workflows/application-regressions.yml");
   assert.match(central, /persist-credentials: false/);
   assert.match(central, /publish-source-commit-status:/);
+  assert.match(central, /GH_TOKEN: \$\{\{ secrets\.AVERON_SOURCE_STATUS_TOKEN \}\}/);
+  assert.match(central, /Configure AVERON_SOURCE_STATUS_TOKEN/);
+  assert.doesNotMatch(central, /GH_TOKEN: \$\{\{ secrets\.AVERON_REPOS_READ_TOKEN \}\}/);
   assert.match(central, /needs\.regression-tests\.result/);
   assert.match(central, /context='AVERON \/ cross-repository verify'/);
   assert.match(central, /SOURCE_SHA: \$\{\{ github\.event\.client_payload\.sha \}\}/);

@@ -19,8 +19,15 @@ secret in the private `Saidaminov-x7/AVERON-security-tests` repository:
    `AVERON_REPOS_READ_TOKEN` and paste the token value into the secret field.
 5. Keep an expiry/rotation owner and renew the token before expiration.
 
-The token is passed only to checkout steps and is never written to workflow
-files or reports. An early preflight checks whether the secret is configured
-without printing it. When absent, the workflow fails the preflight and reports
-that required verification was **NOT performed**; dependent jobs are skipped
-because access is unavailable, not marked as passed.
+The read token is passed only to checkout steps and is never written to
+workflow files or reports. An early preflight checks whether the secret is
+configured without printing it. When absent, the workflow fails the preflight
+and reports that required verification was **NOT performed**; dependent jobs
+are skipped because access is unavailable, not marked as passed.
+
+For exact source-commit status publication, create a separate fine-grained
+token restricted to the same four repositories with **Commit statuses: Read
+and write** and no Contents or administration permissions. Store it as
+`AVERON_SOURCE_STATUS_TOKEN` in the security repository's Actions secrets. This
+credential is used only by `publish-source-commit-status`; do not broaden the
+read-only token to include write access.
