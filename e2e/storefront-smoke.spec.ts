@@ -341,22 +341,22 @@ test('guest purchase resumes after registration and adds the selected product to
   const variantOptions = page.getByRole('group', { name: 'Выберите вариант' });
   await expect(variantOptions.getByRole('group', { name: 'Размер' })).toBeVisible();
   await expect(variantOptions.getByRole('group', { name: 'Цвет' })).toBeVisible();
-  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'false');
-  await expect(variantOptions.getByRole('button', { name: /Цвет: синий/ })).toHaveAttribute('aria-pressed', 'false');
-  await variantOptions.getByRole('button', { name: /^M,/ }).click();
-  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'true');
-  await variantOptions.getByRole('button', { name: /Цвет: синий/ }).click();
-  await expect(variantOptions.getByRole('group', { name: 'Цвет: синий' })).toBeVisible();
-  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'false');
+  await expect(variantOptions.getByRole('button', { name: /Цвет: тёмно-синий/ })).toHaveAttribute('aria-pressed', 'false');
+  await variantOptions.getByRole('button', { name: /^Размер: M,/ }).click();
+  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'true');
+  await variantOptions.getByRole('button', { name: /Цвет: тёмно-синий/ }).click();
+  await expect(variantOptions.getByRole('group', { name: 'Цвет: тёмно-синий' })).toBeVisible();
+  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: /увеличить количество/i }).click();
   await expect(page.locator('output[aria-label="Количество: 2"]')).toBeVisible();
-  await page.getByRole('button', { name: 'Добавить в корзину' }).click();
+  await page.getByRole('button', { name: 'В корзину' }).click();
   const authDialog = page.getByRole('dialog');
   await expect(authDialog).toBeVisible();
   const registrationLink = authDialog.getByRole('link', { name: 'Регистрация' });
   const currentProductPath = new URL(page.url()).pathname;
   const productReturn = new URL(await registrationLink.getAttribute('href')!, storefrontUrl!).searchParams.get('returnTo');
-  expect(productReturn).toBe(`${currentProductPath}?purchaseVariantId=fixture-variant-m&purchaseQuantity=2`);
+  expect(productReturn).toBe(`${currentProductPath}?addToCart=1&cartVariant=fixture-variant-m&cartQuantity=2`);
   await registrationLink.click();
   await expect(page).toHaveURL(/\/ru\/register\?returnTo=/);
 
@@ -372,8 +372,8 @@ test('guest purchase resumes after registration and adds the selected product to
   await expect(page).toHaveURL(new URL(productReturn!, storefrontUrl!).toString());
   await expect.poll(() => cartAddRequests.length).toBe(1);
   expect(registrationRequests).toHaveLength(1);
-  expect(registrationRequests[0]).toMatchObject({ name: customer.name, phone: '+998901234567' });
-  expect(verificationRequests).toEqual([{ phone: '+998901234567', code: '135790' }]);
+  expect(registrationRequests[0]).toMatchObject({ name: customer.name, phone: '+998 90 123 45 67' });
+  expect(verificationRequests).toEqual([{ phone: '+998 90 123 45 67', code: '135790' }]);
   expect(cartAddRequests).toEqual([{ productId: 'fixture-product-review', variantId: 'fixture-variant-m', quantity: 2 }]);
   await page.waitForTimeout(500);
   expect(cartAddRequests).toHaveLength(1);
@@ -391,7 +391,7 @@ test('product detail survives an invalid reviews API success response', async ({
 
   await page.goto(new URL('/ru/catalog/fixture-product-review', storefrontUrl!).toString());
   await expect(page.getByRole('heading', { name: 'GLB review fixture shirt' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Добавить в корзину' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'В корзину' })).toBeVisible();
   await expect(page.locator('#reviews').getByRole('heading', { name: 'Отзывы о товаре' })).toBeVisible();
   await expect(page.locator('#reviews').getByRole('alert')).toBeVisible();
   expect(browserErrors, browserErrors.join('\n')).toEqual([]);
@@ -460,7 +460,7 @@ test('local authenticated checkout revalidates the cart and submits one idempote
   const order = {
     id: 'local-e2e-order-id', orderNumber: 'LOCAL-E2E-ORDER-0001', status: 'PENDING', currency: 'UZS' as const,
     subtotal: '120000.00', discount: '0.00', deliveryCost: '0.00', totalRevenue: '120000.00',
-    contact: { name: 'Local Checkout Customer', phone: '+998901234567' },
+    contact: { name: 'Local Checkout Customer', phone: '+998 90 123 45 67' },
     deliveryAddress: { city: 'Tashkent', address: 'Amir Temur street 1' },
     items: [{ title: 'Local checkout fixture shirt', quantity: 1, unitPrice: '120000.00', totalPrice: '120000.00' }],
     createdAt: '2026-10-09T10:00:00.000Z',
@@ -529,7 +529,7 @@ test('local authenticated checkout revalidates the cart and submits one idempote
   expect(checkoutRequests[1].idempotencyKey).toBe(checkoutRequests[0].idempotencyKey);
   expect(checkoutRequests[1].body).toEqual(checkoutRequests[0].body);
   expect(checkoutRequests[0].body).toMatchObject({
-    contact: { name: 'Local Checkout Customer', phone: '+998901234567' },
+    contact: { name: 'Local Checkout Customer', phone: '+998 90 123 45 67' },
     deliveryAddress: { city: 'Tashkent', address: 'Amir Temur street 1' },
   });
   expect(checkoutRequests[0].body).not.toHaveProperty('total');

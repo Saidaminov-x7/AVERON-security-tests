@@ -80,7 +80,7 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   const sidebar = page.locator('.admin-sidebar');
   const wrapper = page.locator('#admin-mobile-navigation');
   const toggle = page.locator('[data-action-id="admin.sidebar.toggle-collapse"]');
-  const navigation = page.locator('#admin-desktop-navigation');
+  const navigation = page.locator('.admin-sidebar-nav');
 
   await expect(toggle).toHaveAttribute('aria-label', 'Свернуть меню');
   await expect(navigation.getByRole('link')).toHaveCount(18);
@@ -95,15 +95,16 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   await page.keyboard.press('End');
   await expect(resize).toHaveAttribute('aria-valuenow', '360');
   await page.keyboard.press('Home');
+  await expect(sidebar).toHaveCSS('width', '220px');
   const resizeBounds = await resize.boundingBox();
   expect(resizeBounds).not.toBeNull();
   await page.mouse.move(resizeBounds!.x + resizeBounds!.width / 2, resizeBounds!.y + 120);
   await page.mouse.down();
-  await page.mouse.move(320, resizeBounds!.y + 120);
+  await page.mouse.move(360, resizeBounds!.y + 120, { steps: 4 });
   await page.mouse.up();
-  await expect(resize).toHaveAttribute('aria-valuenow', '320');
-  await expect(sidebar).toHaveCSS('width', '320px');
-  await expect(wrapper).toHaveCSS('width', '320px');
+  await expect(resize).toHaveAttribute('aria-valuenow', '360');
+  await expect(sidebar).toHaveCSS('width', '360px');
+  await expect(wrapper).toHaveCSS('width', '360px');
   await expectNoHorizontalOverflow(page);
 
   await page.locator('[data-action-id="admin.theme.toggle"]:visible').click();
@@ -111,11 +112,13 @@ test('admin sidebar collapse persists and active item stays readable in dark the
 
   const activeLink = navigation.locator('a.is-active');
   await expect(activeLink).toBeVisible();
-  const colors = await activeLink.evaluate((element) => ({
-    foreground: getComputedStyle(element).color,
-    background: getComputedStyle(element).backgroundColor,
-  }));
-  expect(contrastRatio(colors.foreground, colors.background)).toBeGreaterThanOrEqual(4.5);
+  await expect.poll(async () => {
+    const colors = await activeLink.evaluate((element) => ({
+      foreground: getComputedStyle(element).color,
+      background: getComputedStyle(element).backgroundColor,
+    }));
+    return contrastRatio(colors.foreground, colors.background);
+  }).toBeGreaterThanOrEqual(4.5);
   await page.screenshot({ path: info.outputPath('admin-sidebar-dark-active.png'), fullPage: true, animations: 'disabled' });
 
   await toggle.click();
@@ -133,7 +136,7 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   await expect(page.locator('[data-action-id="admin.sidebar.toggle-collapse"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '76px');
   await page.locator('[data-action-id="admin.sidebar.toggle-collapse"]').click();
-  await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '320px');
+  await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '360px');
 
   const expectedLabels = {
     ru: { collapse: 'Свернуть меню', expand: 'Развернуть меню', resize: 'Изменить ширину меню' },
@@ -171,8 +174,8 @@ test('mobile admin drawer opens, closes by button and Escape, and keeps the page
     await expect(openButton).toHaveAttribute('aria-expanded', 'true');
     await expect(drawer).toHaveAttribute('data-open', 'true');
     await expect(drawer).toBeVisible();
-    const expectedDrawerWidth = viewport.width;
-    const expectedDrawerLeft = 0;
+    const expectedDrawerWidth = Math.min(viewport.width * 0.92, 400);
+    const expectedDrawerLeft = viewport.width - expectedDrawerWidth;
     await expect.poll(async () => (await drawer.boundingBox())?.x ?? Number.POSITIVE_INFINITY)
       .toBeCloseTo(expectedDrawerLeft, 0);
     const drawerBounds = await drawer.boundingBox();
@@ -256,21 +259,21 @@ test('mobile admin drawer opens, closes by button and Escape, and keeps the page
       expect(menuBounds!.y).toBeGreaterThanOrEqual(triggerBounds!.y + triggerBounds!.height);
     }
     await expect(languageMenu.locator('img')).toHaveCount(3);
-    const flagSources = await languageMenu.locator('img').evaluateAll((images) => images.map((image) => ({
-      source: (image as HTMLImageElement).getAttribute('src'),
-      loaded: (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0,
-      alt: (image as HTMLImageElement).alt,
+    const languageFlags = await languageMenu.locator('img').evaluateAll((flags) => flags.map((flag) => ({
+      locale: flag.getAttribute('alt'),
+      source: flag.getAttribute('src'),
+      loaded: (flag as HTMLImageElement).complete && (flag as HTMLImageElement).naturalWidth > 0,
     })));
-    expect(flagSources.map((flag) => flag.source)).toEqual(['/flags/ru.svg', '/flags/uz.svg', '/flags/en.svg']);
-    expect(flagSources.every((flag) => flag.loaded)).toBe(true);
-    expect(flagSources.map((flag) => flag.alt)).toEqual(['Русский', 'Oʻzbekcha', 'English']);
+    expect(languageFlags.map((flag) => flag.locale)).toEqual(['Русский', 'Oʻzbekcha', 'English']);
+    expect(languageFlags.map((flag) => flag.source)).toEqual(['/flags/ru.svg', '/flags/uz.svg', '/flags/en.svg']);
+    expect(languageFlags.every((flag) => flag.loaded)).toBe(true);
     await page.keyboard.press('Shift+Tab');
     await expect(languageTrigger).toBeFocused();
     await expect(languageMenu).toBeHidden();
     await languageTrigger.click();
     await expect(languageMenu).toBeVisible();
     await page.keyboard.press('Tab');
-    await expect(drawer.locator('[data-admin-mobile-utilities] a[href="/notifications"]')).toBeFocused();
+    await expect(drawer.locator('[data-action-id="admin.theme.toggle"]')).toBeFocused();
     await expect(languageMenu).toBeHidden();
     await languageTrigger.click();
     await expect(languageMenu).toBeVisible();

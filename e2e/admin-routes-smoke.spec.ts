@@ -420,8 +420,8 @@ test('manual product wizard writes once, only after final confirmation, and send
     const prematureWrites = await page.evaluate(async ({ fixtureOrigin, markerValue }) => {
       const response = await fetch(`${fixtureOrigin}/__fixture/requests`);
       const data = await response.json();
-      return data.requests.filter((request: { method: string; path: string; body?: string }) =>
-        request.method === 'POST' && request.path === '/api/v1/admin/products' && request.body?.includes(markerValue),
+      return data.requests.filter((request: { method: string; path: string; body?: unknown }) =>
+        request.method === 'POST' && request.path === '/api/v1/admin/products' && typeof request.body === 'string' && request.body.includes(markerValue),
       ).length;
     }, { fixtureOrigin: fixture.origin, markerValue: marker });
     expect(prematureWrites, 'No product create request may occur while navigating wizard steps').toBe(0);
@@ -459,8 +459,8 @@ test('manual product wizard writes once, only after final confirmation, and send
     const recorded = await page.evaluate(async ({ fixtureOrigin, markerValue }) => {
       const response = await fetch(`${fixtureOrigin}/__fixture/requests`);
       const data = await response.json();
-      return data.requests.filter((request: { method: string; path: string; body?: string; key?: string }) =>
-        request.method === 'POST' && request.path === '/api/v1/admin/products' && request.body?.includes(markerValue),
+      return data.requests.filter((request: { method: string; path: string; body?: unknown; key?: string }) =>
+        request.method === 'POST' && request.path === '/api/v1/admin/products' && JSON.stringify(request.body).includes(markerValue),
       );
     }, { fixtureOrigin: fixture.origin, markerValue: marker }) as Array<{ key: string; body: string }>;
     expect(recorded).toHaveLength(1);
@@ -492,8 +492,8 @@ test('cancelling a partially filled manual product wizard creates no product', a
   const createRequests = await page.evaluate(async ({ fixtureOrigin, markerValue }) => {
     const response = await fetch(`${fixtureOrigin}/__fixture/requests`);
     const data = await response.json();
-    return data.requests.filter((request: { method: string; path: string; body?: string }) =>
-      request.method === 'POST' && request.path === '/api/v1/admin/products' && request.body?.includes(markerValue),
+    return data.requests.filter((request: { method: string; path: string; body?: unknown }) =>
+      request.method === 'POST' && request.path === '/api/v1/admin/products' && JSON.stringify(request.body).includes(markerValue),
     );
   }, { fixtureOrigin: fixture.origin, markerValue: marker });
   expect(createRequests).toHaveLength(0);

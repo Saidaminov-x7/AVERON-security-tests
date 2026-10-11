@@ -24,13 +24,14 @@ test('local product details keep readable article, localized options, care infor
   await expect(options.getByRole('group', { name: '\u0426\u0432\u0435\u0442' })).toBeVisible();
   const darkBlue = page.getByRole('button', { name: /\u0426\u0432\u0435\u0442: \u0442\u0451\u043c\u043d\u043e-\u0441\u0438\u043d\u0438\u0439/ });
   await expect(darkBlue).toHaveAttribute('aria-pressed', 'false');
-  await expect(options.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'false');
+  await expect(options.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'false');
   await darkBlue.click();
   await expect(options.getByRole('group', { name: /\u0426\u0432\u0435\u0442.*\u0442\u0451\u043c\u043d\u043e-\u0441\u0438\u043d\u0438\u0439/ })).toBeVisible();
   await expect(darkBlue).toHaveAttribute('aria-pressed', 'true');
   await expect(darkBlue).toHaveClass(/ring-2/);
-  await expect(darkBlue).toHaveText('');
-  const medium = options.getByRole('button', { name: /^M,/ });
+  await expect(darkBlue.locator('span.sr-only')).toHaveText('dark blue');
+  await expect(darkBlue).toHaveCSS('background-color', 'rgb(0, 0, 128)');
+  const medium = options.getByRole('button', { name: /^Размер: M,/ });
   await expect(medium).toHaveAttribute('aria-pressed', 'false');
   await medium.click();
   await expect(medium).toHaveAttribute('aria-pressed', 'true');
@@ -38,7 +39,7 @@ test('local product details keep readable article, localized options, care infor
   await expect(page.getByText(/\u0426\u0432\u0435\u0442:.*\u0420\u0430\u0437\u043c\u0435\u0440:/)).toHaveCount(0);
 
   const quantity = page.getByRole('group', { name: '\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e' });
-  const purchaseAction = page.getByRole('button', { name: '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0432 \u043a\u043e\u0440\u0437\u0438\u043d\u0443' });
+  const purchaseAction = page.getByRole('button', { name: '\u0412 \u043a\u043e\u0440\u0437\u0438\u043d\u0443' });
   await expect(quantity).toBeVisible();
   await expect(purchaseAction).toBeVisible();
   await expect(purchaseAction).toBeEnabled();
@@ -67,15 +68,18 @@ test('local product details keep readable article, localized options, care infor
   await page.screenshot({ path: testInfo.outputPath(`product-detail-${testInfo.project.name}.png`), fullPage: true, animations: 'disabled' });
 
   await purchaseAction.click();
-  await expect(page.getByRole('heading', { name: /\u0412\u043e\u0439\u0442\u0438 \u0438\u043b\u0438 \u0441\u043e\u0437\u0434\u0430\u0442\u044c \u0430\u043a\u043a\u0430\u0443\u043d\u0442/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /\u0412\u043e\u0439\u0434\u0438\u0442\u0435, \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c/ })).toBeVisible();
   const register = page.getByRole('dialog').getByRole('link', { name: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f' });
   const registerUrl = new URL(await register.getAttribute('href')!, storefrontUrl!);
   expect(registerUrl.pathname).toBe('/ru/register');
-  expect(registerUrl.searchParams.get('returnTo')).toContain('purchaseVariantId=fixture-variant-dark-blue-m');
+  const returnTo = registerUrl.searchParams.get('returnTo')!;
+  expect(new URL(returnTo, storefrontUrl!).searchParams.get('addToCart')).toBe('1');
+  expect(new URL(returnTo, storefrontUrl!).searchParams.get('cartVariant')).toBe('fixture-variant-m');
+  expect(new URL(returnTo, storefrontUrl!).searchParams.get('cartQuantity')).toBe('1');
   await register.click();
   await expect(page).toHaveURL(/\/ru\/register\?returnTo=/);
   await expect(page.getByRole('heading', { name: /\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f/ })).toBeVisible();
-  const pendingPurchase = await page.evaluate(() => JSON.parse(sessionStorage.getItem('averon:pending-product-cart-add:v1') ?? 'null'));
-  expect(pendingPurchase).toMatchObject({ productId: 'fixture-product-review', variantId: 'fixture-variant-dark-blue-m', quantity: 1 });
+  const pendingPurchase = await page.evaluate(() => JSON.parse(sessionStorage.getItem('averon:pending-cart-intent') ?? 'null'));
+  expect(pendingPurchase).toEqual({ productId: 'fixture-product-review', destination: returnTo });
   expect(serverErrors).toEqual([]);
 });
