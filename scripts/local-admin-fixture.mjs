@@ -114,7 +114,9 @@ const server = createServer(async (request, response) => {
       body: redact(body),
       ...(url.searchParams.has("layer") ? { layer: url.searchParams.get("layer") } : {}),
       ...(url.searchParams.has("variantId") ? { variantId: url.searchParams.get("variantId") } : { variantId: null }),
-      ...(body?.rawBodyBytes ? { bytes: body.rawBodyBytes } : {}),
+      ...((body?.rawBodyBytes ?? Number(request.headers["content-length"] ?? 0)) > 0
+        ? { bytes: body?.rawBodyBytes ?? Number(request.headers["content-length"]) }
+        : {}),
       ...(request.headers["idempotency-key"] ? { key: request.headers["idempotency-key"] } : {}),
     });
   }

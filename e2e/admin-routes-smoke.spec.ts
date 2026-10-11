@@ -300,6 +300,39 @@ test('admin product cards adapt to desktop and mobile widths without horizontal 
   }
 });
 
+test('admin product catalog exposes accessible empty and recoverable error states', async ({ page }) => {
+  test.setTimeout(60_000);
+  const admin = await authenticateFixtureAdmin(page);
+  let responseMode: 'empty' | 'error' = 'empty';
+  await page.route('**/api/v1/admin/products**', async (route) => {
+    if (responseMode === 'error') {
+      await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ message: 'Temporary fixture failure' }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ items: [], pagination: { page: 1, limit: 15, total: 0, pages: 0 } }),
+    });
+  });
+
+  await page.goto(new URL('/products', admin).toString(), { waitUntil: 'domcontentloaded' });
+  const catalog = page.getByRole('main').last();
+  await expect(page.getByRole('status', { name: 'Loading page' })).toBeHidden({ timeout: 20_000 });
+  await expect(catalog.locator('.card.text-muted')).toBeVisible();
+  await expect(catalog.locator('.card.text-muted')).not.toBeEmpty();
+
+  responseMode = 'error';
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('alert')).toContainText(/could not load products|Mahsulotlarni yuklab bo.lmadi|товар/i, { timeout: 20_000 });
+  const refresh = catalog.getByRole('button', { name: /refresh|yangilash|обновить/i });
+  await expect(refresh).toBeVisible();
+  responseMode = 'empty';
+  await refresh.click();
+  await expect(page.getByRole('alert')).toBeHidden();
+  await expect(catalog.locator('.card.text-muted')).toBeVisible();
+});
+
 test('promo-code create action renders and persists in the local authenticated fixture', async ({ page }) => {
   test.setTimeout(60_000);
   const admin = await authenticateFixtureAdmin(page);
