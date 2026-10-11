@@ -202,7 +202,9 @@ test('admin fitting-room GLB upload enters review and can be approved', async ({
     expect.objectContaining({ method: 'POST', path: '/api/v1/admin/products/fixture-review-shirt/fitting-room/assets', bytes: expect.any(Number), layer: 'BASE_TOP', variantId: null }),
     expect.objectContaining({ method: 'POST', path: '/api/v1/admin/fitting-room/assets/fixture-glb-uploaded/review', body: expect.objectContaining({ action: 'approve' }) }),
   ]));
-  expect(recorded.requests.find((request: { path?: string }) => request.path === '/api/v1/admin/products/fixture-review-shirt/fitting-room/assets')?.bytes).toBeGreaterThan(100);
+  expect(recorded.requests.find((request: { method?: string; path?: string }) =>
+    request.method === 'POST' && request.path === '/api/v1/admin/products/fixture-review-shirt/fitting-room/assets',
+  )?.bytes).toBeGreaterThan(100);
   await checkOverflow(page);
   await page.screenshot({ path: info.outputPath(info.project.name + '-admin-fitting-review.png'), fullPage: true, animations: 'disabled' });
 });
