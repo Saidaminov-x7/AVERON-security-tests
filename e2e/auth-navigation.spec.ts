@@ -128,3 +128,37 @@ test('safe purchase return survives password recovery and unsafe targets are dro
   await expect(page.locator('a[href*="/forgot-password"]')).toHaveAttribute('href', '/ru/forgot-password');
   await expect(page.locator('a[href*="/register"]')).toHaveAttribute('href', '/ru/register');
 });
+
+test('checkout return is preserved through login, registration, and password recovery links', async ({ page }) => {
+  const storefront = requireLoopbackStorefront();
+  await blockNonLoopbackRequests(page);
+  const returnTo = '/ru/checkout?from=cart';
+  const loginUrl = new URL('/ru/login', storefront);
+  loginUrl.searchParams.set('returnTo', returnTo);
+
+  await page.goto(loginUrl.toString());
+  const encodedReturn = encodeURIComponent(returnTo);
+  await expect(page.locator('a[href*="/forgot-password"]')).toHaveAttribute('href', `/ru/forgot-password?returnTo=${encodedReturn}`);
+  await expect(page.locator('a[href*="/register"]')).toHaveAttribute('href', `/ru/register?returnTo=${encodedReturn}`);
+  await page.locator('a[href*="/forgot-password"]').click();
+  await expect(page).toHaveURL(new RegExp(`/ru/forgot-password\\?returnTo=${encodedReturn}`));
+
+  await page.route('**/auth/reset-password', async (route) => {
+    if (route.request().method() === 'POST') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ok' }) });
+      return;
+    }
+    await route.continue();
+  });
+  const resetUrl = new URL('/ru/reset-password', storefront);
+  resetUrl.searchParams.set('token', 'loopback-checkout-test-token');
+  resetUrl.searchParams.set('returnTo', returnTo);
+  await page.goto(resetUrl.toString());
+  await page.locator('input[name="password"]').fill('SafeTestPassword123!');
+  await page.locator('input[name="confirmPassword"]').fill('SafeTestPassword123!');
+  await page.locator('form button[type="submit"]').click();
+  const continueToLogin = page.getByRole('button', { name: /sign in|РІРѕР№С‚Рё/i });
+  await expect(continueToLogin).toBeVisible();
+  await continueToLogin.click();
+  await expect(page).toHaveURL(loginUrl.toString());
+});
