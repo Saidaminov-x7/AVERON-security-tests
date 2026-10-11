@@ -267,6 +267,13 @@ jobs:
       - name: Verify legacy lookup and sequential article allocation against PostgreSQL
         working-directory: source-checkouts/backend/apps/api
         run: node scripts/check-product-public-id-db.mjs
+      - name: Verify authenticated import review and product care over Fastify and PostgreSQL
+        working-directory: source-checkouts/backend/apps/api
+        env:
+          REDIS_URL: redis://127.0.0.1:6379/15
+          JWT_SECRET: isolated-commerce-http-integration-jwt-secret
+          REFRESH_SECRET: isolated-commerce-http-integration-refresh-secret
+        run: pnpm exec tsx scripts/check-commerce-http-db.ts
 
   publish-source-commit-status:
     if: ${{ always() && (github.event_name == 'repository_dispatch' && github.event.action == 'averon-application-changed' || github.event_name == 'workflow_dispatch' && inputs.backend_ref != 'main' && inputs.frontend_ref != 'main' && inputs.admin_ref != 'main' && inputs.parser_ref != 'main') }}
