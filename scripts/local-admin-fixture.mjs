@@ -6,6 +6,7 @@ const adminOrigin = process.env.AVERON_ADMIN_ORIGIN ?? "http://127.0.0.1:3200";
 const requests = [];
 const products = new Map();
 const promoCodes = new Map();
+const fittingAssets = new Map();
 const now = new Date().toISOString();
 const adminUser = {
   id: "fixture-admin",
@@ -111,6 +112,9 @@ const server = createServer(async (request, response) => {
       method: request.method,
       path: url.pathname,
       body: redact(body),
+      ...(url.searchParams.has("layer") ? { layer: url.searchParams.get("layer") } : {}),
+      ...(url.searchParams.has("variantId") ? { variantId: url.searchParams.get("variantId") } : { variantId: null }),
+      ...(body?.rawBodyBytes ? { bytes: body.rawBodyBytes } : {}),
       ...(request.headers["idempotency-key"] ? { key: request.headers["idempotency-key"] } : {}),
     });
   }
@@ -167,6 +171,49 @@ const server = createServer(async (request, response) => {
     const product = { ...seedProduct(id, body?.title ?? "Fixture product"), ...body };
     products.set(id, product);
     return respond(response, 201, product);
+  }
+  const fittingAssetsMatch = url.pathname.match(/^\/api\/v1\/admin\/products\/([^/]+)\/fitting-room\/assets$/);
+  if (fittingAssetsMatch && request.method === "GET") {
+    return respond(response, 200, [...fittingAssets.values()].filter((asset) => asset.productId === decodeURIComponent(fittingAssetsMatch[1])));
+  }
+  if (fittingAssetsMatch && request.method === "POST") {
+    const productId = decodeURIComponent(fittingAssetsMatch[1]);
+    const asset = {
+      id: "fixture-glb-uploaded",
+      productId,
+      variantId: url.searchParams.get("variantId") || null,
+      fileSize: body?.rawBodyBytes ?? 128,
+      status: "NEEDS_REVIEW",
+      source: "MANUAL",
+      garmentLayer: url.searchParams.get("layer") ?? "BASE_TOP",
+      mannequinVersion: "fixture-v1",
+      modelVersion: "fixture-v1",
+      validationSummary: "Local upload fixture accepted for workflow testing",
+      validationDetails: {},
+      positionX: 0,
+      positionY: 0,
+      positionZ: 0,
+      scale: 1,
+      rejectionReason: null,
+      previewUrl: null,
+      variant: null,
+      createdAt: now,
+    };
+    fittingAssets.set(asset.id, asset);
+    return respond(response, 201, asset);
+  }
+  if (url.pathname === "/api/v1/admin/fitting-room/generation-capabilities" && request.method === "GET") {
+    return respond(response, 200, { enabled: false, localWorkerConfigured: false });
+  }
+  const generationJobsMatch = url.pathname.match(/^\/api\/v1\/admin\/products\/([^/]+)\/fitting-room\/generation-jobs$/);
+  if (generationJobsMatch && request.method === "GET") return respond(response, 200, []);
+  const fittingReviewMatch = url.pathname.match(/^\/api\/v1\/admin\/fitting-room\/assets\/([^/]+)\/review$/);
+  if (fittingReviewMatch && request.method === "POST") {
+    const asset = fittingAssets.get(decodeURIComponent(fittingReviewMatch[1]));
+    if (!asset) return respond(response, 404, { message: "Not found" });
+    const updated = { ...asset, status: body?.action === "approve" ? "APPROVED" : "REJECTED", rejectionReason: body?.rejectionReason ?? null };
+    fittingAssets.set(updated.id, updated);
+    return respond(response, 200, updated);
   }
   const productMatch = url.pathname.match(/^\/api\/v1\/admin\/products\/([^/]+)$/);
   if (productMatch) {

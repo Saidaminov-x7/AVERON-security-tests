@@ -3,6 +3,7 @@ const storeUrl = process.env.AVERON_STOREFRONT_URL;
 const adminUrl = process.env.AVERON_ADMIN_URL;
 const fittingRoomGlb = process.env.AVERON_FITTING_ROOM_GLB;
 const fittingRoomFixtureUrl = process.env.AVERON_FITTING_ROOM_FIXTURE_URL;
+const fittingRoomStoreFixtureUrl = process.env.AVERON_FITTING_ROOM_STORE_FIXTURE_URL;
 async function checkOverflow(page: import('@playwright/test').Page) {
   const sizes = await page.evaluate(() => ({ page: document.documentElement.scrollWidth, view: document.documentElement.clientWidth }));
   expect(sizes.page).toBeLessThanOrEqual(sizes.view + 1);
@@ -49,8 +50,10 @@ test('mobile filters can be collapsed and restored', async ({ page }, info) => {
 });
 
 test('fitting room rotates, adds/removes a layer, and recalculates the outfit total', async ({ page }, info) => {
-  test.skip(!storeUrl, 'AVERON_STOREFRONT_URL is not configured; local fitting-room fixture is not live-verified');
-  await page.goto(new URL('/ru/catalog/fixture-product-review', storeUrl!).toString());
+  test.skip(!fittingRoomStoreFixtureUrl, 'Set AVERON_FITTING_ROOM_STORE_FIXTURE_URL to an isolated storefront containing the fitting-room test product.');
+  const fixtureOrigin = new URL(fittingRoomStoreFixtureUrl!).origin;
+  test.skip(!['127.0.0.1', 'localhost'].includes(new URL(fixtureOrigin).hostname), 'Fitting-room fixture-product flows run only against loopback storefront fixtures.');
+  await page.goto(new URL('/ru/catalog/fixture-product-review', fittingRoomStoreFixtureUrl!).toString());
   await expect(page.getByRole('heading', { name: 'GLB review fixture shirt' })).toBeVisible({ timeout: 10000 });
   await page.getByRole('button', { name: 'Примерить' }).click();
 
@@ -178,8 +181,8 @@ test('admin fitting-room GLB upload enters review and can be approved', async ({
   await expect(page.getByRole('heading', { name: /3D-модель для примерочной|virtual fitting room model/i })).toBeVisible();
   const file = page.locator('input[type="file"][accept*=".glb"]');
   await expect(file).toBeVisible();
-  const uploadRequest = page.waitForRequest((request) => request.url().includes('/api/v1/admin/products/fixture-product-review/fitting-room/assets') && request.method() === 'POST');
-  const uploadResponse = page.waitForResponse((response) => response.url().includes('/api/v1/admin/products/fixture-product-review/fitting-room/assets') && response.request().method() === 'POST');
+  const uploadRequest = page.waitForRequest((request) => request.url().includes('/api/v1/admin/products/fixture-review-shirt/fitting-room/assets') && request.method() === 'POST');
+  const uploadResponse = page.waitForResponse((response) => response.url().includes('/api/v1/admin/products/fixture-review-shirt/fitting-room/assets') && response.request().method() === 'POST');
   await file.setInputFiles(fittingRoomGlb!);
   await page.getByRole('button', { name: /upload model|загрузить модель/i }).click();
   expect((await uploadResponse).status()).toBe(201);
@@ -196,10 +199,10 @@ test('admin fitting-room GLB upload enters review and can be approved', async ({
   expect(result.ok()).toBeTruthy();
   const recorded = await result.json();
   expect(recorded.requests).toEqual(expect.arrayContaining([
-    expect.objectContaining({ method: 'POST', path: '/api/v1/admin/products/fixture-product-review/fitting-room/assets', bytes: expect.any(Number), layer: 'BASE_TOP', variantId: null }),
+    expect.objectContaining({ method: 'POST', path: '/api/v1/admin/products/fixture-review-shirt/fitting-room/assets', bytes: expect.any(Number), layer: 'BASE_TOP', variantId: null }),
     expect.objectContaining({ method: 'POST', path: '/api/v1/admin/fitting-room/assets/fixture-glb-uploaded/review', body: expect.objectContaining({ action: 'approve' }) }),
   ]));
-  expect(recorded.requests.find((request: { path?: string }) => request.path === '/api/v1/admin/products/fixture-product-review/fitting-room/assets')?.bytes).toBeGreaterThan(100);
+  expect(recorded.requests.find((request: { path?: string }) => request.path === '/api/v1/admin/products/fixture-review-shirt/fitting-room/assets')?.bytes).toBeGreaterThan(100);
   await checkOverflow(page);
   await page.screenshot({ path: info.outputPath(info.project.name + '-admin-fitting-review.png'), fullPage: true, animations: 'disabled' });
 });
@@ -228,11 +231,11 @@ test('admin fitting-room upload shows a backend GLB validation error without cre
   await expect(file).toBeVisible();
   const existingAssets = await page.locator('article').filter({ hasText: 'Local upload fixture accepted for workflow testing' }).count();
   await file.setInputFiles(fittingRoomGlb!);
-  await page.route('**/api/v1/admin/products/fixture-product-review/fitting-room/assets**', async (route) => {
+  await page.route('**/api/v1/admin/products/fixture-review-shirt/fitting-room/assets**', async (route) => {
     if (route.request().method() !== 'POST') return route.continue();
     await route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ code: 'GLB_EXTERNAL_RESOURCE_FORBIDDEN' }) });
   });
-  const uploadResponse = page.waitForResponse((response) => response.url().includes('/api/v1/admin/products/fixture-product-review/fitting-room/assets') && response.request().method() === 'POST');
+  const uploadResponse = page.waitForResponse((response) => response.url().includes('/api/v1/admin/products/fixture-review-shirt/fitting-room/assets') && response.request().method() === 'POST');
   await page.getByRole('button', { name: /upload model|загрузить модель/i }).click();
   expect((await uploadResponse).status()).toBe(400);
   await expect(page.getByRole('alert').getByText('GLB_EXTERNAL_RESOURCE_FORBIDDEN')).toBeVisible();
