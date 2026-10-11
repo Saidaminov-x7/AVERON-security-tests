@@ -227,6 +227,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:averon-integration-only@127.0.0.1:5432/averon_integration
     steps:
@@ -267,14 +276,16 @@ jobs:
       - name: Verify legacy lookup and sequential article allocation against PostgreSQL
         working-directory: source-checkouts/backend/apps/api
         run: node scripts/check-product-public-id-db.mjs
-      - name: Verify authenticated import review and product care over Fastify and PostgreSQL
+      - name: Verify phone OTP registration, import review, product care and GLB moderation over HTTP and PostgreSQL
         working-directory: source-checkouts/backend/apps/api
         env:
           REDIS_URL: redis://127.0.0.1:6379/15
+          NODE_ENV: test
           JWT_SECRET: isolated-commerce-http-integration-jwt-secret
           REFRESH_SECRET: isolated-commerce-http-integration-refresh-secret
           PARSER_IMPORT_TOKEN: isolated-parser-http-integration-token
           FEATURE_1688_PARSER: "true"
+          FEATURE_SMS_VERIFICATION: "true"
           PUBLIC_SITE_URL: https://averon.example
           FITTING_ROOM_ENABLED: "true"
         run: pnpm exec tsx scripts/check-commerce-http-db.ts
