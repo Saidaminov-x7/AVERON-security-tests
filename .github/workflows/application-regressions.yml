@@ -52,6 +52,7 @@ jobs:
 
   regression-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: repository-read-preflight
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
@@ -207,10 +208,74 @@ jobs:
           path: ${{ runner.temp }}/averon-release-manifest.json
           if-no-files-found: warn
 
+  product-id-database-integration:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.backend_ref != 'main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [repository-read-preflight]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: averon-integration-only
+          POSTGRES_DB: averon_integration
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d averon_integration"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:averon-integration-only@127.0.0.1:5432/averon_integration
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+        with:
+          repository: Saidaminov-x7/AVERON-backend
+          ref: ${{ inputs.backend_ref }}
+          path: source-checkouts/backend
+          token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # pnpm/action-setup v4
+        with:
+          version: 9.15.9
+      - name: Install backend and generate the isolated database client
+        working-directory: source-checkouts/backend
+        run: pnpm install --frozen-lockfile && pnpm prisma:generate
+      - name: Apply existing migrations, seed a legacy product, then apply the readable-ID migration
+        working-directory: source-checkouts/backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          migration_dir='prisma/migrations/20261011120000_product_readable_public_id'
+          test -f "$migration_dir/migration.sql"
+          mv "$migration_dir" "$RUNNER_TEMP/product-readable-id-migration"
+          restore_migration() {
+            if [[ -d "$RUNNER_TEMP/product-readable-id-migration" && ! -d "$migration_dir" ]]; then
+              mv "$RUNNER_TEMP/product-readable-id-migration" "$migration_dir"
+            fi
+          }
+          trap restore_migration EXIT
+          pnpm prisma:deploy
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO \"CommerceProduct\" (\"id\", \"country\", \"slug\", \"publicId\", \"translations\", \"source\", \"sourceProductId\", \"salePriceUzs\", \"createdAt\", \"updatedAt\") VALUES ('codex-readable-id-fixture', 'CN', 'codex-readable-id-fixture', 'a42h-nbsq-o1fp-awaz', '{}', 'MANUAL', 'codex-readable-id-fixture', 1, NOW(), NOW())"
+          mv "$RUNNER_TEMP/product-readable-id-migration" "$migration_dir"
+          trap - EXIT
+          pnpm prisma:deploy
+      - name: Verify legacy lookup and sequential article allocation against PostgreSQL
+        working-directory: source-checkouts/backend/apps/api
+        run: node scripts/check-product-public-id-db.mjs
+
   publish-source-commit-status:
     if: ${{ always() && (github.event_name == 'repository_dispatch' && github.event.action == 'averon-application-changed' || github.event_name == 'workflow_dispatch' && inputs.backend_ref != 'main' && inputs.frontend_ref != 'main' && inputs.admin_ref != 'main' && inputs.parser_ref != 'main') }}
     runs-on: ubuntu-latest
-    needs: [repository-read-preflight, regression-tests]
+    needs: [repository-read-preflight, regression-tests, product-id-database-integration]
     permissions: {}
     steps:
       - name: Publish required status to the exact source commit
@@ -225,13 +290,14 @@ jobs:
           PARSER_SHA: ${{ inputs.parser_ref }}
           PREFLIGHT_RESULT: ${{ needs.repository-read-preflight.result }}
           REGRESSION_RESULT: ${{ needs.regression-tests.result }}
+          DATABASE_RESULT: ${{ needs.product-id-database-integration.result }}
         run: |
           set -euo pipefail
           if [[ -z "${GH_TOKEN:-}" ]]; then
             echo "::error title=Status credential missing::Configure AVERON_SOURCE_STATUS_TOKEN with Commit statuses: write on the four AVERON source repositories."
             exit 1
           fi
-          if [[ "$PREFLIGHT_RESULT" == success && "$REGRESSION_RESULT" == success ]]; then
+          if [[ "$PREFLIGHT_RESULT" == success && "$REGRESSION_RESULT" == success && ( "$DATABASE_RESULT" == success || "$DATABASE_RESULT" == skipped ) ]]; then
             state=success
             description="Exact-SHA cross-repository checks passed"
           else
