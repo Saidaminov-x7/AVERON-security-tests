@@ -160,7 +160,7 @@ jobs:
           python-version: "3.12"
       - name: Install pinned Semgrep
         if: always()
-        run: python -m pip install --disable-pip-version-check semgrep==1.142.0
+        run: python -m pip install --disable-pip-version-check semgrep==1.179.0
       - name: Run Semgrep on application source
         id: semgrep
         if: always()

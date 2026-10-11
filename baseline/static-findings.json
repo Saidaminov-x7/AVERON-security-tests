@@ -80,6 +80,45 @@
       "reviewedBy": "averon-agent",
       "reviewedAt": "2026-10-03T00:00:00Z",
       "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "eaa09f74862f747cd04910ebb8eb1fc4e3b8cdd860f824fe8793f75fa1b35388",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "Codex security review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "2003d5321e2ac67bcedc629e8c0c925550218843c1800725b043244b2302617c",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "Codex security review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "9eb16b197af6fe774b1a9b2ed6b56f924b8bebce869f4737c9b2d0b6af25d86d",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "Codex security review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
     }
   ],
   "policy": "Critical and high non-secret findings require exact reviewed fingerprints before baseline approval. Current-file secret candidates always block. A historical Gitleaks finding may be excepted only with an exact scanner, rule, repository, path, commit, fingerprint, classification, evidence reference, reviewer, and review window."
