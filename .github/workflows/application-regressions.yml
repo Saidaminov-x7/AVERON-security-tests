@@ -249,25 +249,21 @@ jobs:
       - name: Install backend and generate the isolated database client
         working-directory: source-checkouts/backend
         run: pnpm install --frozen-lockfile && pnpm prisma:generate
-      - name: Apply existing migrations, seed a legacy product, then apply the readable-ID migration
+      - name: Create the pre-change Prisma schema, seed a legacy product, then apply the readable-ID migration
         working-directory: source-checkouts/backend
         shell: bash
         run: |
           set -euo pipefail
-          migration_dir='prisma/migrations/20261011120000_product_readable_public_id'
-          test -f "$migration_dir/migration.sql"
-          mv "$migration_dir" "$RUNNER_TEMP/product-readable-id-migration"
-          restore_migration() {
-            if [[ -d "$RUNNER_TEMP/product-readable-id-migration" && ! -d "$migration_dir" ]]; then
-              mv "$RUNNER_TEMP/product-readable-id-migration" "$migration_dir"
-            fi
-          }
-          trap restore_migration EXIT
-          pnpm prisma:deploy
+          migration_file='prisma/migrations/20261011120000_product_readable_public_id/migration.sql'
+          test -f "$migration_file"
+          sed '/^[[:space:]]*legacyPublicId[[:space:]]/d' prisma/schema.prisma > "$RUNNER_TEMP/commerce-before-public-id.prisma"
+          pnpm exec prisma migrate diff \
+            --from-empty \
+            --to-schema-datamodel "$RUNNER_TEMP/commerce-before-public-id.prisma" \
+            --script > "$RUNNER_TEMP/commerce-before-public-id.sql"
+          pnpm exec prisma db execute --schema=prisma/schema.prisma --file="$RUNNER_TEMP/commerce-before-public-id.sql"
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO \"CommerceProduct\" (\"id\", \"country\", \"slug\", \"publicId\", \"translations\", \"source\", \"sourceProductId\", \"salePriceUzs\", \"createdAt\", \"updatedAt\") VALUES ('codex-readable-id-fixture', 'CN', 'codex-readable-id-fixture', 'a42h-nbsq-o1fp-awaz', '{}', 'MANUAL', 'codex-readable-id-fixture', 1, NOW(), NOW())"
-          mv "$RUNNER_TEMP/product-readable-id-migration" "$migration_dir"
-          trap - EXIT
-          pnpm prisma:deploy
+          pnpm exec prisma db execute --schema=prisma/schema.prisma --file="$migration_file"
       - name: Verify legacy lookup and sequential article allocation against PostgreSQL
         working-directory: source-checkouts/backend/apps/api
         run: node scripts/check-product-public-id-db.mjs
