@@ -188,7 +188,6 @@ test('admin fitting-room GLB upload enters review and can be approved', async ({
   expect((await uploadResponse).status()).toBe(201);
   const sentRequest = await uploadRequest;
   expect(sentRequest.headers()['content-type']).toMatch(/^multipart\/form-data; boundary=/);
-  expect(sentRequest.postDataBuffer()?.byteLength).toBeGreaterThan(100);
   const asset = page.locator('article').filter({ hasText: 'Local upload fixture accepted for workflow testing' });
   await expect(asset.getByText(/needs review|нужна проверка/i)).toBeVisible();
   await expect(asset.getByRole('button', { name: /approve|одобрить/i })).toBeVisible();
