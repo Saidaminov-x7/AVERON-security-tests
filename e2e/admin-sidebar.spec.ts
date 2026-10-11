@@ -301,7 +301,10 @@ test('mobile admin drawer opens, closes by button and Escape, and keeps the page
       foreground: getComputedStyle(element).color,
       background: getComputedStyle(element).backgroundColor,
     }));
-    expect(contrastRatio(darkColors.foreground, darkColors.background)).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrastRatio(darkColors.foreground, darkColors.background),
+      `Dark active navigation colors were ${JSON.stringify(darkColors)}`,
+    ).toBeGreaterThanOrEqual(4.5);
     await page.screenshot({ path: info.outputPath(`admin-sidebar-mobile-${viewport.width}x${viewport.height}-dark.png`), fullPage: true, animations: 'disabled' });
     await themeToggle.click();
     await expect.poll(() => page.locator('html').evaluate((element) => element.classList.contains('dark'))).toBe(false);
