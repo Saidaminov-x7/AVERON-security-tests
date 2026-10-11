@@ -292,9 +292,9 @@ test('guest purchase resumes after registration and adds the selected product to
   };
   const cart = {
     items: [{
-      id: 'local-only-purchase-line', productId: 'fixture-product-review', variantId: 'fixture-variant-m',
+      id: 'local-only-purchase-line', productId: 'fixture-product-review', variantId: 'fixture-variant-dark-blue-m',
       title: 'GLB review fixture shirt', imageUrl: null,
-      variant: { color: 'Blue', size: 'M', sku: 'LOCAL-E2E-M' },
+      variant: { color: 'dark blue', size: 'M', sku: 'LOCAL-E2E-DARK-BLUE-M' },
       quantity: 2, stock: 5, available: true, unitPriceUzs: '180000.00', lineTotalUzs: '360000.00',
     }],
     subtotalUzs: '360000.00', currency: 'UZS' as const,
@@ -341,13 +341,13 @@ test('guest purchase resumes after registration and adds the selected product to
   const variantOptions = page.getByRole('group', { name: 'Выберите вариант' });
   await expect(variantOptions.getByRole('group', { name: 'Размер' })).toBeVisible();
   await expect(variantOptions.getByRole('group', { name: 'Цвет' })).toBeVisible();
-  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'false');
+  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'false');
   await expect(variantOptions.getByRole('button', { name: /Цвет: тёмно-синий/ })).toHaveAttribute('aria-pressed', 'false');
-  await variantOptions.getByRole('button', { name: /^Размер: M,/ }).click();
-  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'true');
+  await variantOptions.getByRole('button', { name: /^M,/ }).click();
+  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'true');
   await variantOptions.getByRole('button', { name: /Цвет: тёмно-синий/ }).click();
   await expect(variantOptions.getByRole('group', { name: 'Цвет: тёмно-синий' })).toBeVisible();
-  await expect(variantOptions.getByRole('button', { name: /^Размер: M,/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(variantOptions.getByRole('button', { name: /^M,/ })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: /увеличить количество/i }).click();
   await expect(page.locator('output[aria-label="Количество: 2"]')).toBeVisible();
   await page.getByRole('button', { name: 'В корзину' }).click();
@@ -356,7 +356,7 @@ test('guest purchase resumes after registration and adds the selected product to
   const registrationLink = authDialog.getByRole('link', { name: 'Регистрация' });
   const currentProductPath = new URL(page.url()).pathname;
   const productReturn = new URL(await registrationLink.getAttribute('href')!, storefrontUrl!).searchParams.get('returnTo');
-  expect(productReturn).toBe(`${currentProductPath}?addToCart=1&cartVariant=fixture-variant-m&cartQuantity=2`);
+  expect(productReturn).toBe(`${currentProductPath}?purchaseVariantId=fixture-variant-dark-blue-m&purchaseQuantity=2`);
   await registrationLink.click();
   await expect(page).toHaveURL(/\/ru\/register\?returnTo=/);
 
@@ -372,9 +372,9 @@ test('guest purchase resumes after registration and adds the selected product to
   await expect(page).toHaveURL(new URL(productReturn!, storefrontUrl!).toString());
   await expect.poll(() => cartAddRequests.length).toBe(1);
   expect(registrationRequests).toHaveLength(1);
-  expect(registrationRequests[0]).toMatchObject({ name: customer.name, phone: '+998 90 123 45 67' });
-  expect(verificationRequests).toEqual([{ phone: '+998 90 123 45 67', code: '135790' }]);
-  expect(cartAddRequests).toEqual([{ productId: 'fixture-product-review', variantId: 'fixture-variant-m', quantity: 2 }]);
+  expect(registrationRequests[0]).toMatchObject({ name: customer.name, phone: '+998901234567' });
+  expect(verificationRequests).toEqual([{ phone: '+998901234567', code: '135790' }]);
+  expect(cartAddRequests).toEqual([{ productId: 'fixture-product-review', variantId: 'fixture-variant-dark-blue-m', quantity: 2 }]);
   await page.waitForTimeout(500);
   expect(cartAddRequests).toHaveLength(1);
   await expect(page.getByRole('status').filter({ hasText: 'Добавлено в корзину' })).toBeVisible();
