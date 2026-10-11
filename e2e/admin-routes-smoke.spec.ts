@@ -333,6 +333,40 @@ test('admin product catalog exposes accessible empty and recoverable error state
   await expect(catalog.locator('.card.text-muted')).toBeVisible();
 });
 
+test('admin catalog mobile header fits Uzbek and English titles', async ({ page }) => {
+  test.setTimeout(60_000);
+  const admin = await authenticateFixtureAdmin(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  for (const language of ['uz', 'en'] as const) {
+    await page.evaluate((value) => localStorage.setItem('i18nextLng', value), language);
+    await page.goto(new URL('/products', admin).toString());
+    await expect(page.getByRole('status', { name: 'Loading page' })).toBeHidden({ timeout: 20_000 });
+
+    const heading = page.getByRole('main').last().getByRole('heading', { level: 1 });
+    await expect(heading).toBeVisible();
+    const layout = await heading.evaluate((element) => {
+      const action = element.parentElement?.parentElement?.querySelector('button');
+      if (!action) throw new Error('Expected the add-product action beside the catalog title');
+      return {
+        title: element.textContent?.trim() ?? '',
+        titleFits: element.scrollWidth <= element.clientWidth + 1,
+        titleBottom: element.getBoundingClientRect().bottom,
+        actionTop: action.getBoundingClientRect().top,
+        viewportWidth: document.documentElement.clientWidth,
+        documentWidth: document.documentElement.scrollWidth,
+      };
+    });
+
+    expect(layout.title, `${language} catalog heading should be translated`).toBe(
+      language === 'uz' ? 'AVERON katalogi' : 'AVERON Catalog',
+    );
+    expect(layout.titleFits, `${language} catalog title should not be ellipsized`).toBe(true);
+    expect(layout.actionTop, `${language} add action should sit below the title`).toBeGreaterThanOrEqual(layout.titleBottom);
+    expect(layout.documentWidth, `${language} catalog should not overflow horizontally`).toBeLessThanOrEqual(layout.viewportWidth + 1);
+  }
+});
+
 test('promo-code create action renders and persists in the local authenticated fixture', async ({ page }) => {
   test.setTimeout(60_000);
   const admin = await authenticateFixtureAdmin(page);
