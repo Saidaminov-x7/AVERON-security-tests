@@ -579,8 +579,8 @@ test("Task 18 authentication and integration foundations fail closed and protect
   assert.match(phoneLogin, /registrationSchema[\s\S]*?\.strict\(\)/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:code:/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:cooldown:/);
-  assert.match(phoneAuth, /keyGenerator:[\s\S]*?authRateLimitKey\(/);
-  assert.match(phoneAuth, /createAuthRateLimitKey\(config\.JWT_SECRET, scope, request\.ip,/);
+  assert.match(phoneAuth, /keyGenerator:[\s\S]*?createAuthRateLimitKey\(/);
+  assert.match(phoneAuth, /createAuthRateLimitKey\(config\.JWT_SECRET, 'phone-otp-request', req\.ip, req\.body, \['phone'\]\)/);
   assert.match(loginThrottle, /averon:v1:auth:login-failures:/);
   assert.match(otpStore, /redis\.call\('GET', KEYS\[1\]\)/);
   assert.match(otpStore, /redis\.call\('DEL', KEYS\[1\]\)/);

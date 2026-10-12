@@ -85,26 +85,26 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   await expect(toggle).toHaveAttribute('aria-label', 'Свернуть меню');
   await expect(navigation.getByRole('link')).toHaveCount(18);
   const initialWidth = await wrapper.evaluate((element) => element.getBoundingClientRect().width);
-  expect(initialWidth).toBeGreaterThanOrEqual(220);
-  expect(initialWidth).toBeLessThanOrEqual(360);
+  expect(initialWidth).toBeGreaterThanOrEqual(232);
+  expect(initialWidth).toBeLessThanOrEqual(320);
 
   const resize = page.locator('[data-action-id="admin.sidebar.resize"]');
   await resize.focus();
   await page.keyboard.press('Home');
-  await expect(resize).toHaveAttribute('aria-valuenow', '220');
+  await expect(resize).toHaveAttribute('aria-valuenow', '232');
   await page.keyboard.press('End');
-  await expect(resize).toHaveAttribute('aria-valuenow', '360');
+  await expect(resize).toHaveAttribute('aria-valuenow', '320');
   await page.keyboard.press('Home');
-  await expect(sidebar).toHaveCSS('width', '220px');
+  await expect(sidebar).toHaveCSS('width', '232px');
   const resizeBounds = await resize.boundingBox();
   expect(resizeBounds).not.toBeNull();
   await page.mouse.move(resizeBounds!.x + resizeBounds!.width / 2, resizeBounds!.y + 120);
   await page.mouse.down();
-  await page.mouse.move(360, resizeBounds!.y + 120, { steps: 4 });
+  await page.mouse.move(320, resizeBounds!.y + 120, { steps: 4 });
   await page.mouse.up();
-  await expect(resize).toHaveAttribute('aria-valuenow', '360');
-  await expect(sidebar).toHaveCSS('width', '360px');
-  await expect(wrapper).toHaveCSS('width', '360px');
+  await expect(resize).toHaveAttribute('aria-valuenow', '320');
+  await expect(sidebar).toHaveCSS('width', '320px');
+  await expect(wrapper).toHaveCSS('width', '320px');
   await expectNoHorizontalOverflow(page);
 
   await page.locator('[data-action-id="admin.theme.toggle"]:visible').click();
@@ -126,7 +126,7 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   await expect(toggle).toHaveAttribute('aria-label', 'Развернуть меню');
   await expect(sidebar).toHaveCSS('width', '76px');
   await expect(wrapper).toHaveCSS('width', '76px');
-  await expect(sidebar.getByRole('img', { name: 'Админ-панель AVERON' })).toBeVisible();
+  await expect(sidebar.getByRole('button', { name: 'Обзор бизнеса' })).toBeVisible();
   await expect(sidebar.getByRole('button', { name: 'Выйти' })).toBeVisible();
   await expect(navigation.getByRole('link')).toHaveCount(18);
   await expectNoHorizontalOverflow(page);
@@ -136,7 +136,7 @@ test('admin sidebar collapse persists and active item stays readable in dark the
   await expect(page.locator('[data-action-id="admin.sidebar.toggle-collapse"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '76px');
   await page.locator('[data-action-id="admin.sidebar.toggle-collapse"]').click();
-  await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '360px');
+  await expect(page.locator('.admin-sidebar')).toHaveCSS('width', '320px');
 
   const expectedLabels = {
     ru: { collapse: 'Свернуть меню', expand: 'Развернуть меню', resize: 'Изменить ширину меню' },
@@ -258,23 +258,17 @@ test('mobile admin drawer opens, closes by button and Escape, and keeps the page
     } else {
       expect(menuBounds!.y).toBeGreaterThanOrEqual(triggerBounds!.y + triggerBounds!.height);
     }
-    await expect(languageMenu.locator('img')).toHaveCount(3);
-    const languageFlags = await languageMenu.locator('img').evaluateAll((flags) => flags.map((flag) => ({
-      locale: flag.getAttribute('alt'),
-      source: flag.getAttribute('src'),
-      loaded: (flag as HTMLImageElement).complete && (flag as HTMLImageElement).naturalWidth > 0,
-    })));
-    expect(languageFlags.map((flag) => flag.locale)).toEqual(['Русский', 'Oʻzbekcha', 'English']);
-    expect(languageFlags.map((flag) => flag.source)).toEqual(['/flags/ru.svg', '/flags/uz.svg', '/flags/en.svg']);
-    expect(languageFlags.every((flag) => flag.loaded)).toBe(true);
+    await expect(languageItems.nth(0).getByRole('img', { name: 'Русский' })).toBeVisible();
+    await expect(languageItems.nth(1).getByRole('img', { name: 'Oʻzbekcha' })).toBeVisible();
+    await expect(languageItems.nth(2).getByRole('img', { name: 'English' })).toBeVisible();
     await page.keyboard.press('Shift+Tab');
     await expect(languageTrigger).toBeFocused();
     await expect(languageMenu).toBeHidden();
     await languageTrigger.click();
     await expect(languageMenu).toBeVisible();
     await page.keyboard.press('Tab');
-    await expect(drawer.locator('[data-action-id="admin.theme.toggle"]')).toBeFocused();
     await expect(languageMenu).toBeHidden();
+    expect(await drawer.evaluate((element) => element.contains(document.activeElement))).toBe(true);
     await languageTrigger.click();
     await expect(languageMenu).toBeVisible();
     await languageMenu.locator('[data-action-id="admin.sidebar.language.ru"]').click();

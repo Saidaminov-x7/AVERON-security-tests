@@ -33,9 +33,12 @@ test('mobile navigation keeps routes and actions reachable across narrow viewpor
     const menuTrigger = page.getByRole('button', { name: /^меню$|^menu$/i });
     await expect(menuTrigger).toBeVisible();
     await menuTrigger.click();
+    await expect(menuTrigger).toHaveAttribute('aria-expanded', 'true');
 
     const dialog = page.getByRole('dialog', { name: /меню|menu/i });
     await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute('role', 'dialog');
+    await expect(dialog).toHaveAttribute('aria-label', /меню|menu/i);
     await expect(dialog.getByRole('searchbox')).toBeVisible();
     await expect(dialog.getByRole('region', { name: /магазины мира|shop by country/i }).getByRole('link')).toHaveCount(4);
     await expect(dialog.getByRole('navigation').getByRole('link').first()).toBeVisible();
@@ -125,7 +128,9 @@ test('mobile navigation keeps routes and actions reachable across narrow viewpor
   await page.goto(new URL('/ru', storefrontUrl!).toString());
   const menuTrigger = page.getByRole('button', { name: /^меню$|^menu$/i });
   await menuTrigger.click();
+  await expect(menuTrigger).toHaveAttribute('aria-expanded', 'true');
   const dialog = page.getByRole('dialog', { name: /меню|menu/i });
+  await expect(dialog).toHaveAttribute('aria-label', /меню|menu/i);
   await expect(dialog).toBeVisible();
   await page.setViewportSize({ width: 1024, height: 768 });
   await expect(dialog).toBeHidden();
@@ -143,6 +148,7 @@ test('drawer keyboard trap, locale switch, and search preserve expected behavior
   const menuTrigger = page.getByRole('button', { name: /^меню$|^menu$/i });
   await menuTrigger.click();
   const dialog = page.getByRole('dialog', { name: /меню|menu/i });
+  await expect(dialog).toHaveAttribute('aria-label', /меню|menu/i);
   const firstLink = dialog.getByRole('link', { name: 'AVERON' });
   await firstLink.focus();
   await page.keyboard.press('Shift+Tab');
@@ -150,7 +156,7 @@ test('drawer keyboard trap, locale switch, and search preserve expected behavior
   await page.keyboard.press('Tab');
   await expect(firstLink).toBeFocused();
 
-  await dialog.getByRole('button', { name: /language: ru|язык: ru/i }).click();
+  await dialog.getByRole('button', { name: /language|язык|til/i }).click();
   const localeOptions = page.getByRole('menuitemradio');
   await expect(localeOptions).toHaveCount(3);
   await localeOptions.nth(1).click();
@@ -173,6 +179,7 @@ test('market, primary-navigation, and utility links navigate and dismiss the dra
 
   const trigger = page.getByRole('button', { name: /^меню$|^menu$/i });
   await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   const dialog = page.getByRole('dialog', { name: /меню|menu/i });
   await dialog.getByRole('link', { name: 'Из США' }).click();
   await expect(page).toHaveURL(/\/ru\/catalog\?country=US$/);
@@ -181,6 +188,7 @@ test('market, primary-navigation, and utility links navigate and dismiss the dra
   await page.goto(new URL('/ru', storefrontUrl!).toString());
   await page.getByRole('button', { name: /^меню$|^menu$/i }).click();
   const secondDialog = page.getByRole('dialog', { name: /меню|menu/i });
+  await expect(secondDialog).toHaveAttribute('aria-label', /меню|menu/i);
   await secondDialog.getByRole('navigation').getByRole('link', { name: 'Товары' }).click();
   await expect(page).toHaveURL(/\/ru\/catalog$/);
   await expect(secondDialog).toBeHidden();
@@ -188,6 +196,7 @@ test('market, primary-navigation, and utility links navigate and dismiss the dra
   await page.goto(new URL('/ru', storefrontUrl!).toString());
   await page.getByRole('button', { name: /^меню$|^menu$/i }).click();
   const thirdDialog = page.getByRole('dialog', { name: /меню|menu/i });
+  await expect(thirdDialog).toHaveAttribute('aria-label', /меню|menu/i);
   await thirdDialog.getByRole('link', { name: 'Избранное' }).click();
   await expect(page).toHaveURL(/\/ru\/login\?returnTo=%2Fru%2Ffavorites$/);
   await expect(thirdDialog).toBeHidden();
