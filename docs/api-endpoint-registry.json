@@ -167,9 +167,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
@@ -190,9 +192,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
@@ -213,9 +217,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "GET",
