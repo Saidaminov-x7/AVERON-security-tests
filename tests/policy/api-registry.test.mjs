@@ -66,9 +66,16 @@ test("API registry distinguishes direct request coverage from module-level tests
   }
 
   const routes = new Map(registry.endpoints.map((endpoint) => [`${endpoint.method} ${endpoint.path}`, endpoint]));
-  assert.equal(routes.get("GET /media")?.testCoverageStatus, "PARTIAL",
-    "A plugin prefix or a different media route must not count as a direct GET /media request");
+  assert.equal(routes.get("GET /media")?.testCoverageStatus, "TESTED");
+  assert.ok(routes.get("GET /media")?.testFiles.some((file) => file.endsWith("media/__tests__/access-control.test.ts")));
   assert.equal(routes.get("POST /media/upload")?.testCoverageStatus, "TESTED");
+});
+
+test("direct endpoint coverage is derived from exact Fastify inject method and URL pairs", async () => {
+  const generator = await readFile(path.join(root, "scripts/generate-api-registry.mjs"), "utf8");
+  assert.match(generator, /request\.method === method\.toUpperCase\(\)/);
+  assert.match(generator, /routeInTest\.test\(request\.url\)/);
+  assert.doesNotMatch(generator, /routeInTest\.test\(testFile\.contents\)/);
 });
 
 test("API registry follows nested commerce plugin registrations", () => {
