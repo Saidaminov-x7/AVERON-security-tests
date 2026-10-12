@@ -64,6 +64,11 @@ test("API registry distinguishes direct request coverage from module-level tests
     assert.match(endpoint.coverageEvidence, /route path literal is asserted/i);
     assert.ok(endpoint.testFiles.length > 0);
   }
+
+  const routes = new Map(registry.endpoints.map((endpoint) => [`${endpoint.method} ${endpoint.path}`, endpoint]));
+  assert.equal(routes.get("GET /media")?.testCoverageStatus, "PARTIAL",
+    "A plugin prefix or a different media route must not count as a direct GET /media request");
+  assert.equal(routes.get("POST /media/upload")?.testCoverageStatus, "TESTED");
 });
 
 test("API registry follows nested commerce plugin registrations", () => {

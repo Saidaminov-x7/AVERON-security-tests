@@ -49,7 +49,7 @@ and validated.
 | #16 | AI search/style/complete-look may select only canonical products and cannot invent commerce facts. | AI catalog assistant and capability routes exist. | AI search/style/look surfaces exist. | Product AI fill surfaces exist. | Not applicable. | Mock and regression tests exist. | No configured provider or live request validation. | Provider availability and canonical hydration not live verified. | Keep optional flows safely disabled/fallback when provider absent. | PARTIAL |
 | #17 | Recommendations, recently viewed, similar/related products, canonical hydration and privacy. | Recommendation service and tests exist. | Recommendation UI exists. | Analytics/merchandising surfaces exist. | Not applicable. | Privacy/security regression coverage incomplete for runtime. | Unit coverage only. | Anonymous vs logged-in isolation and private cache behavior not E2E tested. | None at initial audit. | NOT_RUNTIME_VERIFIED |
 | #18 | Integration foundations (1688, Pinduoduo, AI fill, iPost, n8n, Telegram, currency, SMS, Redis, scaling, outfit, sharing, promo). | Source implementations vary; Pinduoduo persistence and live providers are not confirmed; UZS is authoritative. | Outfit, share and promo UX exist. | Integration diagnostics/config exist. | 1688 adapter exists; provider/runtime needs verification. | Mock contract and security tests exist. | Local mocks do not equal sandbox/live verification. | Provider status must be tracked individually; Redis/Postgres/scale require staging access. | Mark unconfigured/incomplete providers honestly in matrix. | PARTIAL |
-| #19 | API/architecture review, endpoint coverage, runtime security/performance and production evidence. | API registry and safety tests exist. | Product/runtime routes exist; unused rental hooks, region map, saved-search UI, Leaflet helper/assets/dependencies were removed after reference audit. | Obsolete rental listing moderation and legacy review/export routes were removed from the active Admin plugin. | SSRF proxy source-level control exists. | Security regression harness exists. | Current source-derived registry: 198 endpoints, 78 TESTED, 64 PARTIAL, 56 NOT_TESTED. Backend build and unit/API suite pass; no full active endpoint runtime sweep. | Full endpoint coverage and runtime security/performance evidence. | Removed confirmed-unused rental Admin routes and Frontend artifacts; regenerated registry; dead service/schema/database structures remain subject to controlled Task #22 review. | PARTIAL |
+| #19 | API/architecture review, endpoint coverage, runtime security/performance and production evidence. | API registry and safety tests exist. | Product/runtime routes exist; unused rental hooks, region map, saved-search UI, Leaflet helper/assets/dependencies were removed after reference audit. | Obsolete rental listing moderation and legacy review/export routes were removed from the active Admin plugin. | SSRF proxy source-level control exists. | Security regression harness exists. | Current source-derived registry: 198 endpoints, 49 TESTED, 96 PARTIAL, 53 NOT_TESTED. Backend targeted security tests and type-check pass; no full active endpoint runtime sweep. | Full endpoint coverage and runtime security/performance evidence. | Tightened coverage detection to require matching method and exact injected route path; added regression assertions; dead service/schema/database structures remain subject to controlled Task #22 review. | PARTIAL |
 | #20 | SEO, analytics, UI/motion/mobile polish and stale-task cleanup. | Page-view analytics exists; required commerce event taxonomy remains incomplete. | SEO metadata and page-view tracking exist; unused legacy files/assets and Leaflet dependencies removed; mobile visual E2E absent. | Analytics export now reports product activity; obsolete listing export and review routes are retired. | Not applicable. | No full Task #20 matrix. | Frontend build and tests pass (110 tests); Admin build/tests pass; no rendered metadata/mobile browser suite. | Commerce event taxonomy, rendered UX, SEO checks, localization quality, and mobile E2E. | Removed rental terminology/counts from Admin user management and analytics exports plus proven-unused Frontend legacy artifacts; this does not complete wider Task #20 UI/analytics requirements. | PARTIAL |
 | #21 | Production blocker closure, green security baseline, staging E2E and infrastructure verification. | Backend build passed; backend suite passed (302 tests) with test-only environment values; no real datastore/concurrency run. | Prior build/tests pass; Firebase restrictions unknown. | Admin build and suite passed (47 tests); live configuration unknown. | Parser build/tests passed in prior recorded verification; runtime proxy/container test missing. | Policy tests passed (44); fresh static scan unavailable and baseline remains unestablished. | Hosted CI artifact and staging access not available. | Green security baseline, staging/browser E2E, real database/Redis, Cloudflare/Railway, backup/restore, and provider verification. | Refreshed route inventory and test evidence; fail-closed security reporting retained. No external/runtime result was fabricated. | BLOCKED_EXTERNAL |
 
@@ -84,7 +84,9 @@ the controlled architecture/database work and backup review.
   secret findings from exact-context historical approvals. The approvals list
   remains empty until findings are reviewed with fresh scanner output.
 - `docs/api-endpoint-registry.json` was regenerated against the current source:
-  198 active endpoint records; 78 TESTED, 64 PARTIAL, and 56 NOT_TESTED.
+  198 active endpoint records; 49 TESTED, 96 PARTIAL, and 53 NOT_TESTED. Direct
+  coverage now requires a matching HTTP method and exact route path in a Fastify
+  `inject` request; mentioning a route or mounting a plugin prefix is not enough.
 - Verification: Backend production build passed; Backend API/unit suite passed
   (302 tests) with ephemeral test-only environment values; Admin production
   build passed; Admin suite passed (47 tests); Frontend production build and
@@ -146,7 +148,7 @@ tag, or release was performed.
   access based on that role. The CMS section identifier `POPULAR_LISTINGS`
   remains for stored-content compatibility, but its current renderer uses
   product cards and product terminology (`LEGACY_COMPATIBILITY`).
-- API registry: 198 active endpoint records; 78 `TESTED`, 64 `PARTIAL`, and 56
+- API registry: 198 active endpoint records; 49 `TESTED`, 96 `PARTIAL`, and 53
   `NOT_TESTED`. `TESTED` here means source-linked request coverage was detected;
   it does not imply deployed or full production runtime verification.
 
@@ -202,7 +204,7 @@ independent restriction evidence.
   matrices, keyboard/focus/drawer behavior, token-refresh concurrency, IDOR,
   and Admin RBAC remain unverified. The existing local Frontend server serves
   stale/missing chunks and is not suitable for E2E.
-- Critical API route coverage is incomplete: the registry still has 72
+- Critical API route coverage is incomplete: the registry still has 53
   `NOT_TESTED` routes. Critical route families have not all been exercised
   through real runtime/integration paths.
 - No disposable PostgreSQL/Redis services were available. Checkout/promo

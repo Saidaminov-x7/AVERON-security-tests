@@ -1542,8 +1542,8 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
@@ -1598,8 +1598,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
@@ -1626,8 +1626,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
@@ -1654,8 +1654,8 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
@@ -1704,8 +1704,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
@@ -1807,8 +1807,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -1832,8 +1832,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -1857,8 +1857,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -1907,8 +1907,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -1932,8 +1932,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -2121,8 +2121,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
         "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
@@ -2252,16 +2252,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2287,12 +2284,9 @@
       "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2314,16 +2308,14 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
         "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2345,16 +2337,14 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
         "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2457,8 +2447,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
       ]
@@ -2484,8 +2474,8 @@
         "FEATURE_DISABLED"
       ],
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
       ]
@@ -2513,12 +2503,10 @@
       "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
         "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2540,8 +2528,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -2565,8 +2553,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -2590,8 +2578,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -2615,8 +2603,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -2742,8 +2730,8 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
@@ -2767,8 +2755,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
@@ -2843,8 +2831,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
       ]
@@ -3237,8 +3225,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
@@ -3289,8 +3277,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
@@ -3371,11 +3359,7 @@
       "testCoverageStatus": "TESTED",
       "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
@@ -3400,14 +3384,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
         "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
@@ -3461,8 +3442,8 @@
         "FEATURE_DISABLED"
       ],
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
@@ -3690,8 +3671,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
@@ -3715,8 +3696,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
@@ -3740,8 +3721,8 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
@@ -3942,8 +3923,8 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
         "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
@@ -4845,7 +4826,7 @@
       "path": "/media",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 105,
+      "line": 125,
       "access": "ADMIN",
       "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
@@ -4859,16 +4840,18 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/media/:id",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 89,
+      "line": 106,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -4882,16 +4865,18 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/media/upload",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 34,
+      "line": 48,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -4905,9 +4890,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "GET",

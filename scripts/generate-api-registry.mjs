@@ -54,11 +54,28 @@ function routePath(prefix, value) {
 }
 
 function testPathPattern(route) {
-  const quoteCharacters = String.fromCharCode(34, 39, 96);
   const escaped = route.split("/").filter(Boolean).map((segment) =>
-    segment.startsWith(":") ? `[^/${quoteCharacters}?]+` : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    segment.startsWith(":") ? "[^/]+" : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
   );
-  return new RegExp(`[${quoteCharacters}]\\s*/${escaped.join("/")}(?=$|[?/${quoteCharacters}])`);
+  return new RegExp(`^/${escaped.join("/")}/?(?:\\?.*)?$`);
+}
+
+function injectedRequests(testFile) {
+  const source = ts.createSourceFile(testFile.path, testFile.contents, ts.ScriptTarget.Latest, true);
+  const requests = [];
+  function visit(node) {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && node.expression.name.text === "inject" && node.arguments[0]
+      && ts.isObjectLiteralExpression(node.arguments[0])) {
+      const options = node.arguments[0];
+      const method = stringValue(propertyValue(options, "method"));
+      const url = stringValue(propertyValue(options, "url"));
+      if (method && url) requests.push({ method: method.toUpperCase(), url: url.split("#", 1)[0] });
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return requests;
 }
 
 function resolveImportedFile(sourcePath, specifier) {
@@ -221,13 +238,12 @@ async function emitRoutes(sourcePath, prefix, active = new Set()) {
     const routeInTest = testPathPattern(pathValue);
     const matchingTests = testFiles.filter((testFile) => {
       if (currentModule === "core" || !testFile.path.startsWith(`${moduleRoot}${path.sep}`)) return false;
-      const testText = testFile.contents;
-      return routeInTest.test(testText) || testText.includes(sourceBase);
+      return injectedRequests(testFile).some((request) => routeInTest.test(request.url))
+        || testFile.contents.includes(sourceBase);
     });
-    const directlyCovered = matchingTests.some((testFile) =>
-      routeInTest.test(testFile.contents)
-      && /\b(?:server|app)\.inject\s*\(/.test(testFile.contents),
-    );
+    const directlyCovered = matchingTests.some((testFile) => injectedRequests(testFile).some(
+      (request) => request.method === method.toUpperCase() && routeInTest.test(request.url),
+    ));
     const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
 
     endpoints.push({
