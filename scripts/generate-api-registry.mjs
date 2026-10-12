@@ -63,6 +63,7 @@ function testPathPattern(route) {
 function injectedRequests(testFile) {
   const source = ts.createSourceFile(testFile.path, testFile.contents, ts.ScriptTarget.Latest, true);
   const requests = [];
+  const requestMethods = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
   function visit(node) {
     if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
       && node.expression.name.text === "inject" && node.arguments[0]
@@ -71,6 +72,22 @@ function injectedRequests(testFile) {
       const method = stringValue(propertyValue(options, "method"));
       const url = stringValue(propertyValue(options, "url"));
       if (method && url) requests.push({ method: method.toUpperCase(), url: url.split("#", 1)[0] });
+    }
+    // Fastify tests commonly table-drive requests as it.each([['GET', '/path'], ...])
+    // and then pass the destructured method/url into app.inject. Preserve the exact
+    // pair while refusing unrelated table rows and tables in files without inject.
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && node.expression.name.text === "each" && node.arguments[0]
+      && ts.isArrayLiteralExpression(node.arguments[0])
+      && testFile.contents.includes(".inject(")) {
+      for (const row of node.arguments[0].elements) {
+        if (!ts.isArrayLiteralExpression(row) || row.elements.length < 2) continue;
+        const method = stringValue(row.elements[0])?.toUpperCase();
+        const url = stringValue(row.elements[1]);
+        if (method && requestMethods.has(method) && url?.startsWith("/")) {
+          requests.push({ method, url: url.split("#", 1)[0] });
+        }
+      }
     }
     ts.forEachChild(node, visit);
   }

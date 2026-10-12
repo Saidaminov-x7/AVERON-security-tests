@@ -76,6 +76,8 @@ test("direct endpoint coverage is derived from exact Fastify inject method and U
   assert.match(generator, /request\.method === method\.toUpperCase\(\)/);
   assert.match(generator, /routeInTest\.test\(request\.url\)/);
   assert.doesNotMatch(generator, /routeInTest\.test\(testFile\.contents\)/);
+  assert.match(generator, /Fastify tests commonly table-drive requests as it\.each/);
+  assert.match(generator, /requestMethods\.has\(method\) && url\?\.startsWith\("\/"\)/);
 });
 
 test("API registry follows nested commerce plugin registrations", () => {
