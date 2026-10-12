@@ -4840,8 +4840,8 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
         "apps/api/src/modules/media/__tests__/access-control.test.ts"
       ]
