@@ -2,13 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { resolveAllRepositories } from "../../scripts/repositories.mjs";
 import { discoverSourceFile } from "../../scripts/source-discovery.mjs";
 
 const repositories = await resolveAllRepositories();
+const securityTestsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 async function source(repository, relativePath) {
-  const filePath = path.join(repositories[repository], relativePath);
+  const root = repository === "AVERON_security_tests" ? securityTestsRoot : repositories[repository];
+  const filePath = path.join(root, relativePath);
   try {
     return await readFile(filePath, "utf8");
   } catch (error) {
@@ -32,14 +35,200 @@ test("backend requires signing secrets and leaves unfinished visual features dis
   }
 });
 
-test("backend trusts forwarded client IPs only from explicitly configured proxy addresses", async () => {
+test("backend proxy trust requires explicit trusted proxy addresses on every platform", async () => {
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const env = await source("AVERON_backend", "apps/api/src/config/env.ts");
   const proxyConfig = await source("AVERON_backend", "apps/api/src/lib/trust-proxy.ts");
-  assert.match(server, /trustProxy: trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
+  assert.match(server, /trustProxy:\s*trustProxyOption\(config\.TRUST_PROXY_ADDRESSES\)/);
+  assert.doesNotMatch(server, /isRailwayRuntime/);
   assert.doesNotMatch(server, /trustProxy:\s*true/);
   assert.match(env, /TRUST_PROXY_ADDRESSES/);
+  assert.match(proxyConfig, /addresses\.length/);
+  assert.match(proxyConfig, /return false/);
+  assert.doesNotMatch(proxyConfig, /managedPlatformProxy|return true/);
   assert.match(proxyConfig, /trustProxyOption\([\s\S]*addresses\.length[\s\S]*return \[\.\.\.addresses\][\s\S]*return false/);
+});
+
+test("backend unknown routes never reflect attacker-controlled paths or query strings", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const handler = await source("AVERON_backend", "apps/api/src/lib/notFoundHandler.ts");
+  assert.match(server, /registerNotFoundHandler\(server\);/);
+  assert.match(handler, /message:\s*'Route not found'/);
+  assert.doesNotMatch(handler, /request\.url|request\.method/);
+});
+
+test("temporary login throttles are scoped to the source as well as the account", async () => {
+  const throttle = await source("AVERON_backend", "apps/api/src/modules/auth/login-throttle.ts");
+  const emailLogin = await source("AVERON_backend", "apps/api/src/modules/auth/login.ts");
+  const phoneLogin = await source("AVERON_backend", "apps/api/src/modules/auth/phone-password.ts");
+  assert.match(throttle, /identifier: string, sourceIp: string/);
+  assert.match(throttle, /normalized}:\$\{sourceIp/);
+  assert.match(emailLogin, /loginFailureKey\('email', dto\.email, request\.ip\)/);
+  assert.match(phoneLogin, /loginFailureKey\('phone', data\.phone, request\.ip\)/);
+});
+
+test("auth rate-limit storage keys are HMACed instead of retaining submitted PII or tokens", async () => {
+  const authRoutes = await source("AVERON_backend", "apps/api/src/modules/auth/index.ts");
+  const keyBuilder = await source("AVERON_backend", "apps/api/src/modules/auth/rate-limit-key.ts");
+  const tests = await source("AVERON_backend", "apps/api/src/modules/auth/rate-limit-key.test.ts");
+  assert.match(authRoutes, /createAuthRateLimitKey\(config\.JWT_SECRET, 'login', req\.ip, req\.body, \['email'\], true\)/);
+  assert.match(authRoutes, /createAuthRateLimitKey\(config\.JWT_SECRET, 'verify-2fa', req\.ip, req\.body, \['tempToken'\]\)/);
+  assert.doesNotMatch(authRoutes, /keyGenerator:\s*\(req\)\s*=>\s*`\$\{req\.ip\}:/);
+  assert.match(keyBuilder, /createHmac\('sha256', secret\)/);
+  assert.match(keyBuilder, /identityFields/);
+  assert.match(keyBuilder, /MAX_RATE_LIMIT_IDENTIFIER_LENGTH/);
+  assert.match(tests, /excludes IP, identifiers, and other body fields/);
+  assert.match(tests, /separates route scopes, source addresses, and case-sensitive verification tokens/);
+});
+
+test("repeated authenticated authorization denials create a deduplicated admin incident without blocking", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const monitor = await source("AVERON_backend", "apps/api/src/lib/security-denial-monitor.ts");
+  const tests = await source("AVERON_backend", "apps/api/src/lib/security-denial-monitor.test.ts");
+  assert.match(server, /monitorAuthenticatedAuthorizationDenial\(/);
+  assert.match(monitor, /DENIAL_ALERT_THRESHOLD = 12/);
+  assert.match(monitor, /DENIAL_WINDOW_SECONDS = 5 \* 60/);
+  assert.match(monitor, /ALERT_DEDUP_SECONDS = 60 \* 60/);
+  assert.match(monitor, /input\.statusCode !== 403 \|\| !input\.userId/);
+  assert.match(monitor, /createHash\('sha256'\)/);
+  assert.match(monitor, /type: 'SECURITY_INCIDENT'/);
+  assert.match(monitor, /dependencies\.redis\.set\(alertKey, '1', 'EX', ALERT_DEDUP_SECONDS, 'NX'\)/);
+  assert.match(tests, /does not alert for anonymous requests, 401s, or isolated 403 responses/);
+  assert.match(tests, /alerts once after repeated denials without including the raw user ID/);
+  assert.match(tests, /fails open and emits only a typed diagnostic if Redis is unavailable/);
+});
+
+test("repeated unknown API routes alert administrators without blocking single 404s", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const monitor = await source("AVERON_backend", "apps/api/src/lib/unmatched-route-monitor.ts");
+  const temporaryRestriction = await source("AVERON_backend", "apps/api/src/lib/temporary-source-restriction.ts");
+  const tests = await source("AVERON_backend", "apps/api/src/lib/unmatched-route-monitor.test.ts");
+  assert.match(server, /monitorUnmatchedRouteScan\(/);
+  assert.match(server, /routeMatched: Boolean\(request\.routeOptions\.url\)/);
+  assert.match(monitor, /SCAN_ALERT_THRESHOLD = 40/);
+  assert.match(monitor, /SCAN_WINDOW_SECONDS = 5 \* 60/);
+  assert.match(monitor, /input\.statusCode !== 404 \|\| input\.routeMatched \|\| !input\.sourceIp \|\| input\.method === 'OPTIONS'/);
+  assert.match(monitor, /RESOURCE_PROBE_ALERT_THRESHOLD = 60/);
+  assert.match(monitor, /input\.routeTemplate/);
+  assert.match(monitor, /createHash\('sha256'\)/);
+  assert.match(monitor, /type: 'SECURITY_INCIDENT'/);
+  assert.match(monitor, /restrictSourceTemporarily\(dependencies\.redis, input\.sourceIp, 'unmatched-route-scan'\)/);
+  assert.match(monitor, /restrictSourceTemporarily\(dependencies\.redis, input\.sourceIp, 'resource-id-probe'\)/);
+  assert.match(temporaryRestriction, /TEMPORARY_SOURCE_RESTRICTION_SECONDS = 10 \* 60/);
+  assert.match(temporaryRestriction, /redis\.get\(restrictionKey\(sourceIp\)\)/);
+  assert.match(server, /registerTemporarySourceRestrictionGuard\(server, redis\)/);
+  assert.match(server, /trustedClientIp: config\.TRUST_PROXY_ADDRESSES\.length > 0/);
+  assert.match(temporaryRestriction, /server\.addHook\(["']onRequest["']/);
+  assert.match(server, /monitorResourceNotFoundProbes\(/);
+  assert.match(tests, /ignores matched-route 404s, other statuses, missing sources, and isolated probes/);
+  assert.match(tests, /alerts once at the threshold without retaining or exposing the raw source address/);
+  assert.match(tests, /alerts on high-volume 404s for a parameterized route without exposing resource IDs/);
+});
+
+test("successful reads of selected private resources detect distinct-ID enumeration without blocking", async () => {
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  const monitor = await source("AVERON_backend", "apps/api/src/lib/successful-resource-enumeration-monitor.ts");
+  const tests = await source("AVERON_backend", "apps/api/src/lib/successful-resource-enumeration-monitor.test.ts");
+  assert.match(server, /monitorSuccessfulResourceEnumeration\(/);
+  assert.match(monitor, /input\.method !== 'GET' \|\| input\.statusCode !== 200 \|\| !input\.userId/);
+  assert.match(monitor, /\/api\/v1\/orders\/me\/:orderNumber/);
+  assert.match(monitor, /\/api\/v1\/admin\/orders\/:orderNumber/);
+  assert.match(monitor, /\/admin\/users\/:id\/ai-sessions/);
+  assert.match(monitor, /SADD.*KEYS\[1\].*ARGV\[1\]/s);
+  assert.match(monitor, /createHash\('sha256'\)/);
+  assert.match(monitor, /MAX_RESOURCE_KEY_LENGTH/);
+  assert.match(tests, /alerts once after distinct successful reads on explicitly monitored private routes/);
+  assert.match(tests, /does not require or key on a source IP, avoiding NAT-based cross-account aggregation/);
+  assert.match(tests, /keeps Redis and notification failures out of the successful resource response path/);
+});
+
+test("customer order PII and mutations require ADMIN or SUPER_ADMIN", async () => {
+  const orders = await source("AVERON_backend", "apps/api/src/modules/commerce/orders.ts");
+  assert.match(orders, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\)/);
+  assert.doesNotMatch(orders, /preHandler:\s*adminMiddleware/);
+});
+
+test("sensitive admin modules enforce least-privilege role gates", async () => {
+  const commerce = await source("AVERON_backend", "apps/api/src/modules/commerce/index.ts");
+  const promos = await source("AVERON_backend", "apps/api/src/modules/commerce/commerce-promos.ts");
+  const analytics = await source("AVERON_backend", "apps/api/src/modules/analytics/index.ts");
+  const media = await source("AVERON_backend", "apps/api/src/modules/media/index.ts");
+  const errors = await source("AVERON_backend", "apps/api/src/modules/error-reports/index.ts");
+  const reviews = await source("AVERON_backend", "apps/api/src/modules/commerce/product-reviews.ts");
+  const telegram = await source("AVERON_backend", "apps/api/src/modules/commerce/telegram-publication.ts");
+  const shipping = await source("AVERON_backend", "apps/api/src/modules/commerce/ipost-shipping.ts");
+  const productAi = await source("AVERON_backend", "apps/api/src/modules/commerce/product-ai.ts");
+
+  assert.match(commerce, /const catalogReadRoles\s*=\s*\[AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR, AdminRole\.SUPPORT\]/);
+  assert.match(commerce, /const catalogManageRoles\s*=\s*\[AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\]/);
+  assert.match(commerce, /requireAdminRole\(\.\.\.catalogReadRoles\)/);
+  assert.match(commerce, /requireAdminRole\(\.\.\.catalogManageRoles\)/);
+  assert.doesNotMatch(commerce, /preHandler:\s*adminMiddleware/);
+  for (const moduleSource of [promos, analytics, media, telegram, shipping, productAi]) {
+    assert.match(moduleSource, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\)/);
+    assert.doesNotMatch(moduleSource, /preHandler:\s*adminMiddleware/);
+  }
+  assert.match(errors, /const errorReportAccess\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\)\]/);
+  assert.match(errors, /preHandler:\s*errorReportAccess/);
+  assert.doesNotMatch(errors, /preHandler:\s*adminMiddleware/);
+  assert.match(reviews, /reviewModerators\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
+  assert.doesNotMatch(reviews, /preHandler:\s*adminMiddleware/);
+});
+
+test("API operational logs do not serialize raw exceptions from sensitive handlers", async () => {
+  const files = [
+    ["AVERON_backend", "apps/api/src/modules/auth/login.ts"],
+    ["AVERON_backend", "apps/api/src/modules/admin/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/ai-chat/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/cart-checkout.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/orders.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/product-reviews.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/media/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/telegram-publication.ts"],
+    ["AVERON_backend", "apps/api/src/modules/analytics/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/error-reports/index.ts"],
+    ["AVERON_backend", "apps/api/src/server.ts"],
+    ["AVERON_backend", "apps/api/src/lib/errorHandler.ts"],
+  ];
+  for (const [repository, relativePath] of files) {
+    const handler = await source(repository, relativePath);
+    assert.doesNotMatch(
+      handler,
+      /log\.(?:error|warn)\(\{[^}]{0,180}\b(?:err|error|redisErr|storageError):\s*(?:err|error|redisErr|storageError)\b/,
+      `${relativePath} must not serialize caught exception objects`,
+    );
+  }
+  const server = await source("AVERON_backend", "apps/api/src/server.ts");
+  assert.match(server, /message:\s*safeHttpErrorMessage\(statusCode\)/);
+  assert.match(server, /safeErrorLogFields\(err\)/);
+  assert.doesNotMatch(server, /log\.(?:error|warn)\(\{[^}]{0,180}\b(?:err|error|redisErr|storageError):\s*(?:err|error|redisErr|storageError)\b/);
+  assert.doesNotMatch(server, /message:\s*errorMessage/);
+  assert.match(server, /userIdHash:\s*request\.user\?\.userId/);
+  assert.doesNotMatch(server, /request\.log\.(?:error|warn)\(\{[^}]{0,500}\buserId:\s*request\.user\?\.userId/);
+  const safeLogging = await source("AVERON_backend", "apps/api/src/lib/safe-error-log.ts");
+  assert.match(safeLogging, /errorType/);
+  assert.doesNotMatch(safeLogging, /\.message|\.stack/);
+  const aiChat = await source("AVERON_backend", "apps/api/src/modules/ai-chat/index.ts");
+  assert.match(aiChat, /sendSafeErrorReply\(request, reply, err/);
+  const safeResponses = await source("AVERON_backend", "apps/api/src/lib/safe-error-response.ts");
+  assert.match(safeResponses, /safeHttpErrorMessage\(statusCode\)/);
+  assert.doesNotMatch(safeResponses, /candidate\.message|error\.message/);
+});
+
+test("k6 performance smoke is low-rate, read-only, and refuses production targets", async () => {
+  const script = await source("AVERON_security_tests", "performance/catalog-read-smoke.js");
+  const readme = await source("AVERON_security_tests", "performance/README.md");
+  assert.match(script, /AVERON_LOAD_TEST_ENVIRONMENT === 'non-production'/);
+  assert.match(script, /AVERON_LOAD_TEST_APPROVED === 'true'/);
+  assert.match(script, /productionDomain/);
+  assert.match(script, /\['production', 'prod'\]\.includes\(environmentName\)/);
+  assert.match(script, /target: 2/);
+  assert.match(script, /p\(95\)<750/);
+  assert.match(script, /p\(99\)<1500/);
+  assert.match(script, /http\.get/);
+  assert.doesNotMatch(script, /http\.(?:post|put|patch|del)\(/);
+  assert.match(readme, /does not authenticate, mutate data, create orders, or exercise admin\s+routes/);
 });
 
 test("public AI health and auth diagnostics do not expose endpoint configuration or PII", async () => {
@@ -206,7 +395,9 @@ test("Telegram Mini App auth and manual publication keep identity, feature, and 
   assert.match(cardTests, /mocked Telegram transport/);
   assert.match(cardTests, /rejects unsafe image URLs/);
   assert.doesNotMatch(commerce, /publishProductToTelegram|sendTelegramCard/);
-  assert.match(env.replace(/\s+/g, " "), /FEATURE_TELEGRAM_PRODUCT_PUBLISH:.*default\('false'\)/);
+  // The feature flag controls availability; publication itself remains an explicit,
+  // admin-authorized operation covered by the route and service regressions above.
+  assert.match(env, /FEATURE_TELEGRAM_PRODUCT_PUBLISH:\s*z\.enum\(\['true', 'false'\]\)/);
 });
 
 test("Task 15 product reviews preserve verified-purchase, moderation, aggregation, and media boundaries", async () => {
@@ -388,7 +579,8 @@ test("Task 18 authentication and integration foundations fail closed and protect
   assert.match(phoneLogin, /registrationSchema[\s\S]*?\.strict\(\)/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:code:/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:cooldown:/);
-  assert.match(phoneAuth, /keyGenerator:[\s\S]*?req\.ip/);
+  assert.match(phoneAuth, /keyGenerator:[\s\S]*?createAuthRateLimitKey\(/);
+  assert.match(phoneAuth, /createAuthRateLimitKey\(config\.JWT_SECRET, 'phone-otp-request', req\.ip, req\.body, \['phone'\]\)/);
   assert.match(loginThrottle, /averon:v1:auth:login-failures:/);
   assert.match(otpStore, /redis\.call\('GET', KEYS\[1\]\)/);
   assert.match(otpStore, /redis\.call\('DEL', KEYS\[1\]\)/);
@@ -519,5 +711,46 @@ test("Task 18 iPost shipment integration is idempotent, bounded, and does not ow
     "does not call a provider or persist shipment state when iPost is disabled",
   ]) {
     assert.ok(tests.includes(scenario), `Missing Task 18 iPost security regression: ${scenario}`);
+  }
+});
+
+test("deployment verification is bound to each runtime SHA and a successful staging artifact", async () => {
+  const verifier = await source("AVERON_security_tests", "scripts/verify-deployment.mjs");
+  const workflow = await source("AVERON_security_tests", ".github/workflows/deployment-health.yml");
+  const backend = await source("AVERON_backend", "apps/api/src/server.ts");
+  const storefront = await source("AVERON_frontend", "app/api/release/route.ts");
+  const admin = await source("AVERON_admin_panel", "vite.config.ts");
+
+  assert.match(verifier, /EXPECTED_BACKEND_SHA/);
+  assert.match(verifier, /EXPECTED_STOREFRONT_SHA/);
+  assert.match(verifier, /EXPECTED_ADMIN_SHA/);
+  assert.match(verifier, /health\.db !== 'up'/);
+  assert.match(verifier, /staging\.passed !== true/);
+  assert.match(verifier, /staging\.mode !== 'deployment'/);
+  assert.match(workflow, /environment: \$\{\{ inputs\.environment \}\}/);
+  assert.match(workflow, /name: AVERON Deployment SHA and Health Gate/);
+  assert.match(workflow, /actions\/download-artifact@/);
+  assert.match(workflow, /inputs\.environment == 'production'/);
+  assert.match(backend, /RAILWAY_GIT_COMMIT_SHA/);
+  assert.match(storefront, /VERCEL_GIT_COMMIT_SHA/);
+  assert.match(admin, /VERCEL_GIT_COMMIT_SHA/);
+});
+
+test("cross-repository checks publish a blocking status back to the triggering source SHA", async () => {
+  const central = await source("AVERON_security_tests", ".github/workflows/application-regressions.yml");
+  assert.match(central, /persist-credentials: false/);
+  assert.match(central, /publish-source-commit-status:/);
+  assert.match(central, /GH_TOKEN: \$\{\{ secrets\.AVERON_SOURCE_STATUS_TOKEN \}\}/);
+  assert.match(central, /Configure AVERON_SOURCE_STATUS_TOKEN/);
+  assert.doesNotMatch(central, /GH_TOKEN: \$\{\{ secrets\.AVERON_REPOS_READ_TOKEN \}\}/);
+  assert.match(central, /needs\.regression-tests\.result/);
+  assert.match(central, /context='AVERON \/ cross-repository verify'/);
+  assert.match(central, /SOURCE_SHA: \$\{\{ github\.event\.client_payload\.sha \}\}/);
+  for (const repository of ["AVERON_backend", "AVERON_frontend", "AVERON_admin_panel", "AVERON_parser"]) {
+    const notifier = await source(repository, ".github/workflows/notify-security.yml");
+    assert.match(notifier, /statuses: write/);
+    assert.match(notifier, /state=pending/);
+    assert.match(notifier, /state=error/);
+    assert.match(notifier, /client_payload\[sha\]=\"\$SOURCE_SHA\"/);
   }
 });

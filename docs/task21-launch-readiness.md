@@ -60,11 +60,14 @@ failed. A fresh complete CI run and its redacted artifact are required.
   implicit loopback proxy bypass. Existing request interception remains as
   defense in depth. Private, link-local, reserved, IPv4-mapped IPv6, and
   non-global IPv6 ranges are rejected.
-- **Backend forwarded IP trust:** Replaced unconditional `trustProxy: true`
-  with an explicit `TRUST_PROXY_ADDRESSES` IP/CIDR allowlist. It defaults to
-  trusting no forwarding headers; CIDR `/0` wildcard entries are rejected.
-  Production logs a warning when unset. The actual Railway/Cloudflare
-  addresses must be established before setting it.
+- **Backend forwarded IP trust:** source-level implicit trust was removed:
+  Railway runtime variables no longer enable `trustProxy: true`; only explicit
+  `TRUST_PROXY_ADDRESSES` entries permit forwarded headers to influence
+  `request.ip` or `request.protocol`. The default direct-peer behavior and
+  explicit allowlist are covered by unit tests. Verify the real Railway and
+  Cloudflare ingress addresses, header sanitization, origin reachability, and
+  rate-limit behavior in staging before configuring the allowlist; do not guess
+  proxy CIDRs or hop counts. Until then, requests may share the ingress peer IP.
 - Added Parser proxy/rebinding and address-range tests, a Backend spoofed-header
   unit test, and Security Tests regression assertions for both controls.
 
@@ -77,7 +80,7 @@ egress boundary, deployed forwarding chain, or staging behavior.
 | --- | --- |
 | Parser tests | PASS — 27 tests |
 | Parser typecheck, build, lint | PASS |
-| Backend full API suite | PASS — 300 tests with disposable test-only configuration and a longer test timeout |
+| Backend full API suite | PASS — 351 tests across 51 files with disposable test-only secrets and unreachable loopback DB/Redis URLs; this is unit/API-mock evidence, not real datastore integration |
 | Backend focused forwarded-header tests | PASS — 2 tests |
 | Backend typecheck, build, Prisma schema validation | PASS |
 | Backend lint | PASS with existing warnings; no lint errors |
@@ -107,7 +110,7 @@ production credentials were read or used.
 | Staging TLS, redirects, cookies, CORS/CSP, authenticated cache isolation | NOT_VERIFIED | No staging URL or authorized test credentials supplied |
 | Runtime API authorization, IDOR/BOLA, Admin RBAC | NOT_VERIFIED | Local source tests exist; staging/runtime behavior not established |
 | Checkout/promo concurrency and immutable order snapshots | NOT_VERIFIED | No disposable PostgreSQL/staging environment for race testing |
-| Customer/Admin/mobile browser E2E | NOT_VERIFIED | Local builds/tests pass; no end-to-end browser run against disposable seeded data |
+| Customer/Admin/mobile browser E2E | PARTIAL | Latest local production-build Playwright run: 20 passed, 2 desktop/mobile-inapplicable cases skipped across 22 cases, desktop + mobile Chromium; explicit loopback storefront/API fixture and local Admin login. Covers localized routes/overflow, gallery keyboard/scroll behavior, controlled OTP invalid-code recovery plus synthetic protected-profile navigation, fitting-room rotation/layer/total, catalog filters, and Admin login rendering. Auth response is mocked (no persisted customer, SMS, or real commerce); no staging evidence |
 | Production secret presence and strength | NOT_VERIFIED | Secret values were not inspected; production environment access unavailable |
 | Production backup, restore rehearsal, pending migration review/status | NOT_VERIFIED | No production database access or backup evidence; no production migration was run |
 | PostgreSQL/Prisma connection budget and multi-instance behavior | NOT_VERIFIED | Deployed replica, pooler, and database limits unavailable |
@@ -120,6 +123,11 @@ production credentials were read or used.
 Prior Task #19 audit detail and known route-coverage limits remain in
 [`task19-audit-findings.md`](./task19-audit-findings.md). Existing source/test
 coverage is not a substitute for current staging evidence.
+
+The later, local-only API hardening snapshot is tracked separately in
+[`api-security-hardening-status.md`](./api-security-hardening-status.md); it
+adds role gates and safe-response regressions but does not change the blocked
+production decision above.
 
 ## Release runbook (not executed)
 
@@ -208,3 +216,26 @@ production migration status, backup evidence, and restore rehearsal remain
 `NOT_VERIFIED`. No staging or production access was used. These gates must be
 closed before any manual release; the local build/test results alone do not
 establish production readiness.
+
+## Current hosted/UI follow-up (2026-10-09)
+
+The current GitHub Actions pages were reachable in Chrome. The latest visible
+Frontend CI (#15), Admin Panel CI (#13), Backend CI (#14), and Parser CI (#4)
+runs completed successfully on their recorded commits; these runs predate the
+current uncommitted work and are not evidence for its source SHAs. Security
+Tests Application Regressions #68 failed in `publish-source-commit-status`
+with GitHub REST HTTP 403, `Resource not accessible by personal access token`.
+The job uses `AVERON_REPOS_READ_TOKEN` to publish a commit status to a separate
+application repository, while the workflow deliberately grants no job-level
+permissions. A repository credential with cross-repository commit-status write
+access (or equivalent GitHub App credential) must be configured by an owner;
+the required Actions secret cannot be replaced from this workspace. Do not
+bypass or mark the required status successful until a fresh exact-SHA run
+publishes it successfully.
+
+The current local Admin clone additionally passes all 69 unit tests, a
+production build, and the Admin route/sidebar fixture E2Es (25 routes at both
+desktop and mobile; dark-theme Lighthouse accessibility 100). Frontend tests
+pass (153 tests). The public origin `https://averon.uz/uz` could not be resolved
+from Chrome or `curl` in this environment (`ERR_NAME_NOT_RESOLVED`), so live
+production 500-page rendering and post-deploy checks remain unverified.

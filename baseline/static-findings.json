@@ -80,6 +80,45 @@
       "reviewedBy": "averon-agent",
       "reviewedAt": "2026-10-03T00:00:00Z",
       "reviewBy": "2027-04-03T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "9c841f6e6ee434211e70d0545bd7433a464d122d:apps/api/src/modules/commerce/__tests__/fitting-room.test.ts:generic-api-key:452",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "codex-security-review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "9c841f6e6ee434211e70d0545bd7433a464d122d:apps/api/src/modules/commerce/__tests__/fitting-room.test.ts:generic-api-key:469",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "codex-security-review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
+    },
+    {
+      "scanner": "Gitleaks",
+      "rule": "generic-api-key",
+      "repository": "AVERON_backend",
+      "path": "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts",
+      "commit": "9c841f6e6ee434211e70d0545bd7433a464d122d",
+      "fingerprint": "9c841f6e6ee434211e70d0545bd7433a464d122d:apps/api/src/modules/commerce/__tests__/fitting-room.test.ts:generic-api-key:488",
+      "classification": "TEST_FIXTURE",
+      "evidenceRef": "SEC-REVIEW-2026-10-11-FITTING-ROOM-IDEMPOTENCY-FIXTURES",
+      "reviewedBy": "codex-security-review",
+      "reviewedAt": "2026-10-11T00:00:00Z",
+      "reviewBy": "2027-04-11T00:00:00Z"
     }
   ],
   "policy": "Critical and high non-secret findings require exact reviewed fingerprints before baseline approval. Current-file secret candidates always block. A historical Gitleaks finding may be excepted only with an exact scanner, rule, repository, path, commit, fingerprint, classification, evidence reference, reviewer, and review window."

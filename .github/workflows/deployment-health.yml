@@ -1,0 +1,94 @@
+name: AVERON Deployment SHA and Health Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment (production is subject to GitHub Environment protection)
+        type: choice
+        options: [staging, production]
+        required: true
+      mode:
+        description: Verify a new deployment or verify a completed rollback
+        type: choice
+        options: [deployment, rollback]
+        required: true
+      backend_sha:
+        description: Full 40-character backend Git SHA
+        type: string
+        required: true
+      storefront_sha:
+        description: Full 40-character storefront Git SHA
+        type: string
+        required: true
+      admin_sha:
+        description: Full 40-character admin Git SHA
+        type: string
+        required: true
+      backend_url:
+        description: HTTPS backend origin
+        type: string
+        required: true
+      storefront_url:
+        description: HTTPS storefront origin
+        type: string
+        required: true
+      admin_url:
+        description: HTTPS admin origin
+        type: string
+        required: true
+      staging_run_id:
+        description: Required for production - successful staging verification workflow run ID for this SHA
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify-deployment:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+      - name: Require successful staging verification before production
+        if: inputs.environment == 'production'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STAGING_RUN_ID: ${{ inputs.staging_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$STAGING_RUN_ID" =~ ^[0-9]+$ ]] || { echo "::error::A staging workflow run ID is required."; exit 1; }
+          run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${STAGING_RUN_ID}")"
+          [[ "$(jq -r .status <<< "$run")" == completed && "$(jq -r .conclusion <<< "$run")" == success ]] || { echo "::error::The staging verification run must have succeeded."; exit 1; }
+          [[ "$(jq -r .head_sha <<< "$run")" == "$GITHUB_SHA" ]] || { echo "::error::Staging gate must come from this security workflow revision."; exit 1; }
+          mkdir -p "$RUNNER_TEMP/staging-manifest"
+      - name: Download exact staging verification artifact
+        if: inputs.environment == 'production'
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # actions/download-artifact v6.0.0
+        with:
+          name: averon-deployment-verification-staging
+          path: ${{ runner.temp }}/staging-manifest
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.staging_run_id }}
+      - name: Verify runtime health, deployed SHA, and staging promotion gate
+        env:
+          EXPECTED_BACKEND_SHA: ${{ inputs.backend_sha }}
+          EXPECTED_STOREFRONT_SHA: ${{ inputs.storefront_sha }}
+          EXPECTED_ADMIN_SHA: ${{ inputs.admin_sha }}
+          DEPLOYMENT_ENVIRONMENT: ${{ inputs.environment }}
+          VERIFICATION_MODE: ${{ inputs.mode }}
+          BACKEND_URL: ${{ inputs.backend_url }}
+          STOREFRONT_URL: ${{ inputs.storefront_url }}
+          ADMIN_URL: ${{ inputs.admin_url }}
+          STAGING_MANIFEST_PATH: ${{ runner.temp }}/staging-manifest/averon-deployment-verification.json
+          AVERON_MANIFEST_PATH: ${{ runner.temp }}/averon-deployment-verification.json
+        run: node scripts/verify-deployment.mjs
+      - name: Upload deployment verification and rollback evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
+        with:
+          name: averon-deployment-verification-${{ inputs.environment }}
+          path: ${{ runner.temp }}/averon-deployment-verification.json
+          if-no-files-found: error

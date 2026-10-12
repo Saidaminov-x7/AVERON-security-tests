@@ -2,18 +2,18 @@
   "version": 1,
   "source": "AVERON_backend/apps/api/src",
   "extraction": "TypeScript AST of Fastify route declarations and explicit plugin prefixes; verify dynamic/plugin-specific behavior against runtime registration.",
-  "endpointCount": 129,
+  "endpointCount": 198,
   "endpoints": [
     {
       "method": "GET",
       "path": "/",
       "module": "core",
       "sourceFile": "apps/api/src/server.ts",
-      "line": 257,
+      "line": 265,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -78,9 +78,9 @@
       "path": "/admin/analytics/export",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 371,
+      "line": 357,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -92,18 +92,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/audit-logs",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 192,
+      "line": 188,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -115,18 +117,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/audit-logs",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 186,
+      "line": 182,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -138,9 +142,11 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
@@ -161,9 +167,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
@@ -184,9 +192,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
@@ -207,18 +217,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/notifications-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/pages",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 202,
+      "line": 198,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -230,18 +242,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/pages",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 224,
+      "line": 219,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -253,18 +267,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/pages/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 267,
+      "line": 259,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -276,18 +292,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/pages/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 211,
+      "line": 207,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -299,18 +317,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/pages/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 239,
+      "line": 233,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -322,18 +342,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/pages/:id/maintenance",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 253,
+      "line": 246,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -345,16 +367,18 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/profile",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/profile.ts",
-      "line": 29,
+      "line": 30,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -400,9 +424,9 @@
       "path": "/admin/promo-codes",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 462,
+      "line": 447,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -414,18 +438,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/promo-codes",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 468,
+      "line": 453,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -437,18 +463,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/promo-codes/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 485,
+      "line": 470,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -460,18 +488,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/search/quick",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 602,
+      "line": 587,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR|SUPPORT",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -483,18 +513,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/site-settings",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 283,
+      "line": 274,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -506,18 +538,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/site-settings",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 291,
+      "line": 282,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -529,18 +563,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/site-settings/logo",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 354,
+      "line": 341,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -552,18 +588,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/site-settings/logo",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 318,
+      "line": 306,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -575,9 +613,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
@@ -586,7 +626,7 @@
       "sourceFile": "apps/api/src/modules/admin/staff.ts",
       "line": 33,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|SUPPORT",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -655,7 +695,7 @@
       "sourceFile": "apps/api/src/modules/admin/staff.ts",
       "line": 157,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -676,9 +716,9 @@
       "path": "/admin/system/health",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 491,
+      "line": 476,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -690,9 +730,11 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
@@ -745,9 +787,9 @@
       "path": "/admin/users",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 35,
+      "line": 36,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -759,18 +801,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/users/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 114,
+      "line": 110,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -782,16 +826,18 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/users/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 74,
+      "line": 73,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -805,18 +851,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/users/:id/activity",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 131,
+      "line": 127,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR|SUPPORT",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -828,18 +876,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/users/:id/ai-sessions",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 656,
+      "line": 641,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -851,18 +901,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/users/:id/block",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 87,
+      "line": 85,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -874,18 +926,20 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/users/:id/restore",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 647,
+      "line": 632,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -897,18 +951,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/users/:id/sessions",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 163,
+      "line": 159,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR|SUPPORT",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -920,18 +976,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/users/:id/sessions/:sessionId",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 172,
+      "line": 168,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -943,18 +1001,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "PATCH",
       "path": "/admin/users/:id/unblock",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 101,
+      "line": 98,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -966,9 +1026,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
@@ -977,7 +1039,7 @@
       "sourceFile": "apps/api/src/modules/admin/index.ts",
       "line": 50,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -989,18 +1051,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/admin/webhooks",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 535,
+      "line": 520,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1012,18 +1076,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/webhooks",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 539,
+      "line": 524,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1035,18 +1101,20 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/admin/webhooks/:id",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 551,
+      "line": 536,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1058,18 +1126,20 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/admin/webhooks/:id/test",
       "module": "admin",
       "sourceFile": "apps/api/src/modules/admin/index.ts",
-      "line": 556,
+      "line": 541,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1081,16 +1151,18 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/admin/admin-users-security.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/ai-chat/chat",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 24,
+      "line": 25,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1113,7 +1185,7 @@
       "path": "/ai-chat/message",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 107,
+      "line": 106,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1136,7 +1208,7 @@
       "path": "/ai-chat/sessions",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 55,
+      "line": 56,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1159,7 +1231,7 @@
       "path": "/ai-chat/sessions",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 43,
+      "line": 44,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1205,7 +1277,7 @@
       "path": "/ai-chat/sessions/:sessionId",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 66,
+      "line": 67,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1228,7 +1300,7 @@
       "path": "/ai-chat/stream",
       "module": "ai-chat",
       "sourceFile": "apps/api/src/modules/ai-chat/index.ts",
-      "line": 138,
+      "line": 137,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -1251,9 +1323,9 @@
       "path": "/analytics/admin/export",
       "module": "analytics",
       "sourceFile": "apps/api/src/modules/analytics/index.ts",
-      "line": 192,
+      "line": 402,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1265,18 +1337,47 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/admin/journey",
+      "module": "analytics",
+      "sourceFile": "apps/api/src/modules/analytics/index.ts",
+      "line": 316,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/analytics/admin/range",
       "module": "analytics",
       "sourceFile": "apps/api/src/modules/analytics/index.ts",
-      "line": 103,
+      "line": 227,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1288,18 +1389,21 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/analytics/admin/visitors",
       "module": "analytics",
       "sourceFile": "apps/api/src/modules/analytics/index.ts",
-      "line": 79,
+      "line": 203,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1311,18 +1415,47 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/analytics/events",
+      "module": "analytics",
+      "sourceFile": "apps/api/src/modules/analytics/index.ts",
+      "line": 126,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/analytics/funnel",
       "module": "analytics",
       "sourceFile": "apps/api/src/modules/analytics/index.ts",
-      "line": 275,
+      "line": 485,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1334,16 +1467,19 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/analytics/visit",
       "module": "analytics",
       "sourceFile": "apps/api/src/modules/analytics/index.ts",
-      "line": 56,
+      "line": 179,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -1357,18 +1493,21 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/analytics/__tests__/events.test.ts",
+        "apps/api/src/modules/analytics/__tests__/journey.test.ts"
+      ]
     },
     {
       "method": "GET",
       "path": "/api/v1/admin/ai-status",
       "module": "features",
       "sourceFile": "apps/api/src/modules/features/index.ts",
-      "line": 29,
+      "line": 33,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "NOT_DETECTED",
       "responseSchema": "NOT_DECLARED",
@@ -1380,18 +1519,16 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/features/__tests__/feature-flags.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "GET",
       "path": "/api/v1/admin/categories",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 197,
+      "line": 357,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1408,16 +1545,10 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1425,7 +1556,7 @@
       "path": "/api/v1/admin/categories",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 203,
+      "line": 363,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1439,19 +1570,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1459,7 +1584,7 @@
       "path": "/api/v1/admin/categories/:id",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 265,
+      "line": 431,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1476,16 +1601,10 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1493,7 +1612,7 @@
       "path": "/api/v1/admin/categories/:id",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 221,
+      "line": 386,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1510,16 +1629,135 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/commerce/promo-codes",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 75,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/commerce/promo-codes",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 87,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/commerce/promo-codes/:promoId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 177,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/commerce/promo-codes/:promoId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 120,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/commerce/promo-codes/:promoId/usages",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 199,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1527,7 +1765,7 @@
       "path": "/api/v1/admin/dashboard",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 277,
+      "line": 449,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1544,16 +1782,160 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/fitting-room/assets/:assetId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 375,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/fitting-room/assets/:assetId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 277,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/fitting-room/assets/:assetId/review",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 327,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/fitting-room/generation-capabilities",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 188,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/fitting-room/generation-jobs/:jobId/cancel",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 482,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/fitting-room/generation-jobs/:jobId/retry",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 509,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
     },
     {
@@ -1561,7 +1943,7 @@
       "path": "/api/v1/admin/imports",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 308,
+      "line": 506,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1575,19 +1957,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1595,7 +1971,7 @@
       "path": "/api/v1/admin/imports",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 621,
+      "line": 991,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1611,19 +1987,13 @@
         "FEATURE_DISABLED"
       ],
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1631,7 +2001,7 @@
       "path": "/api/v1/admin/imports/:id/approve",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 688,
+      "line": 1058,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1645,19 +2015,13 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1665,7 +2029,7 @@
       "path": "/api/v1/admin/imports/:id/reject",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 771,
+      "line": 1144,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1679,19 +2043,13 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1699,9 +2057,9 @@
       "path": "/api/v1/admin/integration-diagnostics",
       "module": "features",
       "sourceFile": "apps/api/src/modules/features/index.ts",
-      "line": 52,
+      "line": 56,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "NOT_DETECTED",
       "responseSchema": "NOT_DECLARED",
@@ -1713,10 +2071,166 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 460,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:orderNumber",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 564,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/features/__tests__/feature-flags.test.ts"
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orders/:orderNumber/ipost-shipment",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/ipost-shipping.ts",
+      "line": 196,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/orders/:orderNumber/ipost-shipment",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/ipost-shipping.ts",
+      "line": 71,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/orders/:orderNumber/shipping",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 474,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/orders/:orderNumber/status",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 580,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
       ]
     },
     {
@@ -1724,7 +2238,7 @@
       "path": "/api/v1/admin/products",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 290,
+      "line": 462,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1741,16 +2255,10 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1758,7 +2266,35 @@
       "path": "/api/v1/admin/products",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 336,
+      "line": 534,
+      "access": "ADMIN",
+      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/products/:id",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/index.ts",
+      "line": 964,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1775,16 +2311,11 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
         "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -1792,7 +2323,7 @@
       "path": "/api/v1/admin/products/:id",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 418,
+      "line": 657,
       "access": "ADMIN",
       "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
       "requestSchema": "NOT_DECLARED",
@@ -1809,16 +2340,273 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
         "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:id/archive",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/index.ts",
+      "line": 940,
+      "access": "ADMIN",
+      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:id/restore",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/index.ts",
+      "line": 952,
+      "access": "ADMIN",
+      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:id/telegram-preview",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/telegram-publication.ts",
+      "line": 133,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
         "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/products/:id/telegram-publication",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/telegram-publication.ts",
+      "line": 100,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:id/telegram-publish",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/telegram-publication.ts",
+      "line": 159,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/products/:identifier",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/index.ts",
+      "line": 491,
+      "access": "ADMIN",
+      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/products/:productId/fitting-room/assets",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 176,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:productId/fitting-room/assets",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 193,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/products/:productId/fitting-room/generation-jobs",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 471,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/products/:productId/fitting-room/generation-jobs",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 396,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
       ]
     },
     {
@@ -1828,7 +2616,7 @@
       "sourceFile": "apps/api/src/modules/visual-search/index.ts",
       "line": 478,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1843,7 +2631,8 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/visual-search/__tests__/routes.test.ts"
+        "apps/api/src/modules/visual-search/__tests__/routes.test.ts",
+        "apps/api/src/modules/visual-search/__tests__/service.test.ts"
       ]
     },
     {
@@ -1853,7 +2642,7 @@
       "sourceFile": "apps/api/src/modules/visual-search/index.ts",
       "line": 499,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1868,7 +2657,8 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/visual-search/__tests__/routes.test.ts"
+        "apps/api/src/modules/visual-search/__tests__/routes.test.ts",
+        "apps/api/src/modules/visual-search/__tests__/service.test.ts"
       ]
     },
     {
@@ -1876,9 +2666,9 @@
       "path": "/api/v1/admin/products/ai-suggestions",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/product-ai.ts",
-      "line": 8,
+      "line": 10,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1892,19 +2682,10 @@
         "FEATURE_DISABLED"
       ],
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
-        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
-        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts"
       ]
     },
     {
@@ -1912,11 +2693,34 @@
       "path": "/api/v1/admin/recommendation-status",
       "module": "features",
       "sourceFile": "apps/api/src/modules/features/index.ts",
-      "line": 41,
+      "line": 45,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/reviews",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 431,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -1929,7 +2733,32 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/features/__tests__/feature-flags.test.ts"
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/admin/reviews/:id/moderation",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 476,
+      "access": "ADMIN",
+      "requiredRole": "SUPER_ADMIN|ADMIN|MODERATOR",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
     },
     {
@@ -1939,7 +2768,7 @@
       "sourceFile": "apps/api/src/modules/visual-search/index.ts",
       "line": 568,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -1951,10 +2780,11 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/visual-search/__tests__/routes.test.ts"
+        "apps/api/src/modules/visual-search/__tests__/routes.test.ts",
+        "apps/api/src/modules/visual-search/__tests__/service.test.ts"
       ]
     },
     {
@@ -1962,7 +2792,7 @@
       "path": "/api/v1/capabilities",
       "module": "features",
       "sourceFile": "apps/api/src/modules/features/index.ts",
-      "line": 9,
+      "line": 11,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -1976,10 +2806,135 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/features/__tests__/feature-flags.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/cart",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 455,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/features/__tests__/feature-flags.test.ts"
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/cart",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 333,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/cart/items",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 345,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/cart/items/:itemId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 436,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/cart/items/:itemId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 398,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
       ]
     },
     {
@@ -1987,7 +2942,7 @@
       "path": "/api/v1/catalog-facets",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 170,
+      "line": 330,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2001,19 +2956,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2021,7 +2970,7 @@
       "path": "/api/v1/categories",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 168,
+      "line": 328,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2035,19 +2984,38 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/checkout",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/cart-checkout.ts",
+      "line": 471,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts"
       ]
     },
     {
@@ -2055,7 +3023,7 @@
       "path": "/api/v1/custom-orders",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 271,
+      "line": 437,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2072,16 +3040,301 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/fitting-room/products",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 83,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/me",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 373,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
         "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
-        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/orders/me/:orderNumber",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 388,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/orders/me/:orderNumber/cancel",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/orders.ts",
+      "line": 401,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/outfits",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 137,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/outfits",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 156,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/outfits/:outfitId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 222,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/outfits/:outfitId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 172,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/outfits/:outfitId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 192,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/outfits/:outfitId/cart",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/outfits.ts",
+      "line": 232,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/parser/imports",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/parser-import.ts",
+      "line": 29,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts"
       ]
     },
     {
@@ -2089,7 +3342,7 @@
       "path": "/api/v1/products",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 150,
+      "line": 245,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2103,19 +3356,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
         "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
         "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2123,7 +3370,115 @@
       "path": "/api/v1/products/:identifier",
       "module": "commerce",
       "sourceFile": "apps/api/src/modules/commerce/index.ts",
-      "line": 162,
+      "line": 314,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
+        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
+        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
+        "apps/api/src/modules/commerce/__tests__/schemas.test.ts",
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:identifier/complete-the-look",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/catalog-assistant.ts",
+      "line": 441,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:identifier/fitting-room",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/fitting-room.ts",
+      "line": 139,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/fitting-room.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:slug/review-eligibility/:orderItemId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 235,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:slug/reviews",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 176,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2136,20 +3491,61 @@
       },
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/products/:slug/reviews",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 279,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/:slug/reviews/eligibility",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 124,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts",
-        "apps/api/src/modules/commerce/__tests__/checkout-orders.test.ts",
-        "apps/api/src/modules/commerce/__tests__/ipost-shipping.test.ts",
-        "apps/api/src/modules/commerce/__tests__/parser-import.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-ai.test.ts",
-        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts",
-        "apps/api/src/modules/commerce/__tests__/recommendations.test.ts",
-        "apps/api/src/modules/commerce/__tests__/routes.test.ts",
-        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts",
-        "apps/api/src/modules/commerce/__tests__/telegram-publication.test.ts"
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
       ]
     },
     {
@@ -2171,10 +3567,38 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/visual-search/__tests__/routes.test.ts"
+        "apps/api/src/modules/visual-search/__tests__/routes.test.ts",
+        "apps/api/src/modules/visual-search/__tests__/service.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/products/ai-search",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/catalog-assistant.ts",
+      "line": 293,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts"
       ]
     },
     {
@@ -2196,10 +3620,313 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/visual-search/__tests__/routes.test.ts",
+        "apps/api/src/modules/visual-search/__tests__/service.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/promo-codes/validate",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/commerce-promos.ts",
+      "line": 50,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/reviews/me/:id",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 416,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/visual-search/__tests__/routes.test.ts"
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reviews/me/:id",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 165,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/reviews/me/:id",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/product-reviews.ts",
+      "line": 366,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/product-reviews.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/style-assistant/outfits",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/catalog-assistant.ts",
+      "line": 357,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": [
+        "FEATURE_DISABLED"
+      ],
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/catalog-assistant.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wishlist",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 59,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/wishlist/:productId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 102,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wishlist/:productId",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 81,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/wishlist/sharing",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 145,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wishlist/sharing",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 111,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/wishlist/sharing/regenerate",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 136,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/wishlists/shared/:token",
+      "module": "commerce",
+      "sourceFile": "apps/api/src/modules/commerce/wishlist.ts",
+      "line": 154,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "GLOBAL",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "PERSONAL_OR_COMMERCE_DATA",
+      "testCoverageStatus": "PARTIAL",
+      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
+      "testFiles": [
+        "apps/api/src/modules/commerce/__tests__/task18-commerce-features.test.ts"
       ]
     },
     {
@@ -2224,10 +3951,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2252,10 +3976,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2280,10 +4001,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2308,10 +4026,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2336,10 +4051,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2347,7 +4059,7 @@
       "path": "/auth/forgot-password",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 44,
+      "line": 45,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2361,21 +4073,16 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/login",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 77,
+      "line": 78,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2389,46 +4096,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/login/phone/request-code",
-      "module": "auth",
-      "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 31,
-      "access": "PUBLIC",
-      "requiredRole": "NONE",
-      "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
-      "responseSchema": "NOT_DECLARED",
-      "rateLimit": {
-        "category": "SENSITIVE_ENDPOINT",
-        "configuration": "ROUTE_SPECIFIC",
-        "globalFailBehavior": "FAIL_CLOSED"
-      },
-      "ownershipRequirement": "NOT_APPLICABLE",
-      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/auth/login/phone/verify-code",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
       "line": 32,
@@ -2445,14 +4119,32 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login/phone/verify-code",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 33,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
@@ -2476,10 +4168,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/admin-totp-crypto.test.ts"
       ]
     },
     {
@@ -2487,7 +4176,7 @@
       "path": "/auth/logout",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 109,
+      "line": 110,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2501,46 +4190,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "GET",
       "path": "/auth/me",
-      "module": "auth",
-      "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 112,
-      "access": "AUTHENTICATED",
-      "requiredRole": "AUTHENTICATED_USER",
-      "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
-      "responseSchema": "NOT_DECLARED",
-      "rateLimit": {
-        "category": "SENSITIVE_ENDPOINT",
-        "configuration": "GLOBAL_RATE_LIMIT",
-        "globalFailBehavior": "FAIL_CLOSED"
-      },
-      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
-      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
-    },
-    {
-      "method": "PATCH",
-      "path": "/auth/me/catalog-country",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
       "line": 113,
@@ -2557,21 +4213,16 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
-      "method": "GET",
-      "path": "/auth/me/export",
+      "method": "PATCH",
+      "path": "/auth/me/body-profile",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 119,
+      "line": 115,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -2585,46 +4236,59 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
-      "method": "POST",
-      "path": "/auth/password/phone/request-code",
+      "method": "PATCH",
+      "path": "/auth/me/catalog-country",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 33,
-      "access": "PUBLIC",
-      "requiredRole": "NONE",
+      "line": 114,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "NOT_DETECTED",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "SENSITIVE_ENDPOINT",
-        "configuration": "ROUTE_SPECIFIC",
+        "configuration": "GLOBAL_RATE_LIMIT",
         "globalFailBehavior": "FAIL_CLOSED"
       },
-      "ownershipRequirement": "NOT_APPLICABLE",
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "GET",
+      "path": "/auth/me/export",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 121,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
-      "path": "/auth/password/phone/verify-code",
+      "path": "/auth/password/phone/request-code",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
       "line": 34,
@@ -2641,18 +4305,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
-      "path": "/auth/phone/request-code",
+      "path": "/auth/password/phone/verify-code",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
       "line": 35,
@@ -2669,21 +4328,62 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "POST",
+      "path": "/auth/phone/request-code",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 36,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/phone/verify-code",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 39,
+      "line": 40,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 105,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2700,37 +4400,6 @@
       "testCoverageStatus": "TESTED",
       "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/auth/refresh",
-      "module": "auth",
-      "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 104,
-      "access": "PUBLIC",
-      "requiredRole": "NONE",
-      "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
-      "responseSchema": "NOT_DECLARED",
-      "rateLimit": {
-        "category": "SENSITIVE_ENDPOINT",
-        "configuration": "ROUTE_SPECIFIC",
-        "globalFailBehavior": "FAIL_CLOSED"
-      },
-      "ownershipRequirement": "NOT_APPLICABLE",
-      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
         "apps/api/src/modules/auth/__tests__/refresh.test.ts"
       ]
     },
@@ -2739,7 +4408,7 @@
       "path": "/auth/register",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 65,
+      "line": 66,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2753,46 +4422,13 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/register/phone/request-code",
-      "module": "auth",
-      "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 29,
-      "access": "PUBLIC",
-      "requiredRole": "NONE",
-      "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
-      "responseSchema": "NOT_DECLARED",
-      "rateLimit": {
-        "category": "SENSITIVE_ENDPOINT",
-        "configuration": "ROUTE_SPECIFIC",
-        "globalFailBehavior": "FAIL_CLOSED"
-      },
-      "ownershipRequirement": "NOT_APPLICABLE",
-      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/auth/register/phone/verify-code",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
       "line": 30,
@@ -2809,21 +4445,39 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "TESTED",
-      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register/phone/verify-code",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 31,
+      "access": "PUBLIC",
+      "requiredRole": "NONE",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "ROUTE_SPECIFIC",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/resend-2fa",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 99,
+      "line": 100,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2837,21 +4491,16 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
       "path": "/auth/reset-password",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 55,
+      "line": 56,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -2865,17 +4514,35 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "DELETE",
+      "path": "/auth/sessions",
+      "module": "auth",
+      "sourceFile": "apps/api/src/modules/auth/index.ts",
+      "line": 118,
+      "access": "AUTHENTICATED",
+      "requiredRole": "AUTHENTICATED_USER",
+      "requestSchema": "NOT_DECLARED",
+      "handlerValidation": "NOT_DETECTED",
+      "responseSchema": "NOT_DECLARED",
+      "rateLimit": {
+        "category": "SENSITIVE_ENDPOINT",
+        "configuration": "GLOBAL_RATE_LIMIT",
+        "globalFailBehavior": "FAIL_CLOSED"
+      },
+      "ownershipRequirement": "NOT_APPLICABLE",
+      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
+      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
+    },
+    {
+      "method": "GET",
       "path": "/auth/sessions",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
@@ -2893,49 +4560,16 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/auth/sessions",
-      "module": "auth",
-      "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 114,
-      "access": "AUTHENTICATED",
-      "requiredRole": "AUTHENTICATED_USER",
-      "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
-      "responseSchema": "NOT_DECLARED",
-      "rateLimit": {
-        "category": "SENSITIVE_ENDPOINT",
-        "configuration": "GLOBAL_RATE_LIMIT",
-        "globalFailBehavior": "FAIL_CLOSED"
-      },
-      "ownershipRequirement": "NOT_APPLICABLE",
-      "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
-      "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "DELETE",
       "path": "/auth/sessions/:id",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 115,
+      "line": 117,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -2949,14 +4583,9 @@
       "ownershipRequirement": "RESOURCE_OWNERSHIP_OR_ADMIN_AUTHORIZATION_REQUIRED",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "POST",
@@ -2980,10 +4609,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/telegram-init-data.test.ts"
       ]
     },
     {
@@ -3008,10 +4634,7 @@
       "testCoverageStatus": "PARTIAL",
       "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
       "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
+        "apps/api/src/modules/auth/__tests__/telegram-init-data.test.ts"
       ]
     },
     {
@@ -3019,7 +4642,7 @@
       "path": "/auth/verify-2fa",
       "module": "auth",
       "sourceFile": "apps/api/src/modules/auth/index.ts",
-      "line": 88,
+      "line": 89,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -3033,23 +4656,18 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "SENSITIVE_ACCOUNT_OR_ADMIN_DATA",
-      "testCoverageStatus": "PARTIAL",
-      "coverageEvidence": "Related module tests exist, but no direct request test for this route was detected.",
-      "testFiles": [
-        "apps/api/src/modules/auth/__tests__/login-throttle.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-otp.test.ts",
-        "apps/api/src/modules/auth/__tests__/phone-password-security.test.ts",
-        "apps/api/src/modules/auth/__tests__/refresh.test.ts"
-      ]
+      "testCoverageStatus": "NOT_TESTED",
+      "coverageEvidence": "No related module test file was detected.",
+      "testFiles": []
     },
     {
       "method": "GET",
       "path": "/error-reports",
       "module": "error-reports",
       "sourceFile": "apps/api/src/modules/error-reports/index.ts",
-      "line": 63,
+      "line": 65,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -3070,7 +4688,7 @@
       "path": "/error-reports",
       "module": "error-reports",
       "sourceFile": "apps/api/src/modules/error-reports/index.ts",
-      "line": 10,
+      "line": 12,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
@@ -3093,9 +4711,9 @@
       "path": "/error-reports/:id/resolve",
       "module": "error-reports",
       "sourceFile": "apps/api/src/modules/error-reports/index.ts",
-      "line": 95,
+      "line": 97,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -3116,11 +4734,11 @@
       "path": "/health",
       "module": "core",
       "sourceFile": "apps/api/src/server.ts",
-      "line": 265,
+      "line": 273,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -3139,11 +4757,11 @@
       "path": "/health/ai",
       "module": "core",
       "sourceFile": "apps/api/src/server.ts",
-      "line": 282,
+      "line": 294,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -3162,11 +4780,11 @@
       "path": "/health/live",
       "module": "core",
       "sourceFile": "apps/api/src/server.ts",
-      "line": 278,
+      "line": 286,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -3185,11 +4803,11 @@
       "path": "/health/ready",
       "module": "core",
       "sourceFile": "apps/api/src/server.ts",
-      "line": 322,
+      "line": 334,
       "access": "PUBLIC",
       "requiredRole": "NONE",
       "requestSchema": "NOT_DECLARED",
-      "handlerValidation": "NOT_DETECTED",
+      "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
       "rateLimit": {
         "category": "GLOBAL",
@@ -3208,9 +4826,9 @@
       "path": "/media",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 104,
+      "line": 125,
       "access": "ADMIN",
-      "requiredRole": "ADMIN_ROLE_OR_PERMISSION",
+      "requiredRole": "SUPER_ADMIN|ADMIN",
       "requestSchema": "NOT_DECLARED",
       "handlerValidation": "PRESENT_IN_HANDLER_SOURCE_NOT_LINKED_TO_THIS_ROUTE",
       "responseSchema": "NOT_DECLARED",
@@ -3222,16 +4840,18 @@
       "ownershipRequirement": "NOT_APPLICABLE",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "DELETE",
       "path": "/media/:id",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 87,
+      "line": 106,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -3245,16 +4865,18 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "POST",
       "path": "/media/upload",
       "module": "media",
       "sourceFile": "apps/api/src/modules/media/index.ts",
-      "line": 32,
+      "line": 48,
       "access": "AUTHENTICATED",
       "requiredRole": "AUTHENTICATED_USER",
       "requestSchema": "NOT_DECLARED",
@@ -3268,9 +4890,11 @@
       "ownershipRequirement": "DERIVE_OWNER_FROM_AUTHENTICATED_CONTEXT",
       "featureFlags": "NOT_DETECTED_IN_ROUTE_DECLARATION",
       "sensitiveData": "PUBLIC_OR_LOW_SENSITIVITY",
-      "testCoverageStatus": "NOT_TESTED",
-      "coverageEvidence": "No related module test file was detected.",
-      "testFiles": []
+      "testCoverageStatus": "TESTED",
+      "coverageEvidence": "Route path literal is asserted through Fastify inject in a related test file.",
+      "testFiles": [
+        "apps/api/src/modules/media/__tests__/access-control.test.ts"
+      ]
     },
     {
       "method": "GET",

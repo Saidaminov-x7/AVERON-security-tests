@@ -19,6 +19,11 @@
     "security:dast": "node scripts/run-dast.mjs",
     "security:full": "node scripts/run-full.mjs",
     "security:report": "node scripts/generate-report.mjs",
-    "security:migrations": "node scripts/check-migration-policy.mjs"
+    "security:migrations": "node scripts/check-migration-policy.mjs",
+    "e2e:smoke": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "yaml": "2.9.1"
   }
 }

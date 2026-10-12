@@ -53,6 +53,48 @@ function routePath(prefix, value) {
   return `/${parts.join("/")}`;
 }
 
+function testPathPattern(route) {
+  const escaped = route.split("/").filter(Boolean).map((segment) =>
+    segment.startsWith(":") ? "[^/]+" : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+  );
+  return new RegExp(`^/${escaped.join("/")}/?(?:\\?.*)?$`);
+}
+
+function injectedRequests(testFile) {
+  const source = ts.createSourceFile(testFile.path, testFile.contents, ts.ScriptTarget.Latest, true);
+  const requests = [];
+  const requestMethods = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
+  function visit(node) {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && node.expression.name.text === "inject" && node.arguments[0]
+      && ts.isObjectLiteralExpression(node.arguments[0])) {
+      const options = node.arguments[0];
+      const method = stringValue(propertyValue(options, "method"));
+      const url = stringValue(propertyValue(options, "url"));
+      if (method && url) requests.push({ method: method.toUpperCase(), url: url.split("#", 1)[0] });
+    }
+    // Fastify tests commonly table-drive requests as it.each([['GET', '/path'], ...])
+    // and then pass the destructured method/url into app.inject. Preserve the exact
+    // pair while refusing unrelated table rows and tables in files without inject.
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && node.expression.name.text === "each" && node.arguments[0]
+      && ts.isArrayLiteralExpression(node.arguments[0])
+      && testFile.contents.includes(".inject(")) {
+      for (const row of node.arguments[0].elements) {
+        if (!ts.isArrayLiteralExpression(row) || row.elements.length < 2) continue;
+        const method = stringValue(row.elements[0])?.toUpperCase();
+        const url = stringValue(row.elements[1]);
+        if (method && requestMethods.has(method) && url?.startsWith("/")) {
+          requests.push({ method, url: url.split("#", 1)[0] });
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return requests;
+}
+
 function resolveImportedFile(sourcePath, specifier) {
   if (!specifier.startsWith(".")) return null;
   const base = path.resolve(path.dirname(sourcePath), specifier);
@@ -85,9 +127,10 @@ function classifyAccess(routeText, sourcePath, preHandlerText) {
   const authGuard = /authMiddleware|requireAuth|authenticate/i.test(fullText);
   if (adminModule || adminGuard) {
     const explicitRole = fullText.match(/requireAdminRole\(\s*['"]([^'"]+)['"]\s*\)/)?.[1];
+    const enumRoles = [...new Set([...fullText.matchAll(/AdminRole\.([A-Z_]+)/g)].map((match) => match[1]))];
     return {
       access: "ADMIN",
-      requiredRole: explicitRole ?? "ADMIN_ROLE_OR_PERMISSION",
+      requiredRole: explicitRole ?? (enumRoles.length ? enumRoles.join("|") : "ADMIN_ROLE_OR_PERMISSION"),
     };
   }
   if (authGuard || /if\s*\(\s*!request\.user\b/.test(routeText)) {
@@ -139,6 +182,47 @@ async function emitRoutes(sourcePath, prefix, active = new Set()) {
   const sourceFile = ts.createSourceFile(sourcePath, sourceText, ts.ScriptTarget.Latest, true);
   scanned.set(`${sourcePath}\0${prefix}`, sourceFile);
   const imports = new Map();
+  const localInitializers = new Map();
+  function collectLocalInitializers(node) {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+      localInitializers.set(node.name.text, node.initializer);
+    }
+    ts.forEachChild(node, collectLocalInitializers);
+  }
+  collectLocalInitializers(sourceFile);
+
+  function expandLocalAliases(node, seen = new Set()) {
+    if (!node) return "";
+    if (ts.isIdentifier(node)) {
+      const initializer = localInitializers.get(node.text);
+      if (!initializer || seen.has(node.text)) return node.text;
+      const nextSeen = new Set(seen).add(node.text);
+      return `${node.text} ${expandLocalAliases(initializer, nextSeen)}`;
+    }
+    if (ts.isArrayLiteralExpression(node)) {
+      return node.elements.map((entry) => expandLocalAliases(entry, seen)).join(" ");
+    }
+    if (ts.isCallExpression(node)) {
+      return `${node.expression.getText(sourceFile)} ${node.arguments.map((argument) => expandLocalAliases(argument, seen)).join(" ")}`;
+    }
+    return node.getText(sourceFile);
+  }
+
+  function resolveLocalExpression(node, seen = new Set()) {
+    if (!node) return node;
+    if (ts.isIdentifier(node)) {
+      if (seen.has(node.text)) return node;
+      const initializer = localInitializers.get(node.text);
+      return initializer ? resolveLocalExpression(initializer, new Set(seen).add(node.text)) : node;
+    }
+    if (ts.isPropertyAccessExpression(node)) {
+      const owner = resolveLocalExpression(node.expression, seen);
+      const property = propertyValue(owner, node.name.text);
+      return property ? resolveLocalExpression(property, seen) : node;
+    }
+    return node;
+  }
+
   for (const statement of sourceFile.statements) {
     if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
     const clause = statement.importClause;
@@ -154,27 +238,29 @@ async function emitRoutes(sourcePath, prefix, active = new Set()) {
   function addEndpoint(node, method, declaredPath, options) {
     const pathValue = routePath(prefix, declaredPath);
     const routeText = node.getText(sourceFile);
-    const optionsText = options?.getText(sourceFile) ?? "";
-    const preHandler = propertyValue(options, "preHandler");
-    const preHandlerText = preHandler?.getText(sourceFile) ?? "";
+    const resolvedOptions = resolveLocalExpression(options);
+    const optionsText = resolvedOptions?.getText(sourceFile) ?? "";
+    const preHandler = resolveLocalExpression(propertyValue(resolvedOptions, "preHandler"));
+    const preHandlerText = preHandler
+      ? `${preHandler.getText(sourceFile)} ${expandLocalAliases(preHandler)}`
+      : "";
     const access = classifyAccess(routeText, sourcePath, preHandlerText);
-    const schema = schemaFields(options, sourceFile);
+    const schema = schemaFields(resolvedOptions, sourceFile);
     const limit = rateLimitCategory(pathValue, optionsText);
     const code = routeText;
     const flags = [...new Set([...code.matchAll(/\bFEATURE_[A-Z0-9_]+\b/g)].map((match) => match[0]))];
     const currentModule = moduleName(sourcePath);
     const moduleRoot = path.join(apiRoot, "modules", currentModule);
+    const sourceBase = path.basename(sourcePath, path.extname(sourcePath));
+    const routeInTest = testPathPattern(pathValue);
     const matchingTests = testFiles.filter((testFile) => {
       if (currentModule === "core" || !testFile.path.startsWith(`${moduleRoot}${path.sep}`)) return false;
-      const testText = testFile.contents;
-      return testText.includes(`'${declaredPath}'`)
-        || testText.includes(`"${declaredPath}"`)
-        || /\b(?:server|app)\.inject\s*\(/.test(testText);
+      return injectedRequests(testFile).some((request) => routeInTest.test(request.url))
+        || testFile.contents.includes(sourceBase);
     });
-    const directlyCovered = matchingTests.some((testFile) =>
-      (testFile.contents.includes(`'${declaredPath}'`) || testFile.contents.includes(`"${declaredPath}"`))
-      && /\b(?:server|app)\.inject\s*\(/.test(testFile.contents),
-    );
+    const directlyCovered = matchingTests.some((testFile) => injectedRequests(testFile).some(
+      (request) => request.method === method.toUpperCase() && routeInTest.test(request.url),
+    ));
     const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
 
     endpoints.push({
@@ -230,7 +316,10 @@ async function emitRoutes(sourcePath, prefix, active = new Set()) {
         }
       }
 
-      if (receiverName === "server" && method === "register" && node.arguments[0] && ts.isIdentifier(node.arguments[0])) {
+      if (["server", "app", "fastify"].includes(receiverName)
+          && method === "register"
+          && node.arguments[0]
+          && ts.isIdentifier(node.arguments[0])) {
         const importedFile = imports.get(node.arguments[0].text);
         if (importedFile) {
           const options = node.arguments[1];
