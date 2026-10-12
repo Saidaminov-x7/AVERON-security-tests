@@ -46,6 +46,7 @@ test("backend proxy trust requires explicit trusted proxy addresses on every pla
   assert.match(proxyConfig, /addresses\.length/);
   assert.match(proxyConfig, /return false/);
   assert.doesNotMatch(proxyConfig, /managedPlatformProxy|return true/);
+  assert.match(proxyConfig, /trustProxyOption\([\s\S]*addresses\.length[\s\S]*return \[\.\.\.addresses\][\s\S]*return false/);
 });
 
 test("backend unknown routes never reflect attacker-controlled paths or query strings", async () => {
@@ -406,7 +407,8 @@ test("Task 15 product reviews preserve verified-purchase, moderation, aggregatio
   assert.match(api, /eligibleOrderStatus\(item\.order\.status/);
   assert.match(api, /verifiedPurchase:\s*true/);
   assert.match(api, /CommerceProductReviewStatus\.PUBLISHED/);
-  assert.match(api, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)/);
+  assert.match(api, /const reviewModerators\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
+  assert.match(api, /app\.(?:get|patch)\('\/admin\/reviews[^\n]*\{ preHandler: reviewModerators \}/);
   assert.match(api, /moderatedById:\s*request\.user\.userId/);
   assert.match(schema, /orderItemId\s+String\s+@unique/);
   assert.match(schema, /verifiedPurchase\s+Boolean\s+@default\(false\)/);
