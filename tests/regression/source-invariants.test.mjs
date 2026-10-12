@@ -52,7 +52,7 @@ test("backend proxy trust requires explicit trusted proxy addresses on every pla
 test("backend unknown routes never reflect attacker-controlled paths or query strings", async () => {
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const handler = await source("AVERON_backend", "apps/api/src/lib/notFoundHandler.ts");
-  assert.match(server, /registerNotFoundHandler\(server\)/);
+  assert.match(server, /registerNotFoundHandler\(server,/);
   assert.match(handler, /message:\s*'Route not found'/);
   assert.doesNotMatch(handler, /request\.url|request\.method/);
 });
@@ -71,8 +71,9 @@ test("auth rate-limit storage keys are HMACed instead of retaining submitted PII
   const authRoutes = await source("AVERON_backend", "apps/api/src/modules/auth/index.ts");
   const keyBuilder = await source("AVERON_backend", "apps/api/src/modules/auth/rate-limit-key.ts");
   const tests = await source("AVERON_backend", "apps/api/src/modules/auth/rate-limit-key.test.ts");
-  assert.match(authRoutes, /createAuthRateLimitKey\(config\.JWT_SECRET, 'login'/);
-  assert.match(authRoutes, /createAuthRateLimitKey\(config\.JWT_SECRET, 'verify-2fa'/);
+  assert.match(authRoutes, /createAuthRateLimitKey\(config\.JWT_SECRET, scope, request\.ip,/);
+  assert.match(authRoutes, /authRateLimitKey\('login'/);
+  assert.match(authRoutes, /authRateLimitKey\('verify-2fa'/);
   assert.doesNotMatch(authRoutes, /keyGenerator:\s*\(req\)\s*=>\s*`\$\{req\.ip\}:/);
   assert.match(keyBuilder, /createHmac\('sha256', secret\)/);
   assert.match(keyBuilder, /identityFields/);
@@ -84,6 +85,7 @@ test("auth rate-limit storage keys are HMACed instead of retaining submitted PII
 test("repeated authenticated authorization denials create a deduplicated admin incident without blocking", async () => {
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const monitor = await source("AVERON_backend", "apps/api/src/lib/security-denial-monitor.ts");
+  const incidentWriter = await source("AVERON_backend", "apps/api/src/lib/security-incident.ts");
   const tests = await source("AVERON_backend", "apps/api/src/lib/security-denial-monitor.test.ts");
   assert.match(server, /monitorAuthenticatedAuthorizationDenial\(/);
   assert.match(monitor, /DENIAL_ALERT_THRESHOLD = 12/);
@@ -91,8 +93,8 @@ test("repeated authenticated authorization denials create a deduplicated admin i
   assert.match(monitor, /ALERT_DEDUP_SECONDS = 60 \* 60/);
   assert.match(monitor, /input\.statusCode !== 403 \|\| !input\.userId/);
   assert.match(monitor, /createHash\('sha256'\)/);
-  assert.match(monitor, /type: 'SECURITY_INCIDENT'/);
-  assert.match(monitor, /redis\.set\(alertKey, '1', 'EX', ALERT_DEDUP_SECONDS, 'NX'\)/);
+  assert.match(incidentWriter, /type: 'SECURITY_INCIDENT'/);
+  assert.match(monitor, /input\.redis\.set\(alertKey, '1', 'EX', ALERT_DEDUP_SECONDS, 'NX'\)/);
   assert.match(tests, /does not alert for anonymous requests, 401s, or isolated 403 responses/);
   assert.match(tests, /alerts once after repeated denials without including the raw user ID/);
   assert.match(tests, /fails open and emits only a typed diagnostic if Redis is unavailable/);
@@ -101,16 +103,23 @@ test("repeated authenticated authorization denials create a deduplicated admin i
 test("repeated unknown API routes alert administrators without blocking single 404s", async () => {
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
   const monitor = await source("AVERON_backend", "apps/api/src/lib/unmatched-route-monitor.ts");
+  const incidentWriter = await source("AVERON_backend", "apps/api/src/lib/security-incident.ts");
+  const temporaryRestriction = await source("AVERON_backend", "apps/api/src/lib/temporary-source-restriction.ts");
   const tests = await source("AVERON_backend", "apps/api/src/lib/unmatched-route-monitor.test.ts");
   assert.match(server, /monitorUnmatchedRouteScan\(/);
-  assert.match(server, /routeMatched:\s*Boolean\(request\.routeOptions\.url\)/);
+  assert.match(server, /const routeMatched = Boolean\(routeTemplate\)/);
+  assert.match(server, /routeMatched,/);
   assert.match(monitor, /SCAN_ALERT_THRESHOLD = 40/);
   assert.match(monitor, /SCAN_WINDOW_SECONDS = 5 \* 60/);
   assert.match(monitor, /input\.statusCode !== 404 \|\| input\.routeMatched \|\| !input\.sourceIp/);
   assert.match(monitor, /RESOURCE_PROBE_ALERT_THRESHOLD = 60/);
   assert.match(monitor, /input\.routeTemplate/);
   assert.match(monitor, /createHash\('sha256'\)/);
-  assert.match(monitor, /type: 'SECURITY_INCIDENT'/);
+  assert.match(incidentWriter, /type: 'SECURITY_INCIDENT'/);
+  assert.match(monitor, /restrictSourceTemporarily\(input\.redis, input\.sourceIp, '\/unmatched'/);
+  assert.match(monitor, /restrictSourceTemporarily\(input\.redis, input\.sourceIp, route/);
+  assert.match(temporaryRestriction, /TEMPORARY_SOURCE_RESTRICTION_SECONDS = 10 \* 60/);
+  assert.match(temporaryRestriction, /redis\.get\(/);
   assert.match(server, /monitorResourceNotFoundProbes\(/);
   assert.match(tests, /ignores matched-route 404s, other statuses, missing sources, and isolated probes/);
   assert.match(tests, /alerts once at the threshold without retaining or exposing the raw source address/);
@@ -151,14 +160,16 @@ test("sensitive admin modules enforce least-privilege role gates", async () => {
   const shipping = await source("AVERON_backend", "apps/api/src/modules/commerce/ipost-shipping.ts");
   const productAi = await source("AVERON_backend", "apps/api/src/modules/commerce/product-ai.ts");
 
-  assert.match(commerce, /catalogReadRoles\s*=\s*\[AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR, AdminRole\.SUPPORT\]/);
-  assert.match(commerce, /catalogManageRoles\s*=\s*\[AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\]/);
+  assert.match(commerce, /catalogReadHandler\s*=\s*\[requireAdminRole\(\s*AdminRole\.SUPER_ADMIN,\s*AdminRole\.ADMIN,\s*AdminRole\.MODERATOR,\s*AdminRole\.SUPPORT,\s*\)\]/);
+  assert.match(commerce, /catalogAdminHandler\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\)\]/);
   assert.doesNotMatch(commerce, /preHandler:\s*adminMiddleware/);
-  for (const moduleSource of [promos, analytics, media, errors, telegram, shipping, productAi]) {
+  for (const moduleSource of [promos, analytics, media, telegram, shipping, productAi]) {
     assert.match(moduleSource, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN\)/);
     assert.doesNotMatch(moduleSource, /preHandler:\s*adminMiddleware/);
   }
-  assert.match(reviews, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)/);
+  assert.match(errors, /requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.SUPPORT\)/);
+  assert.doesNotMatch(errors, /preHandler:\s*adminMiddleware/);
+  assert.match(reviews, /reviewAdminHandler\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
   assert.doesNotMatch(reviews, /preHandler:\s*adminMiddleware/);
 });
 
@@ -170,8 +181,9 @@ test("API operational logs do not serialize raw exceptions from sensitive handle
     ["AVERON_backend", "apps/api/src/modules/commerce/cart-checkout.ts"],
     ["AVERON_backend", "apps/api/src/modules/commerce/orders.ts"],
     ["AVERON_backend", "apps/api/src/modules/commerce/product-reviews.ts"],
-    ["AVERON_backend", "apps/api/src/modules/commerce/fitting-room.ts"],
     ["AVERON_backend", "apps/api/src/modules/commerce/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/media/index.ts"],
+    ["AVERON_backend", "apps/api/src/modules/commerce/telegram-publication.ts"],
     ["AVERON_backend", "apps/api/src/modules/analytics/index.ts"],
     ["AVERON_backend", "apps/api/src/modules/error-reports/index.ts"],
     ["AVERON_backend", "apps/api/src/server.ts"],
@@ -186,12 +198,18 @@ test("API operational logs do not serialize raw exceptions from sensitive handle
     );
   }
   const server = await source("AVERON_backend", "apps/api/src/server.ts");
-  assert.match(server, /message:\s*statusCode >= 500 \? 'An unexpected error occurred' : errorMessage/);
-  assert.match(server, /userIdHash:\s*request\.user\?\.userId/);
+  assert.match(server, /message:\s*safeHttpErrorMessage\(statusCode\)/);
+  assert.match(server, /message:\s*'Too many requests\. Try again later\.'/);
   assert.doesNotMatch(server, /message:\s*errorMessage/);
+  assert.doesNotMatch(server, /userId:\s*request\.user\?\.userId/);
+  const safeLogging = await source("AVERON_backend", "apps/api/src/lib/safe-error-log.ts");
+  assert.match(safeLogging, /errorType/);
+  assert.doesNotMatch(safeLogging, /\.message|\.stack/);
   const aiChat = await source("AVERON_backend", "apps/api/src/modules/ai-chat/index.ts");
-  assert.match(aiChat, /toSafeErrorResponse\(err,/);
-  assert.match(aiChat, /const error = new Error\('AI service is temporarily unavailable/);
+  assert.match(aiChat, /toSafeErrorResponse\(err\)/);
+  const safeResponses = await source("AVERON_backend", "apps/api/src/lib/safe-error-response.ts");
+  assert.match(safeResponses, /The service is temporarily unavailable/);
+  assert.doesNotMatch(safeResponses, /error\.message/);
 });
 
 test("k6 performance smoke is low-rate, read-only, and refuses production targets", async () => {
@@ -407,8 +425,8 @@ test("Task 15 product reviews preserve verified-purchase, moderation, aggregatio
   assert.match(api, /eligibleOrderStatus\(item\.order\.status/);
   assert.match(api, /verifiedPurchase:\s*true/);
   assert.match(api, /CommerceProductReviewStatus\.PUBLISHED/);
-  assert.match(api, /const reviewModerators\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
-  assert.match(api, /app\.(?:get|patch)\('\/admin\/reviews[^\n]*\{ preHandler: reviewModerators \}/);
+  assert.match(api, /const reviewAdminHandler\s*=\s*\[requireAdminRole\(AdminRole\.SUPER_ADMIN, AdminRole\.ADMIN, AdminRole\.MODERATOR\)\]/);
+  assert.match(api, /app\.(?:get|patch)\('\/admin\/reviews[^\n]*\{ preHandler: reviewAdminHandler \}/);
   assert.match(api, /moderatedById:\s*request\.user\.userId/);
   assert.match(schema, /orderItemId\s+String\s+@unique/);
   assert.match(schema, /verifiedPurchase\s+Boolean\s+@default\(false\)/);
@@ -557,7 +575,8 @@ test("Task 18 authentication and integration foundations fail closed and protect
   assert.match(phoneLogin, /registrationSchema[\s\S]*?\.strict\(\)/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:code:/);
   assert.match(phoneOtp, /averon:v1:auth:phone-otp:cooldown:/);
-  assert.match(phoneAuth, /keyGenerator:[\s\S]*?req\.ip/);
+  assert.match(phoneAuth, /keyGenerator:[\s\S]*?authRateLimitKey\(/);
+  assert.match(phoneAuth, /createAuthRateLimitKey\(config\.JWT_SECRET, scope, request\.ip,/);
   assert.match(loginThrottle, /averon:v1:auth:login-failures:/);
   assert.match(otpStore, /redis\.call\('GET', KEYS\[1\]\)/);
   assert.match(otpStore, /redis\.call\('DEL', KEYS\[1\]\)/);
