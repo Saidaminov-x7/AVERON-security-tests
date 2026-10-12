@@ -31,7 +31,8 @@ test('local product details keep readable article, localized options, care infor
   await expect(darkBlue).toHaveAttribute('aria-pressed', 'true');
   await expect(darkBlue).toHaveClass(/ring-2/);
   await expect(darkBlue).toHaveAttribute('title', '\u0442\u0451\u043c\u043d\u043e-\u0441\u0438\u043d\u0438\u0439');
-  await expect(darkBlue.locator('span[aria-hidden="true"]')).toHaveCSS('background-color', 'rgb(23, 37, 84)');
+  await expect(darkBlue.locator('span[aria-hidden="true"]')).toHaveCSS('background-color', 'rgb(0, 0, 128)');
+  await expect(darkBlue).toHaveCSS('border-radius', '9999px');
   const medium = options.getByRole('button', { name: /^M,/ });
   await expect(medium).toHaveAttribute('aria-pressed', 'false');
   await medium.click();
