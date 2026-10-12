@@ -23,7 +23,7 @@ function seedProduct(id, title) {
     id,
     slug: id,
     publicId: isReviewFixture ? "AVR-000000000000001" : "AVR-000000000000002",
-    country: "CHINA",
+    country: "CN",
     source: "MANUAL",
     translations: { ru: { title }, uz: { title }, en: { title } },
     description: { ru: "Локальный тестовый товар" },

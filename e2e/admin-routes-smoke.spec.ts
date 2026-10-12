@@ -265,6 +265,8 @@ test('admin product cards adapt to desktop and mobile widths without horizontal 
   await page.goto(new URL('/products', admin).toString(), { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('status', { name: 'Loading page' })).toBeHidden({ timeout: 20_000 });
   await expect(page.locator('article')).toHaveCount(5, { timeout: 10_000 });
+  await expect(page.locator('article').first()).toContainText(/Китай|China|Xitoy/i);
+  await expect(page.locator('article').first()).not.toContainText(/неизвестная страна|unknown country/i);
 
   const layout = await page.locator('main .grid').filter({ has: page.locator('article') }).evaluate((grid) => {
     const card = grid.querySelector('article');
