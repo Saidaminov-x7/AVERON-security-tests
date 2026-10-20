@@ -113,6 +113,8 @@ test("SARIF publication is gated on explicit Code Scanning feature availability"
   const availabilityStep = stepWithId("code_scanning_availability");
   assert.match(availabilityStep, /\/code-scanning\/alerts\?per_page=1/);
   assert.match(availabilityStep, /status=BLOCKED_BY_GITHUB_FEATURE/);
+  assert.match(availabilityStep, /elif \[\[ "\$status_code" == "404" \]\]; then[\s\S]*?status=BLOCKED_BY_GITHUB_FEATURE/);
+  assert.match(availabilityStep, /elif \[\[ "\$status_code" == "403"/);
   assert.match(availabilityStep, /status=EXECUTION_FAILED/);
   assert.match(availabilityStep, /status=AVAILABLE/);
   assert.doesNotMatch(availabilityStep, /continue-on-error|--fail-with-body/);

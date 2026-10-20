@@ -244,7 +244,11 @@ jobs:
           if [[ "$status_code" == "200" ]]; then
             echo "status=AVAILABLE" >> "$GITHUB_OUTPUT"
             printf '%s\n' 'SARIF publication: AVAILABLE (uploads will run for generated reports).' >> "$GITHUB_STEP_SUMMARY"
-          elif [[ ( "$status_code" == "403" || "$status_code" == "404" ) \
+          elif [[ "$status_code" == "404" ]]; then
+            echo "status=BLOCKED_BY_GITHUB_FEATURE" >> "$GITHUB_OUTPUT"
+            printf '%s\n' 'SARIF publication: BLOCKED_BY_GITHUB_FEATURE (Code Scanning alerts endpoint is not available; scanner results and baseline enforcement are unaffected).' >> "$GITHUB_STEP_SUMMARY"
+            echo "Code Scanning alerts are unavailable for this repository; only SARIF publication will be skipped."
+          elif [[ "$status_code" == "403" \
             && ( ( "$message_lower" == *"code scanning"* \
               && ( "$message_lower" == *"not enabled"* \
                 || "$message_lower" == *"unavailable"* \
