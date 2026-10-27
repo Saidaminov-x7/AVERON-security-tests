@@ -4,8 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
-  repository_dispatch:
-    types: [averon-application-changed]
+  # TEMPORARILY PAUSED: source notifier dispatches are paused until CI credentials are configured.
+  # Re-enable after completing Saidaminov-x7/AVERON-security-tests#9.
   workflow_dispatch:
     inputs:
       backend_ref:
