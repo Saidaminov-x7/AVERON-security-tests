@@ -22,17 +22,27 @@ test('desktop filter visibility toggle', async ({ page }, info) => {
   test.skip(!storeUrl);
   test.skip(info.project.name.includes('mobile'));
   await page.goto(new URL('/ru/catalog', storeUrl!).toString());
-  const toggle = page.locator('button[aria-expanded]').filter({ hasText: /фильтр|filter|filtr/i }).first();
-  const filters = page.getByRole('complementary');
+  const toggle = page.locator('button[data-catalog-filter-toggle="desktop"]');
+  const filters = page.locator('aside').filter({ hasText: /Параметры поиска|Search options|Qidiruv parametrlari/i });
   const initial = await toggle.getAttribute('aria-expanded');
   expect(['true', 'false']).toContain(initial);
-  await expect(filters).toBeVisible();
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', initial === 'true' ? 'false' : 'true');
-  await expect(filters).toBeHidden();
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', initial!);
-  await expect(filters).toBeVisible();
+  if (initial === 'true') {
+    await expect(filters).toBeVisible();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(filters).toBeHidden();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(filters).toBeVisible();
+  } else {
+    await expect(filters).toBeHidden();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(filters).toBeVisible();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(filters).toBeHidden();
+  }
 });
 test('mobile filters can be collapsed and restored', async ({ page }, info) => {
   test.skip(!storeUrl);
