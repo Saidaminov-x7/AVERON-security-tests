@@ -48,15 +48,47 @@ test('mobile filters can be collapsed and restored', async ({ page }, info) => {
   test.skip(!storeUrl);
   test.skip(!info.project.name.includes('mobile'));
   await page.goto(new URL('/ru/catalog', storeUrl!).toString());
-  const toggle = page.locator('button[aria-expanded]').filter({ hasText: /фильтр|filter|filtr/i }).first();
+  const toggle = page.locator('button[data-catalog-filter-toggle="mobile"]');
   const initial = await toggle.getAttribute('aria-expanded');
   expect(['true', 'false']).toContain(initial);
   await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', initial === 'true' ? 'false' : 'true');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  const filters = page.getByRole('dialog');
+  await expect(filters).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(filters).toBeHidden();
   await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-expanded', initial!);
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(filters).toBeVisible();
+  await page.keyboard.press('Escape');
   const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(widths.scroll).toBeLessThanOrEqual(widths.client + 1);
+});
+
+test('storefront burger drawer fills the mobile viewport and closes cleanly', async ({ page }, info) => {
+  test.skip(!storeUrl);
+  test.skip(!info.project.name.includes('mobile'));
+  for (const width of [375, 768]) {
+    await page.setViewportSize({ width, height: 850 });
+    await page.goto(new URL('/ru', storeUrl!).toString());
+    const menuButton = page.locator('header button[aria-controls="mobile-navigation"]');
+    await menuButton.click();
+    const drawer = page.locator('#mobile-navigation');
+    await expect(drawer).toBeVisible();
+    const box = await drawer.boundingBox();
+    expect(box).not.toBeNull();
+    expect(Math.abs(box!.x)).toBeLessThan(1);
+    expect(Math.abs(box!.y)).toBeLessThan(1);
+    expect(Math.abs(box!.width - width)).toBeLessThan(1);
+    expect(Math.abs(box!.height - 850)).toBeLessThan(1);
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).overflow)).toMatch(/hidden|clip/);
+    await page.keyboard.press('Escape');
+    await expect(drawer).toHaveAttribute('aria-hidden', 'true');
+    await expect(drawer).toHaveAttribute('inert', '');
+    await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).overflow)).not.toMatch(/hidden|clip/);
+    await checkOverflow(page);
+  }
 });
 
 test('fitting room rotates, adds/removes a layer, and recalculates the outfit total', async ({ page }, info) => {
