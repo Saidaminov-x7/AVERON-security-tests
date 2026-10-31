@@ -176,7 +176,7 @@ jobs:
           AVERON_FITTING_ROOM_GLB: ${{ runner.temp }}/averon-e2e-fitting.glb
       - name: Upload Playwright reports
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # actions/upload-artifact v6.0.0 (Node.js 24)
         with:
           name: averon-playwright-smoke
           path: reports/generated/playwright*
@@ -202,7 +202,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload verified source SHA manifest
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # actions/upload-artifact v6.0.0 (Node.js 24)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # actions/upload-artifact v6.0.0 (Node.js 24)
         with:
           name: averon-source-sha-manifest
           path: ${{ runner.temp }}/averon-release-manifest.json
