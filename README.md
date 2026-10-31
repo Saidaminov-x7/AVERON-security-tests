@@ -115,6 +115,15 @@ minimum token permissions and setup steps.
 
 ## Scanner use and CI
 
+The `Scheduled AVERON dependency audit` workflow runs every Monday and can also
+be started manually. It checks production dependencies from the default branch
+of Backend, Frontend, Admin, and Parser. New HIGH and CRITICAL advisories fail
+the corresponding matrix job. It requires the read-only
+`AVERON_REPOS_READ_TOKEN` Actions secret documented above; a failed checkout or
+missing credential is a failed audit run, never a clean result. The Task #11
+baseline is a historical snapshot and does not represent current dependency
+status.
+
 - Pull request/push Security CI runs policy tests against a real checked-out
   backend, then performs cross-repository Semgrep, Trivy, and redacted Gitleaks
   scans. SARIF upload is scoped to the scanner job that needs it.

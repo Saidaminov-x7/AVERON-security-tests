@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "recordedAt": "2026-10-01",
+  "baselineStatus": "HISTORICAL_ONLY_REQUIRES_FRESH_AUDIT",
   "source": "Task #11 production dependency audit outputs",
   "status": "historical-advisory-debt",
   "policy": "Aggregate historical counts are visible documentation, not scanner suppressions. Findings remain untriaged until current scanner output identifies the exact package, advisory, fixed version, and reachability.",
@@ -26,10 +27,10 @@
       ],
       "exactAdvisories": "55_MATCHES_REPRODUCED; KEY_ADVISORIES_REVALIDATED",
       "currentAudit": {
-        "status": "PASS",
+        "status": "HISTORICAL_SNAPSHOT",
         "command": "pnpm audit --prod",
         "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
-        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+        "result": "Historical result from 2026-10-01 only; does not describe the current dependency graph. Run the scheduled dependency-audit workflow for current status."
       },
       "keyFindings": [
         {
@@ -140,10 +141,10 @@
       ],
       "exactAdvisories": "5_MATCHES_REPRODUCED",
       "currentAudit": {
-        "status": "PASS",
+        "status": "HISTORICAL_SNAPSHOT",
         "command": "pnpm audit --prod",
         "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
-        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+        "result": "Historical result from 2026-10-01 only; does not describe the current dependency graph. Run the scheduled dependency-audit workflow for current status."
       },
       "keyFindings": [
         {
@@ -181,10 +182,10 @@
       ],
       "exactAdvisories": "12_MATCHES_REPRODUCED",
       "currentAudit": {
-        "status": "PASS",
+        "status": "HISTORICAL_SNAPSHOT",
         "command": "pnpm audit --prod",
         "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
-        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+        "result": "Historical result from 2026-10-01 only; does not describe the current dependency graph. Run the scheduled dependency-audit workflow for current status."
       },
       "keyFindings": [
         {
@@ -208,10 +209,10 @@
       "knownPackages": [],
       "exactAdvisories": "0_MATCHES_REPRODUCED",
       "currentAudit": {
-        "status": "PASS",
+        "status": "HISTORICAL_SNAPSHOT",
         "command": "npm audit --omit=dev",
         "counts": { "critical": 0, "high": 0, "moderate": 0, "low": 0 },
-        "result": "Zero advisory matches in the checked-out production dependency graph; deployed graph and reachability not verified."
+        "result": "Historical result from 2026-10-01 only; does not describe the current dependency graph. Run the scheduled dependency-audit workflow for current status."
       }
     }
   }
