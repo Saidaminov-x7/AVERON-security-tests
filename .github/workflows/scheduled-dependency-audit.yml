@@ -1,0 +1,73 @@
+name: Scheduled AVERON dependency audit
+
+on:
+  schedule:
+    - cron: '23 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-dependencies:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repository: AVERON-backend
+            path: source-checkouts/AVERON_backend
+            manager: pnpm
+            audit_command: pnpm audit --prod --audit-level high
+            install_command: pnpm install --frozen-lockfile --prod
+          - repository: AVERON-frontend
+            path: source-checkouts/AVERON_frontend
+            manager: pnpm
+            audit_command: pnpm audit --prod --audit-level high
+            install_command: pnpm install --frozen-lockfile --prod
+          - repository: AVERON-frontend
+            path: source-checkouts/AVERON_frontend
+            manager: npm
+            audit_command: npm audit --omit=dev --audit-level=high
+            install_command: npm ci --omit=dev
+          - repository: AVERON-admin-panel
+            path: source-checkouts/AVERON_admin_panel
+            manager: pnpm
+            audit_command: pnpm audit --prod --audit-level high
+            install_command: pnpm install --frozen-lockfile --prod
+          - repository: AVERON-parser
+            path: source-checkouts/AVERON_parser
+            manager: npm
+            audit_command: npm audit --omit=dev --audit-level=high
+            install_command: npm ci --omit=dev
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # actions/checkout v6.0.2
+        with:
+          repository: Saidaminov-x7/${{ matrix.repository }}
+          ref: main
+          path: ${{ matrix.path }}
+          token: ${{ secrets.AVERON_REPOS_READ_TOKEN }}
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # actions/setup-node v6.5.0
+        with:
+          node-version: 22
+      - name: Enable pinned pnpm
+        if: matrix.manager == 'pnpm'
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.9 --activate
+      - name: Install production dependency graph
+        working-directory: ${{ matrix.path }}
+        run: ${{ matrix.install_command }}
+      - name: Audit production dependencies
+        working-directory: ${{ matrix.path }}
+        run: ${{ matrix.audit_command }}
+      - name: Record audit status
+        if: always()
+        run: |
+          {
+            echo "## ${{ matrix.repository }}"
+            echo "Command: \`${{ matrix.audit_command }}\`"
+            echo "Result: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"
